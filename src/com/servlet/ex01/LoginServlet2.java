@@ -1,4 +1,4 @@
-package com.controller;
+package com.servlet.ex01;
 
 import java.io.IOException;
 import java.io.PrintWriter;
