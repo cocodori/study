@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>js를 이용해서 유효성 체크하기</title>
+</head>
+<body>
+<form name="loginForm">
+	아이디    : <input type="text" name="id"><br>
+	비밀번호 : <input type="password" name="password"><br>
+	<input type="button" onClick="fn_validate()" value="로그인">
+	<input type="hidden" name="hiddenData" value="화면에는 보이지 않는 데이터를 전송">
+</form>
+
+<script type="text/javascript">
+	function fn_validate() {
+		var loginForm = document.loginForm;	//<form>의 name 속성으로 태그 내 객체를 받아온다.
+		var id = loginForm.id.value;	//<form>태그 내에 name이 'id'인 것을 찾아서 value값을 받아온다.
+		var pw = loginForm.password.value;
+		
+		if((id.length === 0 || id === '') || (pw.length === 0 || pw === '')) {
+			alert('아이디 또는 비밀번호를 입력하세요')
+		} else {
+			loginForm.method = 'post';		//form의 전송 방식을 post로 설정한다.
+			loginForm.action = 'login5';	//action 속성을 login5로 한다.
+			loginForm.submit();				//설정 끝. /login5로 전송
+		}
+		
+	}
+</script>
+</body>
+</html>
