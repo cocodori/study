@@ -711,3 +711,145 @@ Statement는 정적쿼리만을 전송할 수 있다. 또한 실행할 때 매�
 executeQuery()은 결과값을 가지고 있는 객체다.
 
 > 참고 : [JDBC 프로그래밍](https://opentutorials.org/module/3569/21222)
+
+# 커넥션 풀
+
+> 웹 애플리케이션이 실행됨과 동시에 연동할 데이터베이스와 미리 연결 해둔다. 필요할 때마다 미리 연결해놓은 상태를 이용해 빠르게 데이터베이스 관련 작업을 할 수 있다. 요약하자면 미리 데이터베이스와 연결 시킨 상태를 유지하는 기술을 **커넥션 풀**이라 부른다.
+
+ JDBC의 문제점은 오래 걸린다는 것이다.
+ Connection Pool객체를 이용하면 미리 연결된 상태를 유지하므로 빠르게 작업할 수 있다.
+ 
+ # 커넥션 풀 동작과정
+ 1. 톰캣 컨테이너 실행
+ 2. Connection pool 객체 생성
+ 3. 커넥션 객체 <-> DBMS 연결
+ 4. 데이터베이스와 연동 작업 시, ConnectionPool이 제공하는 메서드를 호출
+ 
+ 톰캣은 자체적으로 ConnectionPool을 제공한다.
+ 
+ 
+# JNDI
+ >Java Naming and Directory Interface<br>필요한 자원을 key-value로 저장해서 필요할 때 key를 이용해 value를 얻는 방법.
+ 
+ 즉 미리 접근할 자원에 키를 지정한 다음, 앱이 실행 중일 때 해당 키를 이용해 자원에 접근해서 작업하는 것이다.
+
+ 실제로 ConnectionPool객체를 구현할 때 javaSE가 제공하는 javax.sql.DataSource클래스를 이용한다. 그리고 톰캣이 만들어놓은 ConnectionPool객체에 접근할 때는 JNDI를 이용한다.
+ 
+ JNDI 사용 예
+ - 웹 브라우저 name / value 쌍으로 전송한 후 서블릿에서 getParameter()로 값을 가져올 때
+ - HashMap에 key/value로 저장한 후 키를 이용해 값을 가져올 때
+ 
+ 
+# 톰캣 DataSource 설정 및 사용
+## 1.dbpc.jar파일 설치
+- [jar파일](http://www.java2s.com/Code/Jar/t/Downloadtomcatdbcp7030jar.htm) 다운 받고 압축 푼다.
+
+- 프로젝트 빌드패스에 jar파일을 추가한다
+참고 : [이전 글](https://velog.io/@cocodori/JDBC)
+
+![](https://images.velog.io/images/cocodori/post/78346478-7c33-4902-b2b3-c5c9d1be33c7/%EC%A3%BC%EC%84%9D%202020-08-06%20155519.png)
+
+
+[이전 글](https://velog.io/@cocodori/JDBC) 에서 약간 코드를 수정했다.
+
+```java
+package pro07.sec01.ex01;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+public class MemberDAO {
+	/* JDBC 설정
+	 * private static final String DRIVER = "com.mysql.cj.jdbc.Driver"; //DRIVER
+	 * NAME private static final String URL =
+	 * "jdbc:mysql://127.0.0.1:3306/servletex?serverTimezone=Asia/Seoul"; //JDBC
+	 * URL/스키마 private static final String USER = "servlet"; //DB ID private static
+	 * final String PWD = "1234"; //DB PW
+	 */	
+	
+	private Connection con;
+	private PreparedStatement pstmt;
+	//DataSource설정
+	private DataSource ds;
+	
+	public MemberDAO() {
+		try {
+			//JNDI에 접근하기 위해 기본 경로를 지정
+			Context ctx = new InitialContext();
+			Context envContext = (Context) ctx.lookup("java:/comp/env");
+			//context.xml에 설정한 name값을 이용해 톰캣이 미리 연결한 DataSource를 받아온다.
+			ds = (DataSource) envContext.lookup("jdbc/mysql");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	} //생성자
+	
+	List<MemberVO> listMembers() {
+		List<MemberVO> list = new ArrayList<>();
+
+		try {
+//			connectDB(); //JDBC설정
+			
+			//DataSource를 이용해 데이터베이스에 연결한다.
+			con = ds.getConnection();
+			String sql = "select * from t_member";
+			System.out.println("Query : " + sql);
+			pstmt = con.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				/*
+				 * select문을 날려서 받아올 칼럼들.
+				 * getString(String columnLabel)으로 받아온다.
+				 * */
+				String id = rs.getString("id");
+				String pwd = rs.getString("pwd");
+				String name = rs.getString("name");
+				String email = rs.getString("email");
+				Date regdate = rs.getDate("regdate");
+				
+				/*
+				 * 받아온 데이터를
+				 * MemberVO객체에 담는다.
+				 * */
+				MemberVO vo = new MemberVO();
+				vo.setId(id);
+				vo.setPwd(pwd);
+				vo.setName(name);
+				vo.setEmail(email);
+				vo.setRegdate(regdate);
+				
+				list.add(vo);
+			}
+			//연결했던 반대순서로 닫는다.
+			rs.close();
+			pstmt.close();
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	} //listMembers()
+	
+	/* JDBC설정
+	 * private void connectDB() { try { Class.forName("com.mysql.cj.jdbc.Driver");
+	 * System.out.println("DRIVER LOADING....."); con =
+	 * DriverManager.getConnection(URL, USER, PWD);
+	 * System.out.println("Connection 생성");
+	 * 
+	 * } catch (Exception e) { e.printStackTrace(); } }
+	 */
+}
+```
+
+결과는 같다. 다만 이번엔 커넥션풀을 이용해 DB와 연동했다는 점이 다르다.
