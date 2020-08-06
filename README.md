@@ -853,3 +853,59 @@ public class MemberDAO {
 ```
 
 결과는 같다. 다만 이번엔 커넥션풀을 이용해 DB와 연동했다는 점이 다르다.
+
+----
+# Forward
+
+> 하나의 서블릿에서 다른 서블릿 또는 JSP와 연동하는 방법을 **포워드**라고 한다.
+
+- 요청에 대한 추가 작업을 다른 서블릿에서 수행하게 한다.
+- 요청에 포함된 정보를 다른 서블릿, JSP와 공유할 수 있다.
+- 요청에 정보를 포함시켜 다른 서블릿에 전달할 수 있다.
+- **Model2 개발 시 서블릿에서 JSP로 데이터를 전달하는 데 사용한다.**
+
+
+# 네 가지 포워드
+### 1.redirect
+- HttpServletResponse객체의 sendRedirect() 이용
+- 웹 브라우저에 재요청하는 방식
+
+_예시_
+```java
+sendRedirect("/board/register");
+```
+
+### 2. Refresh
+- HttpServletResponse의 addHeader() 이용
+- 웹브라우저에 재요청
+
+_예시_
+```java
+response.addHeader("Refresh",경과시간(초);url=요청할 서블릿/JSP");
+```
+
+### 3.location
+- 자바스크립트 location객체의 href 속성 이용
+- 자바스크립트에서 재요청하는 방식
+_예시_
+```javascript
+location.href='/board/list';
+```
+
+### 4.dispatch
+- 일반적으로 포워딩 기능을 지칭
+- 서블릿이 직접 요청하는 방식
+- RequestDispatcher클래스의 forward() 이용
+
+_예시_
+```java
+RequestDispatcher dis = request.getRequestDispatcher("포워드 할 서블릿/JSP");
+dis.forward(request,response);
+```
+
+위의 방법과 달리 서블릿에서 서블릿을 요청한다. 다른 방법은 URL을 통해 재요청 했다는 것을 확인할 수 있는 반면 dispatch방식은 서버가 포워드 했는지 하지 않았는지 클라이언트 쪽에서는 알 수 없다.
+
+<br>
+redirect, refresh, location은 서블릿이 브라우저를 거쳐 다른 서블릿, JSP에게 요청하는 방식이다. 반면 dispatcher는 서블릿에서 클라이언트를 거치지 않고 바로 다른 서블릿에게 요청하는 방법이다. 네 가지 모두 자주 사용하는 방식이다.
+
+

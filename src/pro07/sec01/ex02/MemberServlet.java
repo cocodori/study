@@ -71,11 +71,11 @@ public class MemberServlet extends HttpServlet {
 					+"<td>"+pwd+"</td>"
 					+"<td>"+name+"</td>"
 					+"<td>"+email+"</td>"
-					+"<td>"+regdate+"</td></tr>";
+					+"<td>"+regdate+"</td>"
+					+"<td><a href='/member?command=delMember&id="+id+"'>삭제</a></td></tr>";
 		}
 		
 		data+="</table></body></html>";
 		out.print(data);
 	} //doHandle()
-
 }

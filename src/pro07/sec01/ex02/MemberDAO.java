@@ -97,7 +97,18 @@ public class MemberDAO {
 	}
 
 	public void delMember(String id) {
-		// TODO Auto-generated method stub
-		
+		try {
+			con = ds.getConnection();
+			String sql = "delete from t_member "
+					+"where id = ?";
+			System.out.println("SQL : " + sql);
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			pstmt.executeUpdate();
+			pstmt.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
