@@ -375,3 +375,339 @@ public class LoginServlet2 extends HttpServlet {
 
 - 서블릿에서는 doPost()를 이용해 처리한다.
 
+<br>
+<br>
+
+**아무튼**
+
+GET방식이든 POST방식이든. 어떤 식으로 요청request를 해오든
+응답response라는 것은 웹 애플리케이션 화면을 구현하는 기능이다.
+
+브라우저가 서블릿에게 어떤 정보를 요청한다면
+서블릿은 요청에 알맞는 데이터, 그러니까 요청 받은 HTML문서를 반환한다.
+# 비즈니스 로직
+
+![](https://images.velog.io/images/cocodori/post/9e418cb5-797e-46c4-9b31-9ee1b947eecd/servlet.png)
+
+> 클라이언트로부터 받은 요청을 처리하는 과정을 비즈니스 로직이라 한다.
+
+이를테면 쇼핑몰에서 클라이언트가 1번 상품 정보를 요청한다. 그럼 서버는 데이터베이스에 1번 상품 정보를 조회한다. 조회 결과를 클라이언트에게 반환하기까지 수행하는 작업이 **비즈니스 로직**이다.
+
+## 서블릿 - DB 연동 실습
+
+MySQL
+
+```sql
+-- table 생성
+CREATE TABLE `servletex`.`t_member` (
+  `id` VARCHAR(30) NOT NULL,
+  `pwd` VARCHAR(50) NOT NULL,
+  `name` VARCHAR(50) NULL,
+  `email` VARCHAR(50) NULL,
+  `regdate` TIMESTAMP NOT NULL DEFAULT now(),
+  PRIMARY KEY (`id`));
+
+-- 데이터 추가
+insert into t_member(id, pwd, name, email)
+values('hong', '1234', '홍길동', 'hongil@google.com');
+insert into t_member(id, pwd, name, email)
+values('lee', '1234', '이순신', 'turtleship@google.com');
+insert into t_member(id, pwd, name, email)
+values('jung', '1234', '정약용', 'dasan@google.com');
+
+-- 조회
+select * from t_member;
+
+결과 :
+hong	1234	홍길동	hongil@google.com	2020-08-06 09:16:34
+jung	1234	정약용	dasan@google.com	2020-08-06 09:16:40
+lee	1234	이순신	turtleship@google.com	2020-08-06 09:16:37
+```
+
+## JDBC 설정
+> **Java DataBace connectivity** <br>자바에서 데이터베이스에 접속할 수 있도록 하는 자바 API<br>데이터베이스에서 자료를 쿼리하거나, 업데이트 하는 방법(java.sql패키지)을 제공한다.(위키백과)<br>
+
+![](https://images.velog.io/images/cocodori/post/8bc7ebf5-460b-4425-87d5-c2641b4a1f68/data-access-layer.png)
+
+개발자들은 표준을 좋아한다. 오라클 SQL, Mysql, MariaDB 어떤 DB를 쓰든 똑같은 방식으로 서버에 연결하고 싶었을 것이다. 그래서 JDBC라는 표준 인터페이스를 만들었다. JDBC는 어떤 데이터베이스를 쓰든, 같은 방식으로 서버와 연결할 수 있다. 그때 필요한 것이 JDBC드라이버다. 그런 건 이미 벤더에서 다 만들어놨다. 사용자는 그저 다운받아서 쓰기만 하면 된다.  
+
+JDBC로 구현하는 자바 연동 과정은 이렇다.
+
+JDBC프로그램 - JDBC인터페이스 -JDBC드라이버 - DB
+
+MySQL을 이미 설치했다고 가정하고, [mysql-connector-java.jar](https://dev.mysql.com/downloads/connector/j/#downloads) 파일이 추가로 필요하다.
+
+MySQL을 설치할 때 같이 설치 되었을 수도 있으니 MySQL폴더를 확인해보자.
+
+![](https://images.velog.io/images/cocodori/post/d3e47854-2c04-4a76-9c3b-6f82d4a563ad/1.png)
+
+![](https://images.velog.io/images/cocodori/post/605de312-2e6b-41b2-87e3-e8dfcb279f9f/2.png)
+
+![](https://images.velog.io/images/cocodori/post/9ad2744f-1b91-4087-9dc0-68ddb80dcaa3/3.png)
+
+![](https://images.velog.io/images/cocodori/post/8394e88f-5bda-4212-a0e9-37f7598b3c45/4.png)
+
+![](https://images.velog.io/images/cocodori/post/13fabf9f-87ae-4ef7-880a-b2e058ab74e9/5.png)
+
+![](https://images.velog.io/images/cocodori/post/38c3ebed-5a7b-4722-befc-19ffb4aaea61/6.png)
+
+**예제**
+1. DB - Servlet 연결
+2. select를 날려서 결과 값을 받아온다.
+3. 결과를 화면에 출력한다.
+
+항상 VO부터 만든다.
+_**MemberVO.java**_
+```java
+package pro07.sec01.ex01;
+
+import java.util.Date;
+
+public class MemberVO {
+	/* 반드시 Column이름과 같아야 한다.*/
+	private String id;
+	private String pwd;
+	private String name;
+	private String email;
+	private Date regdate;
+
+	//Getter & Setter 생략
+	....
+}
+```
+
+_**MemberDAO.java**_
+```java
+package pro07.sec01.ex01;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class MemberDAO {
+	private static final String DRIVER = "com.mysql.cj.jdbc.Driver";	//DRIVER NAME
+	private static final String URL = "jdbc:mysql://127.0.0.1:3306/servletex?serverTimezone=Asia/Seoul";	//JDBC URL/스키마
+	private static final String USER = "servlet"; //DB ID
+	private static final String PWD = "1234";	  //DB PW
+	
+	private Connection con;
+	private PreparedStatement pstmt;
+	
+	List<MemberVO> listMembers() {
+		List<MemberVO> list = new ArrayList<>();
+
+		try {
+			connectDB();
+			String sql = "select * from t_member";
+			System.out.println("Query : " + sql);
+			pstmt = con.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				/*
+				 * select문을 날려서 받아올 칼럼들.
+				 * getString(String columnLabel)으로 받아온다.
+				 * */
+				String id = rs.getString("id");
+				String pwd = rs.getString("pwd");
+				String name = rs.getString("name");
+				String email = rs.getString("email");
+				Date regdate = rs.getDate("regdate");
+				
+				/*
+				 * 받아온 데이터를
+				 * MemberVO객체에 담는다.
+				 * */
+				MemberVO vo = new MemberVO();
+				vo.setId(id);
+				vo.setPwd(pwd);
+				vo.setName(name);
+				vo.setEmail(email);
+				vo.setRegdate(regdate);
+				
+				list.add(vo);
+			}
+			//연결했던 반대순서로 닫는다.
+			rs.close();
+			pstmt.close();
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		return list;
+	} //listMembers()
+	
+	private void connectDB() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			System.out.println("DRIVER LOADING.....");
+			con = DriverManager.getConnection(URL, USER, PWD);
+			System.out.println("Connection 생성");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+}
+```
+
+_**MemberServlet.java**_
+```java
+package pro07.sec01.ex01;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class MemberDAO {
+	private static final String DRIVER = "com.mysql.cj.jdbc.Driver";	//DRIVER NAME
+	private static final String URL = "jdbc:mysql://127.0.0.1:3306/servletex?serverTimezone=Asia/Seoul";	//JDBC URL/스키마?serverTimezone
+	private static final String USER = "servlet"; //DB ID
+	private static final String PWD = "1234";	  //DB PW
+	private Connection con;
+	private PreparedStatement pstmt;
+	
+	List<MemberVO> listMembers() {
+		List<MemberVO> list = new ArrayList<>();
+
+		try {
+			connectDB();
+			String sql = "select * from t_member";
+			System.out.println("Query : " + sql);
+			pstmt = con.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				/*
+				 * select문을 날려서 받아올 칼럼들.
+				 * getString(String columnLabel)으로 받아온다.
+				 * */
+				String id = rs.getString("id");
+				String pwd = rs.getString("pwd");
+				String name = rs.getString("name");
+				String email = rs.getString("email");
+				Date regdate = rs.getDate("regdate");
+				
+				/*
+				 * 받아온 데이터를
+				 * MemberVO객체에 담는다.
+				 * */
+				MemberVO vo = new MemberVO();
+				vo.setId(id);
+				vo.setPwd(pwd);
+				vo.setName(name);
+				vo.setEmail(email);
+				vo.setRegdate(regdate);
+				
+				list.add(vo);
+			}
+			//연결했던 반대순서로 닫는다.
+			rs.close();
+			pstmt.close();
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	} //listMembers()
+	
+	private void connectDB() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			System.out.println("DRIVER LOADING.....");
+			con = DriverManager.getConnection(URL, USER, PWD);
+			System.out.println("Connection 생성");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}	
+}
+```
+
+DAO클래스 구현 순서
+
+### 1.드라이버 클래스 로딩
+JDBC드라이버 파일을 사용할 수 있도록 메모리에 로딩한다.
+.jar파일을 빌드패스에 지정해주지 않았다면 ClassNotFoundException 발생
+
+```java
+Class.forName("com.mysql.cj.jdbc.Driver");
+```
+
+### 2.DBMS 서버 접속
+```java
+	private static final String URL = "jdbc:mysql://127.0.0.1:3306/servletex?serverTimezone=Asia/Seoul";	//JDBC URL/스키마?serverTimezone
+	private static final String USER = "servlet"; //DB ID
+	private static final String PWD = "1234";	  //DB PW
+	private Connection con;
+...
+...
+	con = DriverManager.getConnection(URL, USER, PWD);
+
+```
+
+주의할 점은, Mysql의 경우 스키마 이름과 serverTimezone을 꼭 써줘야 한다.
+DriverManager클래스의 getConnection()를 이용해서 URL, DB계정을 입력하여 연결한다.
+- URL : 접속할 서버의 URL. 프로토콜, 서버주소, 서버포트, DB이름(스키마) + ?serverTimezone
+
+이렇게까지 설정해주면 JAVA - DB의 연결이 끝난다.
+이제 statement를 이용해서 SQL문을 전송하고 결과를 받아올 수 있다.
+
+### 3.Statement
+Statement와 PrepareStatement가 있다.
+두 인터페이스 모두 SQL문을 전송하고, 받아오는 역할을 한다.
+
+Statement는 정적쿼리만을 전송할 수 있다. 또한 실행할 때 매번 서버에서 분석해야 한다.
+반면 PrepareStatement는 동적쿼리가 가능하고, PrepareStatement는 한 번만 분석하고 캐시에 저장해두기 때문에 성능상 더 좋다. 보통 PrepareStatement를 사용하는 것을 권장하는 듯하다.
+[참고](https://all-record.tistory.com/79)
+
+```java
+	private PreparedStatement pstmt;
+    ...
+ 	String sql = "select * from t_member";
+    //SQL문을 전송
+    pstmt = con.prepareStatement(sql);
+```
+
+### 4.ResultSet
+```java
+
+	
+	ResultSet rs = pstmt.executeQuery();
+
+	while(rs.next()) {
+				/*
+				 * select문을 날려서 받아올 칼럼들.
+				 * getString(String columnLabel)으로 받아온다.
+				 * */
+				String id = rs.getString("id");
+				String pwd = rs.getString("pwd");
+				String name = rs.getString("name");
+				String email = rs.getString("email");
+				Date regdate = rs.getDate("regdate");
+		}
+        //모두 닫아줘야 한다.
+        rs.close();
+		pstmt.close();
+		con.close();
+
+```
+
+executeQuery()은 결과값을 가지고 있는 객체다.
+
+> 참고 : [JDBC 프로그래밍](https://opentutorials.org/module/3569/21222)
