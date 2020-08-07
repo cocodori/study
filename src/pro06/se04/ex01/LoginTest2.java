@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class LoginTest2
  */
-@WebServlet("/loginTest2")
+//@WebServlet("/loginTest2")
 public class LoginTest2 extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		System.out.println("hello...init()...");

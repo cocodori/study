@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import pro07.sec01.ex01.MemberVO;
 
-@WebServlet("/member")
+//@WebServlet("/member")
 public class MemberServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doHandle(request,response);

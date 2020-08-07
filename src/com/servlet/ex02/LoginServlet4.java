@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/login4")
+//@WebServlet("/login4")
 public class LoginServlet4 extends HttpServlet {
 	
 	public void init() throws ServletException {

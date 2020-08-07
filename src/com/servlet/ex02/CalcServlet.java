@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /*환율 계산기 예제*/
-@WebServlet("/calc")
+//@WebServlet("/calc")
 public class CalcServlet extends HttpServlet {
 	private static float USD_RATE = 1195.74F;
 	private static float JPY_RATE = 10.113F;

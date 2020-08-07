@@ -908,4 +908,315 @@ dis.forward(request,response);
 <br>
 redirect, refresh, location은 서블릿이 브라우저를 거쳐 다른 서블릿, JSP에게 요청하는 방식이다. 반면 dispatcher는 서블릿에서 클라이언트를 거치지 않고 바로 다른 서블릿에게 요청하는 방법이다. 네 가지 모두 자주 사용하는 방식이다.
 
+# 바인딩
+> 웹 프로그램 실행 시 자원(데이터)을 서블릿 관련 객체에 저장하는 방법
+
+GET방식으로 많은 데이터를 전달하기에 한계가 있다. 많은 양의 데이터를 전달할 때 **바인딩**binding을 사용한다.
+
+그냥 key-value다.
+
+```java
+/*데이터를 각 객체에 바인딩한다.*/
+setAttribute(String name, Object obj)
+
+/*각 객체에 바인딩된 데이터를 name으로 가져온다.*/
+getAttribute(String name)
+
+/*각 객체에 바인딩된 데이터를 name으로 제거한다.*/
+removeAttribute(String name)
+
+```
+
+
+_**예제**_
+
+보내는 쪽
+```java
+@WebServlet("/bind")
+public class BindingTestServlet extends HttpServlet {
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html;charset=utf-8");
+		
+		request.setAttribute("address", "소행성 b-612");
+		
+		RequestDispatcher dis = request.getRequestDispatcher("/getBind");
+		dis.forward(request, response);
+	}
+}
+```
+
+받는 쪽
+
+```java
+@WebServlet("/getBind")
+public class GetBindingTestServlet extends HttpServlet {
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		
+		String address = (String)request.getAttribute("address");
+		System.out.println("adress : " + address);
+		out.print("<html><body><h1>나의 주소 : "+address+"</h1></body></html>");
+	}
+}
+```
+
+redirect가 아닌 RequestDispatcher를 이용한 이유는 redirect는 클라이언트를 거치기 때문에 중간에서 데이터가 손실된다. 반면 dispatcher는 다이렉트로 지정한 서블릿으로 가기 때문에 데이터를 유지한다.
+
+이미지 출처 : https://www.oreilly.com/library/view/head-first-servlets/9780596516680/ch05s10.html
+
+# ✔ javax.servlet.ServletContext
+
+## 특징
+
+- 서블릿 - 컨테이너 연동을 위해 사용한다.
+
+- 컨텍스트(웹 애플리케이션)마다 하나의 ServletContext가 생성된다.
+
+- 서블릿끼리 자원을 공유하는 데 사용한다.
+
+- 컨테이너 실행 시 생성되고 종료 시 소멸한다.
+
+## 제공하는 기능
+
+- 서블릿에서 파일 접근
+
+- 자원 바인딩
+
+- 로그 파일
+
+- 컨텍스트에서 제공하는 설정 정보 제공
+
+
+## ServletContext의 메서드
+``` java
+/*주어진 name을 이용해 바인딩된 value를 가져온다.*/
+getAttribute(String name)
+
+/*바인딩된 속성들의 name을 반환한다.*/
+getAttributeNames()
+
+/*지정한 uripath에 해당하는 객체를 반환*/
+getContext(String uripath)
+
+/*name에 해당하는 매개변수의 초기화 값을 반환*/
+getInitParameter(String name)
+
+/*컨텍스트 초기화 관련 매개변수의 이름을 String객체가 저장된 Enumeration타입으로 반환*/
+getInitParameterNames()
+
+/*서블릿 컨테이너가 지원하는 주요 서블릿 API버전을 반환*/
+getMajorVersion()
+
+/*지정한 path에 해당하는 절대 경로를 반환*/
+getRealPath(String path)
+
+/*지정한 path에 해당하는 Resource를 반환*/
+getResource(String path)
+
+/*현재 서블릿이 실행되고 있는 컨테이너의 이름과 버전을 반환*/
+getServerInfo()
+
+/*해당 애플리케이션의 배치 관리자가 지정한 ServletContext에 대한 웹 애플리케이션 이름 반환*/
+getServletContextName()
+
+/*로그 파일에 로그 기록*/
+log(String msg)
+
+/*해당 name으로 ServletContext에 바인딩된 객체를 제거*/
+removeAttribute(String name)
+
+/*해당 name으로 객체를 ServletContext에 바인딩*/
+setAttribute(String name, Object object)
+
+/*주어진 name으로 value를 컨텍스트 초기화 매개변수로 설정*/
+setInitParameter(String name, String value)
+```
+
+## 바인딩 사용
+
+
+```java
+
+List member = new ArrayList();
+member.add("김공");
+member.add(20);
+
+//객체 생성
+ServletContext context = getServletContext();
+
+//바인딩
+context.setAttribute("member", member);
+
+//바인딩한 객체 꺼내기
+List result = (ArrayList)context.getAttribute("member");
+```
+
+## 파라미터 설정
+
+web.xml
+```xml
+<web-app...>
+  ...
+  ...
+  <context-param>
+  	<param-name>menu_member</param-name>
+  	<param-value>회원등록 회원조회 회원수정</param-value>
+  </context-param>
+  <context-param>
+  	<param-name>menu_order</param-name>
+  	<param-value>주문조회 주문등록 주문수정 주문취소</param-value>
+  </context-param>
+    <context-param>
+  	<param-name>menu_goods</param-name>
+  	<param-value>상품조회 상품등록 상품수정 상품삭제</param-value>
+  </context-param>
+</web-app>
+```
+
+```java
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	      request.setCharacterEncoding("utf-8");
+	      response.setContentType("text/html;charset=utf-8");
+	      
+	      PrintWriter out = response.getWriter();
+	      ServletContext context = getServletContext();
+	      
+          //xml에 context-name 설정해둔 이름으로 값을 가져온다.
+	      String menu_member = context.getInitParameter("menu_member");
+	      String menu_order = context.getInitParameter("menu_order");
+	      String menu_goods = context.getInitParameter("menu_goods");
+		
+	      out.print("<html><body>");
+	      out.print("<table border=1 cellspacing=0><tr>메뉴 이름</tr>");
+	      out.print("<tr><td>" + menu_member + "</td></tr>");
+	      out.print("<tr><td>" + menu_order + "</td></tr>");
+	      out.print("<tr><td>" + menu_goods + "</td></tr>");
+	      out.print("</tr></table></body></html>");	
+	}
+```
+
+결과는 이렇다.
+
+![](https://images.velog.io/images/cocodori/post/9eb7e18e-9150-4375-92c8-92ae299847c0/image.png)
+
+# ✔ javax.servlet.ServletConfig
+
+![](https://images.velog.io/images/cocodori/post/ad707a0d-0444-4df6-8db3-6c5f39e3c99a/servletContext.jpg)
+
+같은 그림
+> ServletConfig는 각 Servlet객체에 대해 생성된다.<br>ServletConfig인터페이스를 GenericSerlvet클래스가 실제로 구현한다.
+
+## ServletConfig의 기능
+- ServletContext 객체를 얻는다.
+- 서블릿 초기화 작업
+ @WebServlet 애너테이션과 web.xml설정하는 방법
+ 
+### 애너테이션을 이용한 설정
+
+
+|요소|설명|
+|----|----|
+|urlPatterns|웹 브라우저에서 서블릿 요청 시 사용하는 매핑 이름|
+|name|서블릿 이름|
+|loadOnStartUp|컨테이너 실행 시 서블릿이 로드되는 순서 지정|
+|initParams|@WebInitParam애너테이션을 이용해 매개변수를 추가하는 기능|
+|description|서블릿에 대한 설명|
+
+```java
+@WebServlet(name = "initParamServlet", urlPatterns = {"/sinit", "/sinit2"}
+			, initParams = {
+					@WebInitParam(name = "email", value="admin@web.com")
+					,@WebInitParam(name="tel", value = "000-0000-0000")
+			})
+public class InitParamServlet extends HttpServlet {
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		
+		String email = getInitParameter("email");
+		String tel = getInitParameter("tel");
+		
+		System.out.println("tel :" + tel);
+		System.out.println("email : " + email);
+	}
+}
+
+/*
+결과
+tel :000-0000-0000
+email : admin@web.com
+*/
+```
+
+### Web.xml을 이용한 설정
+```xml
+<web app>
+   <init-param>
+      <param-name>email</param-name>
+      <param-value>admin@web.com</param-value>
+   </init-param>
+</web app>
+```
+잘 이용하지 않지만 이런 식으로 설정할 수 있다.
+
+### load-on-startup
+> 서블릿을 처음 구동하면 init()를 실행하여 메모리에 로드한다. 따라서 최초 요청 시 시간이 좀 더 길어질 수밖에 없다. 이것을 보완하는 기능이 **load-on-startup**이다.
+
+#### 특징
+
+- 톰캣 컨테이너가 실행되면서 미리 서블릿 실행
+- 지정한 숫자가 0보다 크면 톰캣 컨테이너가 실행되면서 서블릿 초기화
+- 지정한 숫자는 우선순위를 의미, 작은 숫자부터 먼저 초기화
+
+#### 애너테이션을 이용한 구현
+```java
+@WebServlet(urlPatterns = "/load", loadOnStartup = 1)
+public class LoadAppConfig extends HttpServlet {
+	private ServletContext context;
+	
+	public void init(ServletConfig config) throws ServletException {
+		System.out.println("초기화 시작");
+		
+		context = config.getServletContext();
+		
+		//.xml에 설정해둔 메뉴 정보 읽기
+		String menu_member = context.getInitParameter("menu_member");
+		String menu_order = context.getInitParameter("menu_order");
+		String menu_goods = context.getInitParameter("menu_goods");
+		
+		//메뉴 정보 바인딩
+		context.setAttribute("menu_member", menu_member);
+		context.setAttribute("menu_order", menu_order);
+		context.setAttribute("menu_goods", menu_goods);
+		
+		System.out.println("초기화 완료");
+	}
+}
+```
+
+```java
+@WebServlet(urlPatterns = "/load", loadOnStartup = 1)
+```
+WebSerlvet 어노테이션에 loadOnStartup속성을 주면 톰캣이 실행되는 동시에 초기화 된다.
+
+#### xml을 이용한 구현
+```xml
+<web-app .....>
+  ...
+  <servlet>
+  	<servlet-name>loadConfig</servlet-name>
+    	<servlet-class>패키지 + 클래스</servlet-class>
+    	<load-on-startup>1</load-on-startup>
+  </servlet>
+  ...
+</web-app>
+```
+
+servlet-name은 @WebServlet의 name속성과 같다.
 
