@@ -1220,3 +1220,445 @@ WebSerlvet 어노테이션에 loadOnStartup속성을 주면 톰캣이 실행되�
 
 servlet-name은 @WebServlet의 name속성과 같다.
 
+# 세션 트래킹
+
+![](https://images.velog.io/images/cocodori/post/52402f8a-7444-4d1a-af50-d81b9fc8d2d0/Untitled%20Diagram%20(2).jpg)
+
+HTTP프로토콜 방식으로 통신하는 웹 페이지는 서로 어떤 정보도 공유하지 않는다.
+
+> 쿠팡 메인 페이지에서 로그인하고 주문 페이지에서 또 다시 로그인하지 않아도 되는 이유는 **세션 트래킹Session Tracking**이라는 웹 페이지 연결기능을 구현했기 때문이다.
+
+HTTP프로토콜은 서버-클라이언트 통신 시 **스테이트리스stateless방식**으로 통신한다. 브라우저에서 새 웹 페이지를 열면 이전 웹 페이지에 대한 어떤 정보도 새 웹페이지는 알 수 없다.
+**stateless**란, 각각 웹 페이지 정보, 상태를 다른 웹페이지와 공유하지 않는 방식을 말한다.
+따라서 웹 페이지를 서로 연결하기 위해 세션 트래킹을 이용해야 한다.
+
+웹 페이지를 연동하는 방법은 몇 가지가 있다.
+- hidden 태그
+- URL Rewriting
+GET방식으로 URL뒤에 정보를 붙이는 방식
+- 쿠키
+클라이언트 PC의 Cookie파일에 정보를 저장한 후 웹 페이지들이 공유한다.
+- 세션
+서버 메모리에 정보를 저장한 후 웹 페이지들이 공유한다.
+
+## 쿠키를 이용한 연동
+>**쿠키Cookie**는 웹 페이지들끼리 공유하는 정보를 클라이언트 PC에 저장해두고, 필요할 때 사용할 수 있도록 매개하는 역할을 한다.
+
+#### 쿠키의 특징
+- 정보가 클라이언트 PC에 저장
+- 저장 정보 용량 제한
+- 보안 취약
+- 클라이언트 브라우저에서 사용 유무 설정 가능
+- 도메인당 쿠키가 만들어진다.
+
+#### 쿠키의 종류
+|속성|Persistence쿠키|Session쿠키|
+|----|------------|-----------|
+|생성 위치|파일로 생성|브라우저 메모리에 생성|
+|종료 시기|쿠키를 삭제하거나 쿠키 설정 값이 종료된 경우|브라우저를 종료한 경우|
+|최초 접속 시 전송 여부|최초 접속 시 서버로 전송|최초 접속 시 서버로 전송되지 않음|
+|용도|로그인 유무 또는 팝업창 제한|사이트 접속 시 Session인증 정보 유지할 때|
+
+Persistence쿠키는 파일로 정보를 저장한다. 파일로 생성된 쿠키는 사용자가 만료 기한을 정할 수 있다. 반면 Session쿠키는 브라우저가 사용하는 메모리에 생성된다. 따라서 브라우저를 종료하면 Session쿠키도 함께 소멸한다.
+
+## 쿠키 생성 과정
+1. 브라우저로 사이트에 접속한다.
+2. 서버는 정보를 저장한 쿠키를 생성한다.
+3. 생성한 쿠키를 브라우저로 전송한다.
+4. 브라우저는 서버로부터 받은 쿠키를 파일에 저장한다.
+5. 재접속 시, 서버는 브라우저에게 쿠키를 요청하고, 브라우저는 서버로 쿠키를 보낸다.
+6. 서버는 쿠키를 이용해서 작업한다.
+
+## javax.servlet.http.Cookie
+
+서블릿에서 이용할 수 있는 쿠키 API다. 
+- HttpServbletResponse의 addCookie()를 이용해서 클라이언트 브라우저로 쿠키를 전송한다.
+- HttpServletRequest의 getCookie()를 이용해서 쿠키를 서버로 가져온다.
+
+### Cookie클래스의 메서드
+
+
+|Method|설명|
+|------|----|
+|getComment()|쿠키에 대한 설명을 가져온다|
+|getDomain()|쿠키의 유효한 도메인 정보를 가져온다.|
+|getMaxAge()|쿠키 유효 기간을 가져온다.|
+|getName()|쿠키 이름을 가져온다.|
+|getPath()|쿠키의 디렉터리 정보를 가져온다.|
+|getValue()|쿠키의 설정 값을 가져온다.|
+|setComment(String comment)|쿠키에 대한 설명을 설정|
+|setDomain(String domain)|쿠키의 유효한 도메인을 설정|
+|setMaxAge(int expiry)|쿠키 유효기간 설정|
+|setValue(String value)|쿠키 값 설정|
+
+setMaxAge()를 사용하지 않거나 인자가 음수일 경우 Session쿠키 그 외는 Persistence쿠키다.
+
+
+## Persistence Cookie Test
+SetCookieValue.java
+```java
+@WebServlet("/scook")
+public class SetCookieValue extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		Date date = new Date();
+		
+		//쿠키 객체를 생성한 후, cookTest라는 이름으로 한글 정보를 인코딩해서 쿠키에 저장한다.
+		Cookie cookie = new Cookie("cookieTest", URLEncoder.encode("JSP PROGRAMMING", "utf-8"));
+		
+		cookie.setMaxAge(24*60*60); //유효기간을 1일로 한다.
+
+		//응답에 쿠키를 포함한다.
+		response.addCookie(cookie);
+		
+		out.println("현재 시간 : " + date);
+		out.print("현재시간을 쿠키로 저장한다.");
+	}
+}
+```
+GetCookieValue.java
+```java
+@WebServlet("/gcook")
+public class GetCookieValue extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		
+		//request의 getCookie()로 요청한 쿠키 정보를 배열로 받는다.
+		Cookie[] allValues = request.getCookies();
+		
+		//
+		for(int i=0; i<allValues.length; i++) {
+			if(allValues[i].getName().equals("cookieTest")) {
+				out.println("<h2>Cookie Value : "+ URLDecoder.decode(allValues[i].getValue(),"utf-8")+"</h2> ");
+			}
+		}
+	}
+}
+```
+
+<br>**브라우저에서 /scook 호출**
+
+![](https://images.velog.io/images/cocodori/post/a5ab8469-8763-4f41-8d82-6d435660b605/setCook1.png)
+
+F12 개발자 도구를 열어서 Application탭에서 쿠키가 생성되었다는 것을 확인한다.
+
+**/gcook 호출**
+
+![](https://images.velog.io/images/cocodori/post/c1601b40-2c90-447b-b2bd-6a5e451eeef4/getCook.png)
+
+저장된 cookie를 HttpServletRequest의 getCookie()로 불러와서 읽었다.
+쿠키 이름, 값, 유효기간까지 잘 유지 되어 전달 받은 것을 확인한다.
+
+만약 쿠키를 지운다면?
+![](https://images.velog.io/images/cocodori/post/2737bb0c-68f2-4ffd-ad22-b1185cbb7c50/3.png)
+![](https://images.velog.io/images/cocodori/post/cc590040-47fe-4c1e-b2d2-e3a8e67a2814/4.png)
+
+읽어들일 Cookie가 없으므로 NullPointException이 발생한다
+500번대 에러는 서버에서 예외가 발생했을 때 나는 에러다.
+
+위 예제는 setMaxSize()를 설정했고, 음수가 아니므로 Persistence쿠키다.
+
+## Session Cookie Test
+
+SetCookieValue.java에서 설정해준 setMaxSize()의 인자를 음수로 바꾸거나, 지우면 Session Cookie가 된다.
+
+![](https://images.velog.io/images/cocodori/post/f1993d0a-2ad7-4454-81c8-88af7accce9e/image.png)
+
+setMaxSize()를 지우고 다시 확인한 결과다. 'Session'이라고 날짜가 바뀌었다.
+
+## 자바스크립트로 팝업창 제한하기
+
+popupTest.html
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JS로 쿠키 제어하기</title>
+</head>
+<body>
+	<form>
+		<input type='button' value='쿠키 삭제' onclick="deleteCookie()">
+	</form>
+<script>
+
+window.onload = () => {
+	//notShowPop의 쿠키 값을 getCookieValue()를 호출하여 얻는다.
+	notShowPop = getCookieValue();
+	
+	console.log(getCookieValue());
+	console.log(typeof notShowPop);
+	console.log(notShowPop !== 'true')
+	
+	
+	//notShowPop이 true가 아니면 팝업창을 나타낸다.
+	if(notShowPop !== 'true') {
+		window.open("popUp.html","pop","width=400,height=500,history=no,"
+				+"resizable=no,status=no,scrollbars=yes,menubar=no");
+	}
+} 
+
+function getCookieValue() {
+	var result = 'false';
+	if(document.cookie!== '') {
+		//document의 cookie속성으로 쿠키 정보를 문자열로 가져온 후 ';'를 구분자로하여 각각 쿠키를 얻는다.
+		cookie = document.cookie.split(';');
+		
+		for(var i=0; i<cookie.length;i++) {
+			element = cookie[i].split('=');
+			value=element[0];
+			//정규식을 이용해 쿠키 이름 문자열의 공백을 제거
+			value=value.replace(/^\s*/,'');
+			
+			if(value==='notShowPop') {
+				result = element[1];
+			}
+		} //for
+	} // if
+	return result;
+} //getCookieValue()
+
+//쿠키 삭제 클릭 시 호출. notShowPop 쿠키 값을 false로 설정.
+function deleteCookie() {
+	document.cookie = 'notShowPop='+'false'+';path=/; expires=-1';
+}
+</script>	
+	
+</body>
+</html>
+```
+
+popUp.html
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<h1>알림 팝업창</h1>
+<br><br>
+<form>
+	<input type='checkbox' onClick='setPopUpStart(this)'>오늘 더 이상 팝업창 띄우지 않기
+</form>
+
+<script>
+	function setPopUpStart(obj) {
+		if(obj.checked === true) {
+			var expireDate = new Date();
+			//쿠키의 유효 기간을 한 달로 설정한다.
+			expireDate.setMonth(expireDate.getMonth() +1);
+			//체크하면 notShowPop쿠키 값을 true로 설정하여 재접속 시 팝업창을 나타내지 않는다.
+			document.cookie='notShowPop='+'true'+';path=/; expires='+expireDate.toGMTString();
+			
+			window.close();
+		} 
+	}
+</script>
+</body>
+</html>
+```
+
+![](https://images.velog.io/images/cocodori/post/6bf8db42-7b42-43ea-b1c1-8793f8c35c2d/1.png)
+
+/popupTest를 호출하면 이렇게 팝업창이 나온다.
+1.현재는 Value가 false다.
+2.체크박스를 체크하고, 새로 고침한다.
+
+![](https://images.velog.io/images/cocodori/post/cc7c39c5-a54c-4ea2-9f35-54bb56c3456b/2.png)
+
+Value가 true로 바뀌면서 팝업창이 뜨지 않는 것을 확인한다.
+
+# Session
+>** 웹 페이지들 사이에서 공유하는 정보를 서버에 저장해두고, 웹 페이지들을 매개한다**는 점에서 세션도 쿠키와 다르지 않다. 다른 점이라면 쿠키는 클라이언트 PC에 저장되고, **세션은 서버 메모리에 저장된다**는 점이다. 쿠키에 비해 **보안이 좋기 때문에 로그인처럼 보안을 요구하는 데이터를 다룰 때 세션을 이용**한다. 세션은 브라우저 당 하나가 생성된다.
+
+## 세션의 특징
+- 데이터를 서버 메모리에 저장한다.
+- 블아줘의 세션 연동은 쿠키를 이용한다.
+- 쿠키보다 보안에 유리하다.
+- 서버에 부하를 줄 수 있다.
+- 브라우저 당 하나의 세션SessionID이 생성된다.
+- 세션은 유효시간을 가진다.(기본 30분)
+- 로그인 유지, 장바구니 등에 주로 사용한다.
+
+## 세션 생성 과정
+
+1. 브라우저로 사이트에 접속한다.
+2. 서버는 접속한 브라우저에 대한 세션 객체를 생성한다.
+3. 서버는 생성한 세션 ID를 클라이언트 브라우저로 보낸다.(response)
+4. 브라우저는 서버에서 받은 세션ID를 브라우저가 사용하는 메모리의 세션 쿠키에 저장한다.
+쿠키 이름은 JSESSIONID
+5. 브라우저가 재접속하면 브라우저는 세션쿠키에 저장한 세션id를 서버에 전달한다.
+6. 서버는 전송받은 세션ID를 이용해 해당 세션에 접근하여 작업한다.
+
+세션의 중요한 특징은 브라우저 당 하나씩 생성된다는 것이다. 브라우저가 서버에 JSESSIONID를 전송하면 서버는 그 값을 이용해서 브라우저를 구분한다.
+
+## 세션API
+>HttpSessoin
+
+서블릿은 HttpSession클래스를 이용해서 세션을 다룬다. HttpSession객체는 HttpServletRequest의 getSession()를 호출해서 생성한다.
+- getSession()
+기존 세션 객체가 존재하면 반환, 없으면 생성
+- getSession(true):기존 세션 객체가 존재하면 반환, 없으면 생성
+- getSession(false):기존 세션 객체가 존재하면 반환, 없으면 null
+
+### HttpSession클래스의 메서드
+
+
+|메서드|설명|
+|-----|----|
+|Object getAttribute(String name)|지정한 이름을 가진 속성 값을 반환|
+|Enumeration getAttributeNames()|세션 속성 이름들을 Enumeration객체 타입으로 반환|
+|long getCreationTime()|1970년 1월 1일 0시 0초를 기준으로 현재 세션이 생성된 시간까지 경과한 시간을 계산하여 1/1000값으로 반환|
+|String getId()|세션에 할당된 고유 식별자를 반환|
+|int getMaxInactiveInterval()|현재 생성된 세션을 유지하기 위해 설정한 세션 유지시간을 int타입으로 변환|
+|void invalidate()|현재 생성된 세션을 소멸|
+|boolean isNew()|최초로 생성한 세션인지 기존에 생성된 세션인지 판별|
+|void removeAttribute(String name)|세션 속성 이름이 name인 속성을 제거|
+|void setAttribute(String name, Object value)|세션 속성 이름이 name인 속성에 속성 값으로 value를 할당한다.|
+|void setMaxInactiveInterval(int interval)|세션을 유지하기 위한 세션 유지 시간을 초 단위로 설정|
+
+<br>
+
+## HttpSession으로 세션 다루기
+```java
+@WebServlet("/st")
+public class SessionTest extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		
+		//HttpSession객체 생성
+		HttpSession session = request.getSession();
+	
+		out.println("세션 아이디 :" + session.getId()+"<br>");
+		out.println("세션 생성 시간 : " + new Date(session.getCreationTime())+"<br>");
+		out.println("최근 세션 접근 시각  : " + new Date(session.getLastAccessedTime())+ "<br>");
+		//세션의 유효기간을 5초로 한다.
+		session.setMaxInactiveInterval(5);
+		out.println("세션 유효 시간 : " + session.getMaxInactiveInterval() +"<br>");
+		
+		if (session.isNew()) {
+			out.print("새 세션이 만들어졌습니다.");
+		}
+	}
+}
+```
+유효기간 5초짜리 세션이다.
+
+![](https://images.velog.io/images/cocodori/post/748af147-9bb7-41bc-96c6-27a7b1c5fa35/s1.png)
+
+5초 뒤에 새로고침하면 새로운 세션이 생성된다.
+
+DED7A38FD66953BF141A0EDA6231924C
+
+2E9DB673F46CF57873B7377ED4F42C63
+
+## 세션 로그인
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+</head>
+<body>
+<form name="login" method="post" action="/st2">
+아이디 : <input type="text" name="id"><br>
+비밀번호:<input type="password" name="password">
+<button>확인</button>
+</form>
+</body>
+</html>
+```
+
+```java
+@WebServlet(name = "SessionTest", urlPatterns = { "/st2" })
+public class SessionTest extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		doHandle(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		doHandle(request, response);
+	}
+	
+	private void doHandle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		//세션 객체 생성
+		HttpSession session = request.getSession();
+		//id, pw값을 받아온다.
+		String id = request.getParameter("id");
+		String pw = request.getParameter("password");
+		
+		System.out.println("id : " + id);
+		System.out.println("pw : " + pw);
+		
+		if (session.isNew()){ //새 세션이라면,
+			if(id != null){ //로그인 상태라면,
+				session.setAttribute("id", id);	//세션에 id라는 이름으로 id를 바인딩한다.
+				out.println("<a href='st2'>로그인 상태 확인</a>");	//다시 st2로 들어온다.
+			}else {
+				out.print("<a href='login.html'>다시 로그인 하세요!!</a>"); //로그아웃 상태라면 다시 로그인 창으로 돌려보낸다.
+				session.invalidate();
+			}
+			
+		} else { // 새 세션이 아닐 때 들어온다.
+			id = (String) session.getAttribute("id"); //세션에 id라고 바인딩된 값을 받아온다.
+			if (id != null && id.length() != 0) {	//해당 id가 있을 경우,
+				out.print("안녕하세요 " + id + "님!!!");
+			} else { //없다면 session을 지우고 login창으로 돌려보낸다.
+				out.print("<a href='login2.html'>다시 로그인 하세요!!</a>");
+				session.invalidate();
+			}
+		}
+	}
+}
+```
+### 1. 로그인
+
+![](https://images.velog.io/images/cocodori/post/0c65a2bd-4721-48bc-9a50-4233d90e9aed/l1.png)
+
+
+### 2.JSESSIONID 생성
+
+![](https://images.velog.io/images/cocodori/post/54f4a16c-17fb-4130-b555-26208929d349/l2.png)
+
+로그인을 하면 JSESSIONID가 발급된다.
+내부적으로는 
+```java
+if (session.isNew()){ //새 세션이라면,
+	if(id != null){ //로그인 상태라면,
+	session.setAttribute("id", id);	//세션에 id라는 이름으로 id를 바인딩한다.
+	out.println("<a href='st2'>로그인 상태 확인</a>");	//다시 st2로 들어온다.
+}else {
+	out.print("<a href='login.html'>다시 로그인 하세요!!</a>"); //로그아웃 상태라면 다시 로그인 창으로 돌려보낸다.
+	session.invalidate();
+}
+```
+
+이 단계다. 새로 생성된 세션이 맞고, 로그인 상태이므로, 세션에 id를 바인딩한다.
+그리고 '로그인 상태 확인'을 누르면,
+
+### 3. JSESSIONID에 바인딩된 값 받아오기
+
+![](https://images.velog.io/images/cocodori/post/38acfcc9-25b1-4803-b2d5-833485bea36e/l3.png)
+
+내부적으로는
+```java
+else { // 새 세션이 아닐 때 들어온다.
+	id = (String) session.getAttribute("id"); //세션에 id라고 바인딩된 값을 받아온다.
+	if (id != null && id.length() != 0) {	//해당 id가 있을 경우,
+	out.print("안녕하세요 " + id + "님!!!");
+	}
+```
+
+이 부분이다. session에 id라는 이름으로 바인딩된 객체를 꺼내서 화면에 출력한다. 
+
+
+
