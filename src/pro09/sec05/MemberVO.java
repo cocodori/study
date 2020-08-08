@@ -1,11 +1,13 @@
-package pro09.ex05;
+package pro09.sec05;
+
+import java.util.Date;
 
 public class MemberVO {
 	private String id;
 	private String pwd;
 	private String name;
 	private String email;
-	private String regdate;
+	private Date regdate;
 	
 	public String getId() {
 		return id;
@@ -31,12 +33,10 @@ public class MemberVO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getRegdate() {
+	public Date getRegdate() {
 		return regdate;
 	}
-	public void setRegdate(String regdate) {
+	public void setRegdate(Date regdate) {
 		this.regdate = regdate;
 	}
-	
-	
 }

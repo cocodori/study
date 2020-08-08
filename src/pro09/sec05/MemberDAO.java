@@ -1,4 +1,4 @@
-package pro09.ex05;
+package pro09.sec05;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,8 +11,6 @@ import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
-
-import pro07.sec01.ex01.MemberVO;
 
 public class MemberDAO {
 	private Connection con;
@@ -118,10 +116,32 @@ public class MemberDAO {
 		String pwd = vo.getPwd();
 		
 		try {
+			//db - servlet 연결
 			con = ds.getConnection();
-//			String sql = "select "
+			
+			//조회하는 ID가 있으면  'true', 없으면 'false' (as result는 레코드 이름)
+			String sql = "SELECT IF(COUNT(*) = 1 , 'true', 'false') AS RESULT"
+					+ " FROM t_member"
+					+" WHERE id = ? AND pwd = ?";
+			
+			//SQL문을 PrepareStatement에 등록하고 각각의 자리(?)를 채운다.
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);			
+			pstmt.setString(2, pwd);
+			
+			//DB에 쿼리를 전송하고, 결과 값을 받는다.
+			ResultSet rs = pstmt.executeQuery();
+
+			rs.next();	//커서를 첫 번째 레코드에 위치한다.
+			
+			//'result'라는 레코드의  값을 boolean으로 변환
+			result = Boolean.parseBoolean(rs.getString("result"));
+			
+			System.out.println("result : " + result);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 }
