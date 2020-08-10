@@ -1,7 +1,25 @@
 # servlet
 > 📚 [자바 웹을 다루는 기술](http://www.yes24.com/Product/Goods/68371015?OzSrank=1) 을 정리한 내용입니다.
 
-> 📚 [자바 웹을 다루는 기술](http://www.yes24.com/Product/Goods/68371015?OzSrank=1)을 정리한 내용입니다.
+# 목차
+- Servlet/JSP
+- Servlet
+- Request - Response
+- GET & POST
+- JDBC
+- 포워드
+- Connection Pool
+- 바인딩
+- ServletContext & ServletConfig
+- 쿠키와 세션 - 쿠키
+- 쿠키와 세션 - 세션
+- encodeURL()
+- 세션 로그인 예제
+- 서블릿 스코프
+- Filter
+- Listener
+- JSP😇
+
 
 # Servlet이란?
 
@@ -1659,6 +1677,715 @@ else { // 새 세션이 아닐 때 들어온다.
 ```
 
 이 부분이다. session에 id라는 이름으로 바인딩된 객체를 꺼내서 화면에 출력한다. 
+## Servlet Scope!
+### 서블릿 속성attribute 세 가지
+- ServletContext
+- HttpSession
+- HttpServletRequest
+
+각 속성을 setAttribute()로 바인딩하고 getAttribute()로 꺼내서 쓴다.
+
+> **서블릿 스코프scope란, 서블릿 속성에 접근할 수 있는 범위를 말한다.** 
+
+
+### servlet scope !
+
+|스코프 종류|해당 서블릿API|속성의 스코프|
+|----------|------------|-----------|
+|애플리케이션 스코프|ServletContext|속성은 애플리케이션 전체에서 접근할 수 있다.|
+|세션 스코프|HttpSession|속성은 브라우저에서만 접근할 수 있다.|
+|리퀘스트 스코프|HttpServletRequest|속성은 해당 요청-응답 사이클 안에서만 접근할 수 있다.|
+
+### 스코프의 기능
+- 로그인 상태 유지
+- 장바구니
+- MVC - Model과 View의 데이터 전달
+
+
+### 예제
+
+ServletContext, HttpSession, HttpServletRequest
+각각 서블릿API의 스코프를 알아보는 예제다.
+
+1. 리퀘스트 스코프
+2. 세션 스코프
+3. 애플리케이션 스코프
+
+SetAttribute.java
+```java
+@WebServlet("/seta")
+public class SetAttribute extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		
+		PrintWriter out = response.getWriter();
+		String contextMsg = "context에 바인딩 됩니다.";
+		String sessionMsg = "session에 바인딩 됩니다.";
+		String requestMsg = "request에 바인딩 됩니다.";
+		
+		ServletContext ctx = getServletContext();
+		HttpSession session = request.getSession();
+		
+		ctx.setAttribute("context", contextMsg);
+		session.setAttribute("session", sessionMsg);
+		request.setAttribute("request", requestMsg);
+		
+		out.print("binding.....");
+		
+		RequestDispatcher dis = request.getRequestDispatcher("/geta");
+		dis.forward(request, response);
+	}
+}
+```
+
+GetAttribute.java
+
+```java
+@WebServlet("/geta")
+public class GetAttribute extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		
+		PrintWriter out = response.getWriter();
+		ServletContext ctx = getServletContext();
+		HttpSession session = request.getSession();
+
+		String contextMsg = (String)ctx.getAttribute("context");
+		String sessionMsg = (String)session.getAttribute("session");
+		String requestMsg = (String)request.getAttribute("request");
+		
+		out.print("context : " + contextMsg + "<br>");
+		out.print("session : " + sessionMsg + "<br>");
+		out.print("request : " + requestMsg + "<br>");
+	}
+}
+```
+
+
+#### 1. 리퀘스트 스코프의 경우
+
+리퀘스트 스코프인 경우, 모든 서블릿API가 접근할 수 있다.
+
+```java
+		RequestDispatcher dis = request.getRequestDispatcher("/geta");
+		dis.forward(request, response);
+```
+Dispatcher를 이용하여 GetAttribute서블릿으로 이동하도록 포워드 했으므로,
+GetAttribute서블릿이 request.setAttribute(..)로 보낸 정보를 getAttribute()로 꺼내볼 수 있다.
+
+![](https://images.velog.io/images/cocodori/post/7da9783e-0a18-48c5-bac3-3e00adc7d294/1.png)
+
+#### 2.세션 스코프의 경우
+
+위 코드를
+```java
+		response.sendRedirect("/geta");
+```
+이렇게 바꾼다면, 과정은 이렇다.
+
+1. 브라우저가 '/seta'를 호출한다.
+2. SetAttribute.java는 해당 요청을 처리하고 브라우저에게 '/geta'를 재호출 하라는 응답을 보낸다.(sendRedirect)
+3. 브라우저는 응답에 따라 '/geta'를 재호출 한다.
+
+**브라우저 -> '/seta' -> 브라우저 -> '/geta'**
+바꿔 말하자면, ** 요청 -> 응답 -> 요청 -> 응답**이다. request스코프는 설명했다시피 요청 - 응답 한 사이클 안에서만 유효하다. 따라서 위처럼 반복하면, 바인딩된 값이 유실될 수밖에 없다.
+
+![](https://images.velog.io/images/cocodori/post/b7897420-bc3b-4d97-be76-b220d7d942ff/2.png)
+
+#### 3. 애플리케이션 스코프의 경우
+
+위에서 코드는 그대로 유지한 채로, 다른 브라우저를 이용해서 '/geta'에 접속하면 이런 결과가 나타난다.
+
+![](https://images.velog.io/images/cocodori/post/255ef91f-23e3-4cbf-be1a-a20e5dff8c40/3.png)
+
+엣지 브라우저로 접속한 결과다.
+SetAttribute.java에서 세션 객체에 바인딩한 값은 Chrome에 저장된다. 엣지 브라우저에서 크롬 세션에 접근할 수 없기 때문에 null을 반환한다. 반면 Context객체에 바인딩된 데이터는 파이어폭스나 사파리로 접속해도 같은 결과를 얻을 수 있다.
+
+# 서블릿 필터Servlet Filter
+
+> 요청/응답과 관련된 작업을 미리 처리한다. 이를테면 setCharacterEncoding()같은 귀찮은 작업을 필터에 설정해두면 요청/응답할 때 알아서 한다.
+
+![](https://images.velog.io/images/cocodori/post/c6285941-3d29-4375-a694-6c0f1a69da6d/servletfilter.JPG)
+
+# Request Filter - Response Filter
+필터는 크게 요청 필터와 응답 필터로 나눌 수 있다.
+## 요청 필터
+- 사용자 인증 및 권한 검사
+- 요청 시 요청 관련 로그 작업
+- 인코딩
+
+## 응답 필터
+- 응답 결과에 대한 암호화
+- 서비스 시간 측정
+
+### 관련 API
+- javax.servlet.Filter
+- javax.servlet.FilterChain
+- javax.servlet.FilterConfig
+
+#### Filter인터페이스의 메서드
+
+
+|Method|기능|
+|------|----|
+|destroy()|필터 소멸 시 컨테이너에 의해 호출되어 종료 작업 수행|
+|doFilter()|요청/응답 시 컨테이너에 의해 호출되어 기능 수행|
+|init()|필터 생성 시 컨테이너에 의해 호출되어 초기화 작업 수행|
+
+
+#### FilterConfig의 메서드
+
+
+|Method|기능|
+|------|----|
+|getFilterName()|필터 이름 반환|
+|getInitParameter(String name)|매개변수 name에 대한 값을 반환|
+|getServletContext()|서블릿 컨텍스트 객체를 반환|
+
+# 사용자 정의 필터
+> 사용자 정의 필터는 반드시 Filter 인터페이스를 구현해야 한다.
+
+사용자 정의 필터를 생성하면 필터를 각각 요청에 맞게 적용하기 위해 매핑이 필요하다. xml을 이용해서 할 수도 있고 애너테이션을 이용해서 할 수도 있다. 역시 애너테이션이 편하다.
+
+
+## 요청 필터 사용해보기
+
+지금껏 한글 인코딩reqeust.setCharacterEncoding("utf-8")이 늘 지겹도록 반복됐다.
+이것을 Filter로 설정해두고, 모든 요청이 해당 Filter를 거치도록 만들어본다.
+
+
+login.html
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+</head>
+<body>
+<form name="login" method="post" action="/filterLogin">
+아이디 : <input type="text" name="id"><br>
+비밀번호:<input type="password" name="password">
+<button>확인</button>
+</form>
+</body>
+</html>
+```
+
+FilterLogin.java
+```java
+@WebServlet("/filterLogin")
+public class FilterLogin extends HttpServlet {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//setCharacterEncoding() 생략
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		String id = request.getParameter("id");
+		String pwd = request.getParameter("password");
+		out.print("<h1>한글 id : " + id +"<br> pwd : " + pwd+"</h1>");
+	}
+}
+```
+
+이렇게 셋캐릭터인코딩을 하지 않은 상태로 한글 아이디를 입력해 로그인하게 되면 다음과 같은 일이 일어난다.
+
+![](https://images.velog.io/images/cocodori/post/b18afb4f-3506-4b39-a684-dfbb72917ce9/image.png)
+
+이것을 Filter를 사용해서 인코딩할 것이다.
+우선 서블릿과 같은 패키지에 filter를 만든다.
+
+![](https://images.velog.io/images/cocodori/post/70803fe7-412c-4a63-909c-ff2c25cfa449/image.png)
+
+![](https://images.velog.io/images/cocodori/post/9989d2bc-6232-4690-b2c9-c1a4214644c8/image.png)
+
+![](https://images.velog.io/images/cocodori/post/01c24324-a5e3-4675-a683-2870365526e0/a.png)
+
+![](https://images.velog.io/images/cocodori/post/6cdb69da-702e-4cd0-a98b-b6c44abeae21/b.png)
+
+EncoderFilter.java
+```java
+@WebFilter("/*")	//모든 요청은 해당 필터를 거친다.
+public class EncoderFilter implements Filter {
+	
+	private ServletContext context;
+	
+	public void init(FilterConfig fConfig) throws ServletException {
+		System.out.println("filter........");
+		System.out.println("utf-8 encoding.........");
+		context = fConfig.getServletContext();
+	}
+	
+	//실제로 필터 역할을 하는 메서드
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		System.out.println("doFilter()..........");
+		request.setCharacterEncoding("utf-8");
+		
+		//웹 어플리케이션의 컨텍스트 이름
+		String context = ((HttpServletRequest)request).getContextPath();
+		
+		//웹 브라우저에서 요청한 요청 URI
+		String pathinfo = ((HttpServletRequest)request).getRequestURI();
+		
+		//요청 URI의 절대 경로
+		String realPath = request.getRealPath(pathinfo);
+		
+		String msg = "Context : " + context +" \n URI : : " + pathinfo + "\n 절대 경로 : " + realPath;
+		
+		System.out.println(msg);
+		
+		//다음 필터로 넘기는 작업을 수행
+		chain.doFilter(request, response);
+	}
+	
+	public void destroy() {
+		System.out.println("destroy().....");
+	}
+}
+```
+
+![](https://images.velog.io/images/cocodori/post/86140a73-e65e-4904-83f3-74124bb3daea/image.png)
+
+utf-8로 아주 잘 인코딩 된 것을 볼 수 있다.
+
+
+## 응답 필터도 써보기
+
+응답 필터라고 요청 필터와 다르지 않다. 위 EncoderFilter.java에서 doFilter() 마지막 줄에서
+```java
+chain.doFilter(request, response);
+```
+이 코드를 볼 수 있다. 이 코드를 기준으로 위쪽에 있는 코드는 요청 필터, 아래 있는 코드는 응답 필터다.
+
+응답 필터로 작업 시간을 구하는 예제다.
+
+EncoderFilter.java의 doFilter()만 약간 수정하면 된다.
+```java
+//실제로 필터 역할을 하는 메서드
+public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		
+        ...
+        ...
+		
+	long begin = System.currentTimeMillis();
+		
+	//다음 필터로 넘기는 작업을 수행
+	chain.doFilter(request, response);
+		
+	System.out.println("response filter..........");
+
+	long end = System.currentTimeMillis();
+		
+	System.out.println("작업 시간 : " + (end - begin)+"ms");
+		
+}
+```
+
+간단한 작업이므로 결과는 0ms를 얻는다.
+
+**공통으로 처리해야 하는 작업을 Filter로 처리하면 쉽게 중복을 제거하고 귀찮은 일을 덜 수 있단느 것을 기억하자!**
+
+
+
+# Servlet Listener API
+
+> 서블릿에서 발생하는 이벤트를 처리할 수 있도록 제공하는 리스너
+
+## Listener의 메서드
+
+
+|서블릿 관련 Listener|추상 메서드|기능|
+|------------------|----------|----|
+|ServletContextAttributeListener|attributeAdded()<br>attributeRemoved()<br>attributeReplaced()|Context객체에 속성 추가/제거/수정 이벤트 발생 시 처리|
+|HttpSessionListener|sessionCreated()<br>sessionDestroyed()|세션 객체의 생성/소멸 이벤트 발생 시 처리|
+|ServletRequestListener|reqeustInitialized()<br>requestDestroyed()|클라이언트의 요청 이벤트 발생 시 처리|
+|ServletRequestAttributeListener|attributeAdded()<br>attributeRemoved()<br>attributeReplaced()|요청 객체에 속성 추가/제거/수정 이벤트 발생 시 처리|
+|HttpSessionBiningListener|valueBound()<br>valueUnbound()|세션에 바인딩/언바인딩된 객체를 알려주는 이벤트 발생 시 처리|
+|HttpSessionAttributeListener|attributeAdded()<br>attributeRemoved()<br>attributeReplaced()|세션에 속성 추가/제거/수정 이벤트 발생 시 처리|
+|ServletContextListener|contextInitialized()<br>contextDestroyed()|컨텍스트 객체의 생성/소멸 이벤트 발생 시 처리|
+|HttpSessionActivationListener|sessionDidActivate()<br>sessionWillPassivate()|세션의 활성/비활성 이벤트 발생 시 처리|
+
+
+**HttpSessionBindingListener를 제외한 모든 Listener는 @WebListener를 사용해서 Listener로 등록해야 한다.**
+
+## Listener예제
+접속자 수와 접속자 아이디를 집계해 화면에 띄우는 예제다.
+
+### 리스너 생성
+
+controll + space -> Listener 생성
+
+![](https://images.velog.io/images/cocodori/post/4c6917f9-1bc6-4091-84f8-590f93f27d99/image.png)
+
+![](https://images.velog.io/images/cocodori/post/e8c5d427-0dea-46b6-9c5a-dd2ce80cc93a/image.png)
+
+![](https://images.velog.io/images/cocodori/post/67dff4f2-6c28-4103-bf3d-f097ceca70f9/abc.png)
+
+구현할 인터페이스를 고르면 된다.
+
+![](https://images.velog.io/images/cocodori/post/b06a2366-dc45-44f4-9203-f209861630de/image.png)
+
+LoginImpl.java
+```java
+@WebListener
+public class LoginImpl implements HttpSessionListener {
+	String id;
+	String pwd;
+	static int totalUser = 0;
+	
+	public LoginImpl() {}
+	
+	public LoginImpl(String id, String pwd) {
+		this.id = id;
+		this.pwd = pwd;
+	}
+	
+    public void sessionCreated(HttpSessionEvent se)  { 
+    	 System.out.println("세션 생성");
+    	 ++totalUser;
+    }
+
+    public void sessionDestroyed(HttpSessionEvent se)  { 
+    	System.out.println("세션 소멸");
+    	--totalUser;
+    }
+}
+```
+
+login.html
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+</head>
+<body>
+<form name="login" method="post" action="/listenerLogin">
+아이디 : <input type="text" name="id"><br>
+비밀번호:<input type="password" name="password">
+<button>확인</button>
+</form>
+</body>
+</html>
+```
+
+LoginTest.java
+```java
+@WebServlet("/listenerLogin")
+public class LoginTest extends HttpServlet {
+	ServletContext context;
+	
+	//로그인한 접속자 ID를 저장할 List
+	List<String> userList = new ArrayList<>();
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		HttpSession session = request.getSession();
+		context = getServletContext();
+		String id = request.getParameter("id");
+		String pwd = request.getParameter("password");
+		
+		//로그인한 아이디와 비밀번호로 LoginImpl객체 생성
+		LoginImpl loginUser = new LoginImpl(id, pwd);
+		
+		/* 최초 로그인 시, ID를 List에 저장하고, context객체에 바인딩한다. */
+		if (session.isNew()) { // 새로 생성된 세션일 경우
+			session.setAttribute("loginUser", loginUser);
+			userList.add(id);
+			context.setAttribute("userList", userList);
+		}
+		
+		out.print("<html><head></head><body><h1>ID : " + id + "<br>PW : " + pwd + "<br>접속자 수 : " + LoginImpl.totalUser+"</h1>"
+				+"<h2>접속자 아이디 : <br>");
+		
+		List list = (ArrayList)context.getAttribute("userList");
+		for(int i=0; i<list.size();i++) {
+			out.print(list.get(i)+"<br>");
+		}
+		out.println("<a href='/listenerLogout?id="+id+"'>로그아웃</a>");
+		//JS의 setTimeout함수를 이용하여 5초마다 서블릿에 재요청하며 현재 접속자수를 파악
+		out.print("<script type='text/javascript'> setTimeout('history.go(0);',5000); </script></body></html>");
+	}
+
+}
+```
+
+LogoutTest.java
+```java
+@WebServlet("/listenerLogin")
+public class LoginTest extends HttpServlet {
+	ServletContext context;
+	
+	//로그인한 접속자 ID를 저장할 List
+	List<String> userList = new ArrayList<>();
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		HttpSession session = request.getSession();
+		context = getServletContext();
+		String id = request.getParameter("id");
+		String pwd = request.getParameter("password");
+		
+		//로그인한 아이디와 비밀번호로 LoginImpl객체 생성
+		LoginImpl loginUser = new LoginImpl(id, pwd);
+		
+		/* 최초 로그인 시, ID를 List에 저장하고, context객체에 바인딩한다. */
+		if (session.isNew()) { // 새로 생성된 세션일 경우
+			session.setAttribute("loginUser", loginUser);
+			System.out.println("id : " + id );
+			userList.add(id);
+			System.out.println("userList : " + userList);
+			context.setAttribute("userList", userList);
+		}
+		
+		out.print("<html><head></head><body><h1>ID : " + id + "<br>PW : " + pwd + "<br>접속자 수 : " + LoginImpl.totalUser+"</h1>"
+				+"<h2>접속자 아이디 : <br>");
+		
+		List list = (ArrayList)context.getAttribute("userList");
+		for(int i=0; i<list.size();i++) {
+			out.print(list.get(i)+"<br>");
+		}
+		out.println("<a href='/listenerLogout?id="+id+"'>로그아웃</a>");
+		//JS의 setTimeout함수를 이용하여 5초마다 서블릿에 재요청하며 현재 접속자수를 파악
+		out.print("<script type='text/javascript'> setTimeout('history.go(0);',5000); </script></body></html>");
+	}
+}
+```
+
+
+크롬에서 로그인 시 나타나는 화면
+
+![](https://images.velog.io/images/cocodori/post/94e494e6-25b5-4d2c-8283-a4a6ed9125a2/image.png)
+
+Edge에서 로그인 시 나타나는 화면
+
+![](https://images.velog.io/images/cocodori/post/de71a082-6958-4a9e-8d2e-3c7d649ee3b1/image.png)
+
+크롬 화면도 setTimeout()에 의해서 자동 갱신된다.
+
+![](https://images.velog.io/images/cocodori/post/036cb491-ff67-4130-bc16-bbfdb53933c0/image.png)
+
+크롬에서 로그아웃 시 로그인 중인 브라우저 화면이 자동 갱신된다.
+
+아이콘 제작자 <a href="https://www.flaticon.com/kr/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/kr/" title="Flaticon"> www.flaticon.com</a>
+
+# JSP?
+먼 옛날. 서블릿 위에 html태그를 써서 화면으로 전달하던 시절. 디자이너와 개발자는 서로 얼굴 붉힐 일이 많았을 것이다. 이런 일이 있었다. 디자이너는 오늘 일찍 퇴근해서 애인과 종로에서 가장 오래된 레스토랑인 아지오에 갈 생각이다. 그런데 개발자라는 작자가 작업을 끝내지 못해서 오전 내 작업을 못하고 있다. 오후 세시께야 파일을 받았다. 디자이너는 세 시간 안에 작업을 끝내겠다는 생각으로 열의를 불태운다. 흠. 너무 과했던 모양이다. 실수로 자바 코드 몇 개를 건드렸는데...controll + z도 안 먹는다... 그렇게 디자이너와 개발자 사이는 비포장도로처럼 위태로워졌을 것이며 어쩌면 타이어에 펑크가 났을지도 모르는 일이다.
+ 이런 배경에서 누군가. 그러니까 평화를 지향하던 인간 하나가 JSP를 들고 나타났다. JSP가 Java Server Pages가 약자가 아니라 Java Server Peace😇의 약자라는 전설이 그래서 도는 것이다.  물론 이건 내가 지어낸 얘기일 뿐이다.
+ 
+ 그랬거나
+ 말거나.
+
+정리하자면,
+> JSP란, 화면과 비즈니스 로직을 분리해서 개발하려는 목적으로 고안된 것이다. 이렇게 하면 협업도 쉽고, 당연히 유지보수도 쉽다.
+
+ 
+> JSP는 [서버사이드 스크립트 언어](https://ko.wikipedia.org/wiki/%EC%84%9C%EB%B2%84_%EC%82%AC%EC%9D%B4%EB%93%9C_%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8_%EC%96%B8%EC%96%B4)다. 확장자는 .jsp이며 HTML의 외향을 두르고 있지만 컴파일 되면서 서블릿 컨테이너에 의해 서블릿으로 바뀐다. 말하자면 결국 자바 클래스라는 것이다.
+
+# JSP의 구성 요소
+
+- HTML , CSS , JS
+- JSP 기본 태그
+- JSP 액션 태그
+- 사용자 정의 태그 또는 프레임워크가 제공하는 커스텀 태그
+
+
+# JSP가 동작하는 방식
+
+자바스크립트는 브라우저가 해석할 수 있는, 클라이언트 사이드 스크립트 언어다. 반면 위에서 설명했듯이 jsp는 서버사이드 스크립트 언어다. 브라우저는 JSP를 해석할 수 없다. 따라서 실행 시에 서블릿(톰캣) 컨테이너가 .jsp파일을 자바코드로 컴파일 하는 과정을 거친다.
+
+1. 변환- 컨테이너는 JSP파일을 자바 파일로 변환한다.
+
+2. 컴파일 - 컨테이너는 변환한 .java파일을 클래스 파일로 컴파일 한다.
+
+3. 실행 - 컨테이너는 .class파일을 실행하여 그 결과html,css,js를 브라우저로 전송한다.
+
+서블릿 컨테이너에 의해 .jsp에서 .java변환된 클래스 파일은 이클립스의 경우 '\eclipse-workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\work\Catalina\localhost\ROOT\org\apache\jsp\test' 이 경로에서 볼 수 있다.
+
+# 구성 요소
+JSP에서 HTML 태그와 같이 사용하는 여러 요소다.
+- 디렉티브 태그
+- 스크립트 요소 : 주석문, 스크립트릿scriptlet, 표현식, 선언식
+- 표현 언어Expression Language
+- 내장 객체
+- 액션 태그
+- 커스텀 태그
+
+## 디렉티브 태그Directive Tag
+디렉티브 태그는 전반적인 설정 정보를 저장할 때 사용한다.
+몇 가지 종류가 있다.
+- 페이지 디렉티브 태그 - 전반적인 정보를 설정할 때 사용
+- 인클루드 디렉티브 태그 - 공통으로 사용하는 jsp페이지를 다른 jsp페이지에 추가할 때 사용
+- 태그라이브 디렉티브 태그 - 개발자나 프레임워크에서 제공하는 태그를 쓸 때 사용
+
+### 페이지 디렉티브 태그Page Directive Tag
+
+형식은 <%page %> 이렇게 쓴다.
+jsp파일을 만들면 맨 첫 줄에 나오는 태그가 페이지 디렉티브 태그다.
+```java
+<%@page language="java" contentType="text/html;charset=UTF-8" 
+   pageEncoding="UTF-8"%>
+```
+
+간단한 예제.
+명시적으로 지정했지만, 아래 나온 값은 몇 가지를 제외한 대부분 기본값이므로 따로 지정하지 않아도 된다. 
+```java
+<%@page contentType="text/html;charset=utf-8;" //출력 형식
+		import="java.util.*" //다른 패키지의 클래스를 임포트할 때 지정해야 함
+		language="java"	//jsp에서 사용할 언어
+		session="true" //HttpSession객체 사용 여부
+		buffer="8kb" //버퍼 크기
+		autoFlush="true" //출력되기 전 버퍼가 다 채워질 경우 동작을 지정
+		info="(Shoppingmall.........)" //페이지 설명
+		isErrorPage="false" //현재 페이지가 예외 처리 담당 jsp인지 지정
+		errorPage=""%>
+```
+
+### 인클루드 디렉티브 태그Include Directive Tag
+
+한 웹에서 페이지 이동을 할 때, 윗부분header과 아랫부분footer은 동일하고 가운데 부분만 달라질 때가 많다. 인클루드 태그를 이용해서 헤더와 푸터를 공통적으로 중복을 제거하고 하나의 코드를 여러 jsp가 공유해서 재사용할 수 있다. 관리도 편하다.
+```jsp
+<!-- 공통되는 부분은 include로 -->
+<%include file="../header.jsp" %>
+
+	<!-- 각 페이지 고유한 부분 -->
+
+<%include file="../footer.jsp" %>
+```
+
+### 스크립트 요소
+
+JSP는 컴파일 되면서 자바 코드로 바뀐다고 했다. 이 말은 조건이나 상황에 맞게 html태그를 선택할 수 있다. 따라서 동적인 화면 구성을 할 수 있다.
+> 스크립트 요소란, <% %>안에 자바 코드를 구현하는 것을 말한다. <% %>기호를 스크립트릿scriptlet이라고 부른다.
+
+#### 스크립트릿의 종류 세 가지
+- 선언문 : 변수나 메서드를 선언할 때 사용
+- 스크립트릿 : 자바 코드를 작성할 때 사용
+- 표현식 : 변수 값을 출력할 때 사용
+
+#### 선언문
+형식은 <%! .... %>이다.
+
+```html
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%> 
+<%!
+	private String name = "코코";
+	public String getName() {
+		return this.name;
+	}
+%>
+...
+  ...
+<h2>안녕하세요 <%=getName()%>님~</h2>
+</body>
+</html>
+```
+
+#### 스크립트릿
+초기 JSP에서 자바코드를 이용해 동적인 화면을 구성했다. 현재는 잘 쓰지 않는다.
+
+<% 코드 %>
+
+```html
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%! /* 선언문 */
+	private String name = "뽀로로";
+	public String getName() {
+		return this.name;
+	}
+%>
+
+<% /* 스크립트릿 */
+	String age = request.getParameter("age");
+%>
+  ...
+  ...
+    <h1>이름 <%=getName()%>, 나이 <%=age%></h1>
+  </body>
+</html>
+```
+
+
+#### 표현식
+위 예제에서 변수 값을 가져올 때 썼던 <%= ...%>다.
+```html
+<h1>이름 <%=getName()%>, 나이 <%=age%></h1>
+<%=Integer.parseInt(age)+10 %>
+```
+
+표현식은 당연히 연산도 가능하다.
+
+
+###### tip. JSP 프리컴파일
+
+>컴파일 시 JSP는 서블릿으로 변환된다. 때문에 처음 접속 시 속도가 느릴 수 있다. 이 시간을 단축하기 위해 톰캣 컨테이너는 JSP Precomile을 제공한다. 이것을 이용하면 미리 JSP파일을 컴파일해둘 수 있다. [load-on-startup](https://velog.io/@cocodori/ServletContext-ServletConfig#load-on-startup)과 유사하다.
+
+
+# 내장객체
+
+서블릿으로 컴파일된 JSP의 일부다.
+
+```java
+
+package org.apache.jsp.test;
+
+import ...
+
+public final class emtpy_jsp extends org.apache.jasper.runtime.HttpJspBase
+    implements org.apache.jasper.runtime.JspSourceDependent,
+                 org.apache.jasper.runtime.JspSourceImports {
+....
+...
+    
+    //JSP페이지에 대한 정보를 저장한다.
+    final javax.servlet.jsp.PageContext pageContext;
+    
+    //세션 정보를 저장한다.
+    javax.servlet.http.HttpSession session = null;
+    
+    //컨텍스트 정보를 저장한다.
+    final javax.servlet.ServletContext application;
+    
+    //JSP페이지에 대한 설정 정보를 저장한다.
+    final javax.servlet.ServletConfig config;
+    
+    //JSP페이지에서 결과를 출력한다.
+    javax.servlet.jsp.JspWriter out = null;
+    
+    //JSP페이지의 서블릿 인스턴스를 저장한다.
+    final java.lang.Object page = this;
+    
+    javax.servlet.jsp.JspWriter _jspx_out = null;
+    javax.servlet.jsp.PageContext _jspx_page_context = null;
+
+
+....
+...
+..
+}
+```
+
+위에 선언되어 있는 것이 JSP의 내장객체다. 이외에도 HttpServletRequest나 HttpServletResponse 등이 있다. 이렇게 내장객체가 있기 때문에 HttpServletRequest 또는 HttpSession을 별도의 생성 없이 사용할 수 있는 것이다. 내장하지 않은 객체를 사용하고 싶다면 그냥 import하고 쓰면 된다.
+
+## 내장 객체의 스코프
+
+|내장 객체|서블릿|scope|
+|-------|-----|-----|
+|page|this|한 번의 요청에 대해 하나의 JSP페이지를 공유한다|
+|request|HttpServletRequest|한번의 요청에 대해 같은 요청을 공유하는 JSP를 공유한다|
+|session|HttpSession|같은 브라우저에서 공유한다.|
+|application|ServletContext|같은 애플리케이션에서 공유한다.|
+
+[서블릿 스코프](https://velog.io/@cocodori/%EC%84%9C%EB%B8%94%EB%A6%BF-%EC%8A%A4%EC%BD%94%ED%94%84)와 별반 다르지 않다.
+
+
+
+
+
 
 
 
