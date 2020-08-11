@@ -19,7 +19,7 @@
 - Filter
 - Listener
 - JSP😇
-
+- 액션 태그<jsp:.... />
 
 # Servlet이란?
 
@@ -2383,7 +2383,365 @@ public final class emtpy_jsp extends org.apache.jasper.runtime.HttpJspBase
 [서블릿 스코프](https://velog.io/@cocodori/%EC%84%9C%EB%B8%94%EB%A6%BF-%EC%8A%A4%EC%BD%94%ED%94%84)와 별반 다르지 않다.
 
 
+# 액션 태그 <jsp: ... >
+> JSP는 비즈니스 로직과 화면 개발을 분리하려는 목적으로 개발되었다. 그러나 여전히 스크립트릿<%%>같은 녀석들이 HTML 영역을 침범했다. 방역하고 방역해도 죽지 않는 코로나처럼. 죽일 순 없으니 마스크라도 쓰자...는 마음으로 만들어진 것이 액션 태그다.
 
+## 인클루드 액션 태그 <jsp:include...>
+
+1. 파라미터 인자로 받는 이미지 파일 이름을 읽어서 화면에 나타내는 jsp를 만든다.
+2. 1에서 만든 jsp를 다른 jsp들이 include 태그를 이용하여 재사용한다.
+
+이런 방식의 장점은 자바 코드를 한 번만 쓰면, 남은 페이지에서 자바 코드를 쓸 일이 없다는 것이다.
+
+1번 jsp
+```html
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	request.setCharacterEncoding("utf-8");
+	String name = request.getParameter("name");
+	String imgName = request.getParameter("imgName");	
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>8 BIT WALL-E</title>
+</head>
+<body>
+<h1>이름은 <%=name %></h1>
+</body><img src="/image/<%=imgName %>" />
+</html>
+```
+
+자바코드 없이 include태그로 1번을 재사용하는 jsp
+```html
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	request.setCharacterEncoding("utf-8");
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>include1</title>
+</head>
+<body>
+	<h1>폐허한 지구의 두 친구</h1>
+	
+	<jsp:include page="walleImage.jsp" flush="true">
+		<jsp:param name='name' value='WallE'/>
+		<jsp:param name='imgName' value='walle.png'/>
+	</jsp:include>
+		
+</body>
+</html>
+```
+
+```html
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>INCLUDE2</title>
+</head>
+<body>
+	<h1>폐허한 지구</h1>
+	<jsp:include page="/actionEx/walleImage.jsp" flush="true">
+		<jsp:param name="name" value="eve"/>
+		<jsp:param name="imgName" value="eve.png"/>
+	</jsp:include>
+</body>
+</html>
+```
+
+![](https://images.velog.io/images/cocodori/post/f1b9ef2c-cfd3-4453-be39-3443e4860473/image.png)
+
+![](https://images.velog.io/images/cocodori/post/7003eac7-54d7-4d98-98d7-f457d540dccb/image.png)
+
+만약 한글 이름을 전달하려면 request.setCharacterEncoding("utf-8")만 추가하면 된다.
+
+# 포워드 액션 태그 <jsp:forward ...>
+
+RequestDispatcher없이 포워딩할 수 있다.
+아이디를 입력하지 않고 로그인 시, 포워딩하여 로그인 창에 에러 메세지를 띄우는 예제다.
+
+login.jsp
+```html
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	request.setCharacterEncoding("utf-8");
+	//String msg = (String)request.getAttribute("msg");
+	String msg = request.getParameter("msg");
+%>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>forward action tag</title>
+</head>
+<body>
+<%
+	if(msg != null) { %>
+		<h1><%=msg %></h1>
+<%	} %>
+	<form action='/actionEx/result.jsp'>
+		<input type='text' name='id' placeholder='ID...'><br>
+		<input type='password' name='pwd' placeholder='PASSWORD...'>
+		<input type='submit' value='LOGIN'>
+	</form>
+</body>
+</html>
+```
+
+result.jsp
+```html
+...
+...
+<body>
+<%
+	request.setCharacterEncoding("utf-8");
+	String id = request.getParameter("id");
+	if(id.length() == 0 || id == null) {
+		//RequestDispatcher dispatch = request.getRequestDispatcher("/actionEx/login.jsp");
+		//dispatch.forward(request, response);
+		//request.setAttribute("msg", "아이디를 입력하세요.");
+		String msg = "아이디를 입력하세요.";
+
+%>
+	<jsp:forward page='/actionEx/login.jsp' >
+		<jsp:param name='msg' value='<%=msg %>' />	
+	</jsp:forward>
+
+<%	}//if%>
+
+<h1>환영합니다. <%=id %>님!</h1>
+
+</body>
+  ...
+  ...
+  하략
+```
+
+보다시피 jsp:forward로 RequestDispatcher를 대신하고 있다.
+jsp:param을 이용해 파라미터도 함께 전달할 수 있다.
+
+
+## useBean, setProperty, getProperty
+
+이 세 가지 액션 태그로 객체 생성, 속성에서 값을 저장(setter)하거나 가져올(getter) 수 있다.
+
+### 자바빈Java Bean
+
+자바 빈은 [JavaEE](https://animal-park.tistory.com/97)프로그래밍 시, 여러 객체를 거쳐 만들어지는 데이터를 저장/전달하는 데 사용한다. 자바의 DTO(Data Transfer Object,데이터 전송 객체) 또는 VO(Value Object,값 객체)와 같은 개념이라고 할 수 있다.
+ #### 자바 빈 특징
+ - 속성 접근 제어자는 private
+ - 각 속성attribute, property은 각각 setter/getter를 가진다
+ - setter/getter 이름 첫 글자는 반드시 소문자다
+ - 기본 생성자를 반드시 가진다
+
+자바 빈을 이용해서 회원가입 폼 데이터를 받아서 회원으로 등록하고,
+전체 회원 목록을 출력하는 예제다.
+
+
+```html
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"
+    import="pro13.sec01.*"
+    import="java.util.*"
+%>
+<%
+	request.setCharacterEncoding("utf-8");
+
+	//회원 가입 페이지로부터 받은 데이터
+	String id = request.getParameter("id");
+	String pwd = request.getParameter("pwd");
+	String name = request.getParameter("name");
+	String email = request.getParameter("email");
+	
+	System.out.println("name : " + name);
+	
+	//위 데이터로 MemberBean객체를 만들어서 DB에 추가
+	MemberBean bean = new MemberBean(id, pwd, name, email);
+	MemberDAO dao = new MemberDAO();
+	dao.addMember(bean);
+	
+	//모든 멤버 리스트를 불러온다.
+	List<MemberBean> memberList = dao.memberList();
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회원</title>
+</head>
+<body>
+	<h1>회원 목록</h1>
+	<table align='center' width='100%'>
+		<tr align='center' bgcolor='#99ccff'>
+			<td width='7%'>아이디</td>
+			<td width='7%'>비밀번호</td>
+			<td width='5%'>이름</td>
+			<td width='11%'>이메일</td>
+			<td width='5%'>가입일</td>
+		</tr>
+	<%
+		if(memberList.size() == 0) {
+	%>
+		<tr>
+			<td colspan='5'>
+				<p align='center'><b><span style='font-size:9pt;'>
+				등록된 회원이 없습니다.
+				</span></b></p>
+			</td>
+		</tr>
+	<%
+		} else {
+			for (int i = 0; i < memberList.size(); i++) {
+				bean = memberList.get(i);
+	%>
+		<tr align='center'>
+			<td>
+				<%=bean.getId()%>			
+			</td>
+			<td>
+				<%=bean.getPwd()%>			
+			</td>
+			<td>
+				<%=bean.getName()%>			
+			</td>
+			<td>
+				<%=bean.getEmail()%>			
+			</td>
+			<td>
+				<%=bean.getRegdate()%>			
+			</td>
+		</tr>
+	
+	<%
+		}
+	}
+	%>
+	<tr height='1' bgcolor='#99ccff'>
+		<td colspan='5'></td>
+	</tr>
+	</table>
+</body>
+</html>
+```
+
+이렇게 할 경우, 화면에 자바 코드가 섞이므로 복잡해진다.
+<jsp:useBean ...>으로 자바 빈을 대체할 수 있다.
+```java
+pro13.sec01.MemberBean member = new MemberBean();
+```
+이 자바 선언문과
+
+```html
+<jsp:useBean id='memeber' class='pro13.sec01.MemberBean' scope='page'/>
+```
+
+이 태그는 완전히 같은 기능을 한다.
+(scope의 속성으로는 page(기본),request,session,application이 있음)
+
+useBean태그로 객체를 생성하고 setProperty와 getProperty를 이용해서 값을 저장하거나 불러올 수 있다.
+
+```java
+member.setId("coco");
+member.getId();
+```
+이 자바 코드와
+```html
+<jsp:setProperty name='member' property='id' value='coco'/>
+<jsp:getProperty name='member' property='id'/>
+```
+위 태그는 같은 기능을 한다.
+name - useBean id속성으로 지정한 이름(member)
+property - 값을 설정할 속성 이름(MemberBean의 변수 명)
+
+자바 빈을 useBean태그로 모두 대체한 것이다.
+
+```html
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" import="pro13.sec01.*" import="java.util.*"%> 
+<%
+	request.setCharacterEncoding("UTF-8");
+%>
+
+<jsp:useBean id='member' class='pro13.sec01.MemberBean' scope='page' />
+
+<!-- 매개변수로 받은 데이터와 param과 이름이 맞는 것을 매칭해준다. param생략가능 -->
+<jsp:setProperty name="member" property="id" param="id"/>
+<jsp:setProperty name="member" property="pwd" param="pwd" />
+<jsp:setProperty name="member" property="name" param="name" />
+<jsp:setProperty name="member" property="email" param="email"/>
+
+<%
+	MemberDAO dao = new MemberDAO();
+	dao.addMember(member);
+	List<MemberBean> memberList = dao.memberList();
+%>
+
+
+<!-- 아이디가 'member'인 MemberBean객체를 만든다. -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>회원 목록</h1>
+	<table align='center' width='100%'>
+		<tr align='center' bgcolor='#99ccff'>
+			<td width='7%'>아이디</td>
+			<td width='7%'>비밀번호</td>
+			<td width='5%'>이름</td>
+			<td width='11%'>이메일</td>
+		</tr>
+		<tr align='center'>
+			<td>
+				<jsp:getProperty property="id" name="member"/>
+			</td>
+			<td>
+				<jsp:getProperty property="pwd" name="member" />
+			</td>
+			<td>
+				<jsp:getProperty property="name" name="member" />
+			</td>
+			<td>
+				<jsp:getProperty property="email" name="member"/>
+			</td>
+		</tr>
+	
+	<tr height='1' bgcolor='#99ccff'>
+		<td colspan='5'></td>
+	</tr>
+	</table>
+</body>
+</html>
+```
+
+놀라운 것은
+```html
+<jsp:setProperty name="member" property="id" param="id"/>
+<jsp:setProperty name="member" property="pwd" param="pwd" />
+<jsp:setProperty name="member" property="name" param="name" />
+<jsp:setProperty name="member" property="email" param="email"/>
+```
+이 부분을
+```html
+<jsp:setProperty name="member" property="*"/>
+```
+이렇게 바꿀 수 있다는 것이다.
+회원가입 폼에서 전송받은 매개변수의 name속성들과 member 빈 속성을 비교한 후에, 동일한 빈에 값을 자동으로 설정한다. 매우 놀랍다.
 
 
 
