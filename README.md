@@ -2743,6 +2743,244 @@ property - 값을 설정할 속성 이름(MemberBean의 변수 명)
 이렇게 바꿀 수 있다는 것이다.
 회원가입 폼에서 전송받은 매개변수의 name속성들과 member 빈 속성을 비교한 후에, 동일한 빈에 값을 자동으로 설정한다. 매우 놀랍다.
 
+# 표현언어 EL
+> 액션태그에 이어서 JSP에서 자바 코드를 없애려는 노력은 계속되었다. EL은 좀 더 편리하게 자바 표현식을 다루기 위해 JSP2.0부터 도입되었다. 데이터를 출력하는 역할을 한다.
+
+## 특징
+- 기존 표현식보다 편리하게 값을 출력한다.
+- 변수와 여러 연산자를 포함할 수 있다.
+- JSP 내장 객체에 저장된 속성 및 자바 빈 속성도 출력할 수 있다.
+- EL 자체 내장 객체를 제공한다.
+- JSP 생성 시 기본 설정으로는 EL을 사용할 수 없다.
+- ~~페이지 디렉티브 태그에서 반드시 isELIgnored=false로 설정해야 한다.~~
+
+### 형식
+```html
+${표현식 또는 값}
+${1+1 == 2 ? "hello" : "world"} 
+${number}
+```
+
+## EL의 자료형과 연산자
+### 자료형
+  - boolean
+  - 정수
+  - 실수
+  - 문자열('', "" 모두 가능)
+  - null
+### 연산자
+**산술**
+- '+'
+- '-'
+- / 또는 div
+- % 또는 mod
+
+**비교**
+- == 또는 eq
+- != 또는 ne
+- < 또는 lt
+- &gt; 또는 gt
+- <= 또는 le
+- &gt;= 또는 ge
+
+**논리**
+- && 또는 and
+- || 또는 or
+- ! 또는 not
+
+**empty**
+empty '값' : 값이 null이거나 빈 문자열이면 true를 반환한다.
+> 예시 
+${empty num1} 
+
+**조건**
+삼항연산자
+수식 ? 값 : 값
+>예시
+${1+1 == 2 ? 'hello' : 'world'}
+
+_**${empty ..} 예제**
+```html
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" %>
+    
+<jsp:useBean id="m1" class='pro13.sec01.MemberBean' />
+<jsp:setProperty name='m1' property='name' value='콩콩'/>
+
+<jsp:useBean id="m2" class='java.util.ArrayList'/>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>empty연산자 테스트</h1>
+	<h2 style='color:red;'>null이면 true</h1>
+	<h2 style='color:blue;'>null이 아니면 false</h1>
+	<h3><p>\${empty m1} : ${empty m1 }</p></h3>
+	<h3><p>\${not empty m1} : ${not empty m1 }</p></h3>
+
+	<h3><p>\${empty m2} : ${empty m2 }</p></h3>
+	<h3><p>\${not empty m2} : ${not empty m2 }</p></h3>
+</body>
+</html>
+```
+
+## 내장 객체
+
+### 스코프 객체
+
+- pageScope
+- requestScope
+- sessionScope
+- applicationScope
+
+예시
+
+
+```
+//리퀘스트 스코프로 바인딩
+request.setAttribute("name","이땅콩");
+```
+1. 기존의 jsp에서 request scope를 읽어오고 출력하던 방식
+```html
+<%
+//바인딩된 데이터 읽기
+String name = (String)request.getAttribute("name");
+%>
+...
+...
+<!-- 출력 -->
+<h1>이름 : <%=name %> </h1>
+
+```
+
+2. EL의 스코프 내장객체를 이용하여 출력하는 방식
+
+```html
+
+<!-- getAttribute()로 읽을 필요 없이 바로 출력 -->
+<h1> 이름 : ${requestScope.name} </h1>
+```
+
+간결하다.
+
+### 요청 매개변수
+
+- param
+
+
+
+1. 기존의 요청 매개변수
+  ```html
+  <%
+      String id = request.getParameter("id");
+      String pwd = request.getParameter("pwd");
+      String name = request.getParameter("name");
+      String email = request.getParameter("email");
+  %>
+    ...
+    ...
+      <td><%=id %></td>
+      <td><%=name %></td>
+      <td><%=email %></td>
+  ```
+
+2. EL 내장객체를 이용한 매개변수
+  ```html
+  <td>${param.id }</td>
+  <td>${param.name }</td>
+  <td>${param.email }</td>
+  ```
+getParameter() 받지 않고 바로 출력할 수 있다.
+
+
+## EL로 컬렉션 다루기
+
+HashMap 다루는 예제다.
+HashMap에 직접 매핑해서 꺼내는 방법과
+Map안에 List를 저장해서 읽는 방법.
+```html
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"
+    import="pro13.sec01.MemberBean, java.util.*"
+    %>
+
+<%
+	request.setCharacterEncoding("utf-8");
+%>
+
+<!-- MemberBean객체 생성. 파라미터로 들어오는 값을, MemberBean 속성에 맞춰서 매핑 -->
+<jsp:useBean id="m1" class="pro13.sec01.MemberBean" />
+<jsp:setProperty name="m1" property="*"/>
+<!-- ArrayList, HashMap 생성-->
+<jsp:useBean id="memberList" class="java.util.ArrayList" />
+<jsp:useBean id="memberMap" class="java.util.HashMap" />
+
+<%
+	//map객체에 회원 정보 저장
+	memberMap.put("id", "jojo");
+	memberMap.put("pwd", "1234");
+	memberMap.put("name", "김조조");
+	memberMap.put("email", "jojo@naver.com");
+	
+	//MemberBean객체 생성하고, 초기화
+	MemberBean m2 = new MemberBean("kal", "1234","김갈량","kal@daum.com");
+	
+	//리스트에 담는다.
+	memberList.add(m1);
+	memberList.add(m2);
+	
+	//리스트를 맵에 담는다.
+	memberMap.put("memberList", memberList);
+	System.out.println("memberList : " + memberList);
+	System.out.println("memberMap.memberList[1].id: " + memberMap.get("memberList"));
+	
+
+%>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EL로 HashMap다루기</title>
+</head>
+<body>
+<table border='1' align='center'>
+		<tr align='center' bgcolor='#99ccff'>
+			<td width='20%'><b>아이디</b></td>
+			<td width='20%'><b>비밀번호</b></td>
+			<td width='20%'><b>이름</b></td>
+			<td width='20%'><b>이메일</b></td>
+		</tr>
+		<tr align='center'>
+		<!-- map객체에 매핑한 회원 정보 -->
+			<td>${memberMap.id }</td>
+			<td>${memberMap.pwd }</td>
+			<td>${memberMap.name }</td>
+			<td>${memberMap.email }</td>
+		</tr>
+		<tr align='center'>
+		<!-- 회원가입 페이지로부터 받은 회원 정보 -->
+			<td>${memberMap.memberList[0].id }</td>
+			<td>${memberMap.memberList[0].pwd }</td>
+			<td>${memberMap.memberList[0].name }</td>
+			<td>${memberMap.memberList[0].email }</td>
+		</tr>
+		<tr align='center'>
+			<td>${memberMap.memberList[1].id }</td>
+			<td>${memberMap.memberList[1].pwd }</td>
+			<td>${memberMap.memberList[1].name }</td>
+			<td>${memberMap.memberList[1].email }</td>
+		</tr>
+	</table>
+</body>
+</html>
+```
+
+
 
 
 
