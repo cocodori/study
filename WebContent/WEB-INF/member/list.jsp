@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>회원 목록</title>
 </head>
 <body>
 	<c:choose>
@@ -19,6 +19,8 @@
 				<td width='20%'><b>이름</b></td>
 				<td width='20%'><b>이메일</b></td>
 				<td width='20%'><b>가입일</b></td>
+				<td><b>수정</b></td>
+				<td><b>삭제</b></td>
 			</tr>
 			<c:forEach var="member" items="${memberList}">
 			<tr align="center">
@@ -26,12 +28,13 @@
 				<td>${member.name }</td>
 				<td>${member.email }</td>
 				<td>${member.regdate }</td>
+				<td><a href='/m/modifyForm?id=${member.id }'>수정</a></td>
+				<td><a href='/m/remove?id=${member.id }'>삭제</a></td>
 			</tr>
 			</c:forEach>
 		</table>
 	</c:otherwise>
 	</c:choose>
 <center><a href='/m/signup'>회원가입</a></center>
-	
 </body>
 </html>

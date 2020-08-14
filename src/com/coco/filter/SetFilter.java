@@ -12,18 +12,15 @@ import javax.servlet.annotation.WebFilter;
 @WebFilter("/*")
 public class SetFilter implements Filter {
 	public void init(FilterConfig fConfig) throws ServletException {
-		System.out.println("set encoding");
+		System.out.println("set Encoding");
 		System.out.println("set ContentType");
 
 	}
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-			
 		request.setCharacterEncoding("utf-8");
-		System.out.println("1");
 		chain.doFilter(request, response);
 		response.setContentType("text/html;charset=utf-8");
-		System.out.println("2");
 	}
 
 	public void destroy() {

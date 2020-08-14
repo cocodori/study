@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Sign up</title>
 </head>
 <body>
 <h1 style='text-align:center'>회원가입</h1>

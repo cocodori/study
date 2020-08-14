@@ -78,8 +78,73 @@ public class MemberDAO {
 			e.printStackTrace();
 		}
 		
-		
 		return -1;
+	}
+
+	public MemberVO findMember(String id) {
+		System.out.println("id : " + id);
+		String sql = "select * from t_member"
+				+" where id = ?";
+		try(
+			Connection conn = ds.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			) {
+			
+			pstmt.setString(1, id);
+			ResultSet rs = pstmt.executeQuery();
+			
+			rs.next();
+			
+			MemberVO vo =
+					new MemberVO(rs.getString("id"), rs.getString("pwd"), rs.getString("name"), 
+							rs.getString("email"), rs.getDate("regdate"));
+			
+			System.out.println("vo : " + vo);
+			return vo;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void modMember(MemberVO vo) {
+		if(vo == null) return;
 		
+		// 1. db 연결
+		// 2. 수정하려는 회원 정보를 ID로 찾는다.
+		// 3. 해당 ID의 정보를 인자로 받은 vo로 변경한다.
+		String sql = "UPDATE t_member"
+				+" SET pwd = ?, name = ?, email = ?"
+				+" WHERE id = ?";
+		try(
+			Connection conn = ds.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			) {
+
+			pstmt.setString(1, vo.getPwd());
+			pstmt.setString(2, vo.getName());
+			pstmt.setString(3, vo.getEmail());
+			pstmt.setString(4, vo.getId());
+			
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void remove(String id) {
+		System.out.println("id : " + id);
+		String sql = "delete from t_member"
+				+" where id=?";
+		try(
+			Connection conn = ds.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			) {
+			pstmt.setString(1, id);
+			pstmt.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

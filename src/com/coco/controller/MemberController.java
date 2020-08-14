@@ -35,10 +35,19 @@ public class MemberController extends HttpServlet {
 		String action = request.getPathInfo();
 		System.out.println("action : " + action);
 		
-		if(action.equals("/list")) {
+		/* 요청 URL이 '/m/list'일 경우 
+		 * 회원가입 GET
+		 * */
+		if(action.equals("/list")) { 
+			//DB에서 받아온 회원 목록을 request스코프로 바인딩해서 화면으로 보낸다.
 			request.setAttribute("memberList", dao.memberList());
-			nextPage = "list.jsp";
 			
+			//현재 이 서블릿에 위치하고 있는 
+			nextPage = "list";
+			
+		/* 요청 URL이 '/m/addMember'일 경우 
+		 * 회원가입 POST 
+		 * */
 		} else if (action.equals("/addMember")) {
 			String id = request.getParameter("id");
 			String pwd = request.getParameter("pwd");
@@ -46,23 +55,46 @@ public class MemberController extends HttpServlet {
 			String email = request.getParameter("email");
 			MemberVO vo = new MemberVO(id, pwd, name, email);
 			
-			dao.addMember(vo);
-			
 			request.setAttribute("memberList", dao.memberList());
+			
+			nextPage = dao.addMember(vo) == 1 ? "list": "signup";
 
-			
-			nextPage = "list.jsp";
-			
+			/* 요청 URL이 '/m/signup'일 경우 */
 		} else if(action.equals("/signup")) {
-			nextPage = "signup.jsp";
+			nextPage = "signup";
+		
+			/* 요청 URL이 '/m/modify'일 경우 
+			 * 회원 정보 수정 GET
+			 * */
+		} else if (action.equals("/modifyForm")){
+			String id = request.getParameter("id");
+			MemberVO memberInfo = dao.findMember(id);
+			request.setAttribute("memberInfo", memberInfo);
+			nextPage ="/modifyForm";
+			
+		/* 요청 URL이 '/m/modify'일 경우 
+		* 회원정보 수정 POST
+		* */
+		} else if(action.equals("/modify")) {
+			String id = request.getParameter("id");
+			String pwd = request.getParameter("pwd");
+			String name = request.getParameter("name");
+			String email = request.getParameter("email");
+			
+			MemberVO vo = new MemberVO(id, pwd, name, email);
+			
+			System.out.println("vo : " + vo);
+			dao.modMember(vo);
+
+			nextPage = "list";
+			
+		} else if(action.equals("/remove")) { //회원 삭제
+			String id = request.getParameter("id");
+			dao.remove(id);
+			nextPage = "list"; 
 		}
 		
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/member/"+nextPage);
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/member/"+nextPage+".jsp");
 		dispatcher.forward(request, response);
-		
-		
-		
 	} //doHandle()
-	
-
 }
