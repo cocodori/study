@@ -51,13 +51,13 @@ public class MemberController extends HttpServlet {
 		} else if (action.equals("/addMember")) {
 			String id = request.getParameter("id");
 			String pwd = request.getParameter("pwd");
-			String name = request.getParameter("email");
+			String name = request.getParameter("name");
 			String email = request.getParameter("email");
 			MemberVO vo = new MemberVO(id, pwd, name, email);
 			
-			request.setAttribute("memberList", dao.memberList());
-			
 			nextPage = dao.addMember(vo) == 1 ? "list": "signup";
+			
+			request.setAttribute("memberList", dao.memberList());
 
 			/* 요청 URL이 '/m/signup'일 경우 */
 		} else if(action.equals("/signup")) {
@@ -80,17 +80,19 @@ public class MemberController extends HttpServlet {
 			String pwd = request.getParameter("pwd");
 			String name = request.getParameter("name");
 			String email = request.getParameter("email");
-			
+
 			MemberVO vo = new MemberVO(id, pwd, name, email);
 			
-			System.out.println("vo : " + vo);
 			dao.modMember(vo);
+			
+			request.setAttribute("memberList", dao.memberList());
 
 			nextPage = "list";
 			
 		} else if(action.equals("/remove")) { //회원 삭제
 			String id = request.getParameter("id");
 			dao.remove(id);
+			request.setAttribute("memberList", dao.memberList());
 			nextPage = "list"; 
 		}
 		
