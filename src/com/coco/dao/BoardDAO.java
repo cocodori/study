@@ -1,6 +1,7 @@
 package com.coco.dao;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,6 +32,49 @@ public class BoardDAO {
 			e.printStackTrace();
 		}
 	} //BoardDAO()
+	
+	public int delete(int bno) {
+    	String sql = "DELETE FROM t_board WHERE bno = ?";
+    	log.info(sql);
+    	try(
+            Connection conn = ds.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ) {
+        		
+        	pstmt.setInt(1, 44);
+        		
+        	return pstmt.executeUpdate();
+            	
+    	} catch(Exception e) {
+    		e.printStackTrace();
+        }
+    	
+    	return -1;
+	} //delete()
+	
+	public int update(BoardVO vo) {
+    	String sql = "UPDATE t_board " + 
+    			" set title = ?, content= ?" + 
+    			" where bno = ?";
+    	
+    	log.info("vo : " + vo);
+    	
+      	try(
+            Connection conn = ds.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ) {
+      		
+    		pstmt.setString(1, vo.getTitle());
+    		pstmt.setString(2, vo.getContent());
+    		pstmt.setInt(3, vo.getBno());
+      		
+    		return pstmt.executeUpdate();
+    		
+            } catch (Exception e) {
+            	e.printStackTrace();
+            }
+		return -1;
+	} //update()
 	
 	public BoardVO getPost(int no) {
 		log.info("no : " + no);

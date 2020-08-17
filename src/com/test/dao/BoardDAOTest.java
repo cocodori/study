@@ -24,6 +24,28 @@ public class BoardDAOTest {
     private static final String PW = "1234";
     
     @Test
+    public void deleteTest() throws ClassNotFoundException {
+    	Class.forName(DRIVER);
+    	String sql = "DELETE FROM t_board WHERE bno = ?";
+    	log.info(sql);
+    	
+    	try(
+        	Connection conn = DriverManager.getConnection(URL,USER,PW);
+        	PreparedStatement pstmt = conn.prepareStatement(sql);
+        	) {
+    		
+    		assertNotNull(conn);
+    		
+    		pstmt.setInt(1, 44);
+    		
+    		assertTrue(pstmt.executeUpdate()==1);
+        	
+        	} catch(Exception e) {
+        		e.printStackTrace();
+        	}
+       }
+    
+    @Test
     public void updateTest() throws ClassNotFoundException {
     	Class.forName(DRIVER);
     	String sql = "UPDATE t_board " + 

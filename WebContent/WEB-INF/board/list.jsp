@@ -67,5 +67,17 @@
 	</c:choose>
 </table>
 <a class='cls1' href='/board/write'><p class='cls2'>글쓰기</a>
+
+<script>
+	window.onload = () => {
+		const removeResult = '${result }'
+		if(removeResult == 'success') {
+			alert('삭제 되었습니다.')
+		} else if(removeResult=='fail') {
+			alert('다시 시도하세요');
+			return;
+		}
+	}
+</script>
 </body>
 </html>

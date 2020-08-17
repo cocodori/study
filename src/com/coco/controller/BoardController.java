@@ -71,9 +71,38 @@ public class BoardController extends HttpServlet {
 			request.setAttribute("post", boardService.getPost(no));
 
 			nextPage="/WEB-INF/board/post.jsp";
+		} else if(action.equals("/modify")) {
+     		//수정한 데이터를 받는다.
+			String title = request.getParameter("title");
+			String content = request.getParameter("content");
+			int bno = Integer.parseInt(request.getParameter("bno"));
+			BoardVO vo = new BoardVO();
+
+			//수정한 데이터로 vo초기화
+			vo.setBno(bno);
+			vo.setTitle(title);
+			vo.setContent(content);
 			
-		} 
-		
+			log.info("VO : " + vo);
+			
+            //수정하는 메서드 호출
+			boardService.modify(vo);
+			
+            //내가 수정한 게시물로 이동
+			nextPage = "/board/post?no="+bno;
+		} else if (action.equals("/remove")) {
+			int bno = Integer.parseInt(request.getParameter("bno"));
+			log.info("bno : " + bno);
+
+			int removeResult = boardService.remove(bno);
+			
+			String msg = removeResult==1 ? "success" : "fail";
+			
+			//list페이지로 성공 여부 메세지를 보낸다.
+			//성공하면 list창에 alert창을 띄워 삭제했다는 메세지를 띄운다.
+			request.setAttribute("result", "success");
+			nextPage ="/board/list";
+		}
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher(nextPage);
 		dispatcher.forward(request, response);
