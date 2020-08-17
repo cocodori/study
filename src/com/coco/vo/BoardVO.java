@@ -10,6 +10,14 @@ public class BoardVO {
 	private Date regdate;
 	
 	public BoardVO() {	}
+	
+	public BoardVO(String title, String content, String imgName, String id) {
+		this.title = title;
+		this.content = content;
+		this.imgName = imgName;
+		this.id = id;
+	}
+	
 	public BoardVO(int bno, int p_bno, int level, String title, String content, String id, Date regdate) {
 		super();
 		this.bno = bno;
@@ -32,6 +40,7 @@ public class BoardVO {
 		this.id = id;
 		this.regdate = regdate;
 	}
+
 	public int getBno() {
 		return bno;
 	}

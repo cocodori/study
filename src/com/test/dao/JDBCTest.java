@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.logging.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -15,6 +16,7 @@ import javax.sql.DataSource;
 import org.junit.Test;
 
 public class JDBCTest {
+	private final static Logger log = Logger.getGlobal();
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String URL = "jdbc:mysql://127.0.0.1:3306/servletex?serverTimezone=Asia/Seoul";
     private static final String USER = "servlet";
@@ -33,11 +35,11 @@ public class JDBCTest {
 			) {
 			
 			assertNotNull(conn);
-			System.out.println("conn : " + conn);
-			System.out.println("pstmt : " + pstmt);
+			log.info("conn : " + conn);
+			log.info("pstmt : " + pstmt);
 			
 			rs.next();
-			System.out.println(rs.getString("time"));
+			log.info(rs.getString("time"));
 			
 		} catch(Exception e) {
 			e.printStackTrace();

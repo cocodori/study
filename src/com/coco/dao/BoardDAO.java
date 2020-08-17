@@ -1,11 +1,15 @@
 package com.coco.dao;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -15,6 +19,7 @@ import javax.sql.DataSource;
 import com.coco.vo.BoardVO;
 
 public class BoardDAO {
+	private final static Logger log = Logger.getGlobal();
 	DataSource ds;
 	
 	public BoardDAO() {
@@ -26,6 +31,62 @@ public class BoardDAO {
 			e.printStackTrace();
 		}
 	} //BoardDAO()
+	
+	public BoardVO getPost(int no) {
+		log.info("no : " + no);
+    	String sql = "SELECT * FROM t_board"
+    			+" WHERE bno > 0 AND bno = ?";
+    	log.info(sql);
+       	try(
+        	Connection conn = ds.getConnection();
+        	PreparedStatement pstmt = conn.prepareStatement(sql);
+        	) {
+    		pstmt.setInt(1, no);
+    		ResultSet rs = pstmt.executeQuery();
+    			
+    		rs.next();
+
+    		BoardVO vo = new BoardVO();
+    			
+    		vo.setBno(rs.getInt("bno"));
+    		vo.setP_bno(rs.getInt("p_bno"));
+    		vo.setTitle(rs.getString("title"));
+    		vo.setContent(rs.getString("content"));
+    		vo.setImgName(rs.getString("imgName"));
+    		vo.setId(rs.getString("id"));
+    		vo.setRegdate(rs.getDate("regdate"));
+
+    		log.info("vo : " + vo);
+    		
+    		return vo;
+
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+		
+		return null;
+	}
+	
+	public int insert(BoardVO vo) {
+    	String sql = "INSERT INTO t_board(title, content, imgName, id)"
+    			+" VALUES(?,?,?,?)";
+		
+    	log.info(sql);
+    	
+    	try(
+			Connection conn = ds.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			){
+			pstmt.setString(1, vo.getTitle());
+			pstmt.setString(2, vo.getContent());
+			pstmt.setString(3, vo.getImgName());
+			pstmt.setString(4, vo.getId());
+			
+			return pstmt.executeUpdate();
+			
+		}catch(Exception e) {e.printStackTrace();}
+		return -1;
+	}
 	
 	public List<BoardVO> getList() {
 		List<BoardVO> list = new ArrayList<>();
@@ -46,7 +107,7 @@ public class BoardDAO {
 				"         WHERE @id IS NOT NULL) fnc\r\n" + 
 				"  JOIN t_board t ON fnc.id = t.bno";
 		
-		System.out.println(sql);
+		log.info(sql);
 		
 		try(	//try with resources
 			Connection conn = ds.getConnection();

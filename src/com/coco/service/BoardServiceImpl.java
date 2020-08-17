@@ -18,4 +18,14 @@ public class BoardServiceImpl implements BoardService {
 	public List<BoardVO> getList() {
 		return dao.getList();
 	}
+
+	@Override
+	public int register(BoardVO vo) {
+		return dao.insert(vo);
+	}
+
+	@Override
+	public BoardVO getPost(int no) {
+		return dao.getPost(no);
+	}
 }
