@@ -35,7 +35,7 @@
 			<input type='button' id='modify' value='수정'>
 			<input type='button' id='remove' value='삭제'> 
 			<input type='button' id='list' value='목록'>
-			<input type='button' id='rePost' value='답글'></td> 
+			<input type='button' id='rePost' value='답변'></td> 
 		</tr>
 	</table>
 	
@@ -49,10 +49,21 @@
 		const rePost = document.getElementById('rePost')
 		const modify = document.getElementById('modify')
 		const actionForm = document.getElementById('action')
+		const id = document.getElementById('id')
 		
-		console.log(remove)
-		console.log(list)
-		console.log(rePost)
+		//답글
+		document.getElementById('rePost').addEventListener("click", () => {
+			actionForm.method = 'post'
+			actionForm.action = '/board/rePost'
+			actionForm.submit()
+			
+		})
+		
+		if(id.value.length==0||id==='') {
+			document.getElementById('modify').style.display='none'		
+			document.getElementById('rePost').style.display='none'		
+			document.getElementById('remove').style.display='none'		
+		}
 
 		//목록으로
 		list.addEventListener("click", () => {

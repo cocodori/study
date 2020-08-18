@@ -34,6 +34,26 @@ public class BoardDAO {
 	} //BoardDAO()
 	
 	public int delete(int bno) {
+		String sql = "CALL deletePost(?)";
+    	log.info(sql);
+    	try(
+            Connection conn = ds.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ) {
+        		
+        	pstmt.setInt(1, bno);
+        		
+        	return pstmt.executeUpdate();
+        		
+    	} catch (Exception e) {
+    		log.info(e.getMessage());
+        }
+		return -1;
+	}
+	
+/*	
+ * 이 메서드는 자식 노드에 대해서는 아무런 처리도 하지 않으므로 주석처리한다.
+	public int delete(int bno) {
     	String sql = "DELETE FROM t_board WHERE bno = ?";
     	log.info(sql);
     	try(
@@ -41,7 +61,7 @@ public class BoardDAO {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             ) {
         		
-        	pstmt.setInt(1, 44);
+        	pstmt.setInt(1, bno);
         		
         	return pstmt.executeUpdate();
             	
@@ -51,6 +71,7 @@ public class BoardDAO {
     	
     	return -1;
 	} //delete()
+	*/
 	
 	public int update(BoardVO vo) {
     	String sql = "UPDATE t_board " + 
@@ -112,8 +133,8 @@ public class BoardDAO {
 	}
 	
 	public int insert(BoardVO vo) {
-    	String sql = "INSERT INTO t_board(title, content, imgName, id)"
-    			+" VALUES(?,?,?,?)";
+    	String sql = "INSERT INTO t_board(title, content, imgName, id, p_bno)"
+    			+" VALUES(?,?,?,?,?)";
 		
     	log.info(sql);
     	
@@ -125,6 +146,7 @@ public class BoardDAO {
 			pstmt.setString(2, vo.getContent());
 			pstmt.setString(3, vo.getImgName());
 			pstmt.setString(4, vo.getId());
+			pstmt.setInt(5, vo.getP_bno());
 			
 			return pstmt.executeUpdate();
 			

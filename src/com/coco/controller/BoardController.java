@@ -47,15 +47,22 @@ public class BoardController extends HttpServlet {
 		} else if(action.equals("/write")) {
 			nextPage = "/WEB-INF/board/write.jsp";
 			
-		}  else if (action.equals("/register")) {
+		}  else if (action.equals("/register") || action.equals("/rePostRegister")) {
 			//등록한 게시물 데이터를 받아온다.
 			String title = request.getParameter("title");
 			String content = request.getParameter("content");
 			String imgName = request.getParameter("imgName");
 			String id = request.getParameter("id");
+			int p_bno = Integer.parseInt(request.getParameter("pbno"));
 			
 			//받아온 데이터로 VO객체를 생성한다.
-			BoardVO vo = new BoardVO(title, content, imgName, id);
+			BoardVO vo = new BoardVO();
+			
+			vo.setTitle(title);
+			vo.setContent(content);
+			vo.setImgName(imgName);
+			vo.setId(id);
+			vo.setP_bno(p_bno);
 			
 			log.info("vo : " + vo);
 			
@@ -63,6 +70,7 @@ public class BoardController extends HttpServlet {
 			//결과가 1이라면 성공, 그 외는 실패..
 			nextPage = boardService.register(vo) == 1
 							? "/board/list" : "error";
+			
 		} else if(action.equals("/post")) {
 			//조회한 게시물 번호
 			int no = Integer.parseInt(request.getParameter("no"));
@@ -100,9 +108,15 @@ public class BoardController extends HttpServlet {
 			
 			//list페이지로 성공 여부 메세지를 보낸다.
 			//성공하면 list창에 alert창을 띄워 삭제했다는 메세지를 띄운다.
-			request.setAttribute("result", "success");
+			request.setAttribute("result", msg);
 			nextPage ="/board/list";
-		}
+		} else if (action.equals("/rePost")) {
+			int bno = Integer.parseInt(request.getParameter("bno"));
+			log.info("bno : " +bno);
+			request.setAttribute("bno", bno);
+			
+			nextPage="/WEB-INF/board/rePost.jsp";
+		} 
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher(nextPage);
 		dispatcher.forward(request, response);

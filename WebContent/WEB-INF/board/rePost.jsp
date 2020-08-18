@@ -1,16 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>게시물 등록</title>
+<title>답변 작성</title>
 </head>
 <body>
-<h1>글쓰기</h1>
-<form name='action' method='post' action='/board/register'>
+<h1>답변</h1>
+<form name='action' method='post' action='/board/rePostRegister'>
 	<table>
 		<tr>
 			<td align="right"> 제목 </td>
@@ -27,20 +25,21 @@
 		<tr>
 			<td align="right"> </td>
 			<td colspan="2">
-				<input type='submit' value='글쓰기'>
-				<input type='button' id='list' value='목록'>
+				<input type='submit' value='답변 등록'>
+				<input type='button' id='back' value='이전'>
 			</td>
 		</tr>
 	</table>
-	<input type="hidden" name='pbno' value='0'>
+	<input type="hidden" id='pbno' name='pbno' value='${bno }'>
 </form>
-
-<script type="text/javascript">
+<script>
 	window.onload = () => {
-		const list = document.getElementById('list')
+		const back = document.getElementById('back')
 		
-		list.addEventListener("click", () => {
-			location.replace('/board/list')
+		//'이전'버튼 누르면 원글로 돌아감
+		back.addEventListener("click", () => {
+			const pbno = document.getElementById('pbno')
+			location.replace('/board/post?no='+pbno.value)					
 		})
 	}
 </script>

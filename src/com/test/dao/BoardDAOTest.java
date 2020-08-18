@@ -24,6 +24,27 @@ public class BoardDAOTest {
     private static final String PW = "1234";
     
     @Test
+    public void deleteProcedureTest() throws ClassNotFoundException {
+    	Class.forName(DRIVER);
+    	String sql = "CALL deletePost(?)";
+    	log.info(sql);
+    	try(
+            Connection conn = DriverManager.getConnection(URL,USER,PW);
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            	) {
+    		
+    		pstmt.setInt(1, 26);
+    		
+    		int result = pstmt.executeUpdate();
+    		
+    		assertTrue(result == 1);
+    		
+    	} catch (Exception e) {
+    		log.info(e.getMessage());
+    	}
+    }
+    
+    @Test
     public void deleteTest() throws ClassNotFoundException {
     	Class.forName(DRIVER);
     	String sql = "DELETE FROM t_board WHERE bno = ?";
@@ -111,8 +132,8 @@ public class BoardDAOTest {
     public void insertTest() throws ClassNotFoundException{
     	Class.forName(DRIVER);
     	
-    	String sql = "INSERT INTO t_board(title, content, imgName, id)"
-    			+" VALUES(?,?,?,?)";
+    	String sql = "INSERT INTO t_board(title, content, imgName, id, p_bno)"
+    			+" VALUES(?,?,?,?,?)";
     	log.info(sql);
     	
     	try(
@@ -123,11 +144,16 @@ public class BoardDAOTest {
     		log.info(conn.toString());
     		log.info(pstmt.toString());
     		
-    		for (int i=1; i<=10; i++) {
-    			pstmt.setString(1, "저도 도배 " + i);
+    		for (int i=1; i<=3; i++) {
+    			pstmt.setString(1, "하이룽" + i);
     			pstmt.setString(2, "hello world " + i);
     			pstmt.setString(3, null);
-    			pstmt.setString(4, "coco");
+    			pstmt.setString(4, "wooa");
+    			
+    			//0 : 자신이 원글.
+    			//그 외 숫자 : 부모 글의 게시물 번호(bno)
+    			//pstmt.setInt(5, 2); //2번 글의 답변글
+    			pstmt.setInt(5, 0);
     			
     			//성공하면 1을 반환한다.
         		int result = pstmt.executeUpdate();
