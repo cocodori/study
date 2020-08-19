@@ -1,8 +1,6 @@
 package com.coco.controller;
 
 import java.io.IOException;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -16,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.coco.service.BoardService;
 import com.coco.service.BoardServiceImpl;
 import com.coco.vo.BoardVO;
-import com.test.dao.JDBCTest;
+import com.coco.vo.PageOper;
+import com.coco.vo.PageVO;
 
 //'/board' 경로로 들어오는 모든 요청은 이 컨트롤러를 거친다.
 @WebServlet("/board/*")
@@ -42,7 +41,22 @@ public class BoardController extends HttpServlet {
 		 * service에서 게시글 목록을 불러오는 메서드를 바인딩 해서 화면으로 보낸다.
 		 */
 		if(action == null || action.equals("/list")) {
-			request.setAttribute("boardList", boardService.getList());
+			//화면으로부터 페이지 데이터를 받아서 PageVO를 초기화한다.
+			int pageNum = request.getParameter("page") != null  ? 
+					Integer.parseInt(request.getParameter("page")) : 1;
+			int pageAmount = request.getParameter("amount") != null ?
+					Integer.parseInt(request.getParameter("amount")) : 10;
+					
+			PageVO page = new PageVO(pageNum, pageAmount);
+			
+			//전체 게시물의 개수를 조회한다.
+			int total = boardService.getTotal();
+			
+			//요청받은 페이지 데이터를 화면으로 전달한다.
+			request.setAttribute("boardList", boardService.getList(page));
+			
+			//다음 페이지 또는 이전 페이지, 어떤 것을 나타내야 하는지 연산한 결과를 화면으로 보낸다.
+			request.setAttribute("page", new PageOper(page, total));
 			nextPage="/WEB-INF/board/list.jsp";
 		} else if(action.equals("/write")) {
 			nextPage = "/WEB-INF/board/write.jsp";

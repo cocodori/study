@@ -2,7 +2,6 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -40,7 +39,7 @@
 		<c:when test="${boardList != null }">
 			<c:forEach var="post" items="${boardList }" varStatus="postNum">
 			<tr align="center">
-				<td width="5%">${postNum.count }</td>
+				<td width="5%">${post.bno}</td>
 				<td width="10%">${post.id }</td>
 				<td align='left' width="35%">
 				<span style='padding-right:30px'></span>
@@ -65,6 +64,24 @@
 			</c:forEach>
 		</c:when>
 	</c:choose>
+	
+	<!--Start Paging -->
+	<td colspan="4">
+	<p align="center"><b><span style='font-size=9pt;'>
+	<c:if test="${page.prev }">
+		<a href="/board/list?page=${page.startPage -1 }">이전 페이지</a>
+	</c:if>
+&nbsp;<c:forEach var="num" begin="${page.startPage }" end="${page.endPage }">
+			<a href="/board/list?page=${num }">${num }</a> &nbsp;
+	</c:forEach>
+	<c:if test="${page.next }">
+		<a href="/board/list?page=${page.endPage + 1 }">다음 페이지</a>
+	</c:if>
+	</span></b>
+	</p>
+	</td>
+	<!--End Paging -->
+	
 </table>
 <a class='cls1' href='/board/write'><p class='cls2'>글쓰기</a>
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.coco.dao.BoardDAO;
 import com.coco.vo.BoardVO;
+import com.coco.vo.PageVO;
 
 public class BoardServiceImpl implements BoardService {
 
@@ -15,8 +16,8 @@ public class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
-	public List<BoardVO> getList() {
-		return dao.getList();
+	public List<BoardVO> getList(PageVO page) {
+		return dao.getList(page);
 	}
 
 	@Override
@@ -37,5 +38,10 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public int remove(int bno) {
 		return dao.delete(bno);
+	}
+
+	@Override
+	public int getTotal() {
+		return dao.getTotal();
 	}
 }

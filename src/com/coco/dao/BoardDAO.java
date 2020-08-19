@@ -1,10 +1,6 @@
 package com.coco.dao;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -18,6 +14,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.coco.vo.BoardVO;
+import com.coco.vo.PageVO;
 
 public class BoardDAO {
 	private final static Logger log = Logger.getGlobal();
@@ -32,6 +29,25 @@ public class BoardDAO {
 			e.printStackTrace();
 		}
 	} //BoardDAO()
+		
+	public int getTotal() {
+    	String sql = "SELECT COUNT(*) as total FROM t_board";
+    	log.info(sql);
+    	try(
+            Connection conn = ds.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+    		ResultSet rs = pstmt.executeQuery();
+    			) {
+    		rs.next();
+    		
+    		return rs.getInt("total");
+    		
+    	} catch (Exception e) {
+    		log.info(e.getMessage());
+    	}
+    	
+    	return -1;
+	}
 	
 	public int delete(int bno) {
 		String sql = "CALL deletePost(?)";
@@ -154,7 +170,7 @@ public class BoardDAO {
 		return -1;
 	}
 	
-	public List<BoardVO> getList() {
+	public List<BoardVO> getList(PageVO page) {
 		List<BoardVO> list = new ArrayList<>();
 		
 		String sql = "SELECT CASE WHEN LEVEL-1 > 0 then CONCAT(CONCAT(REPEAT('    ', level  - 1),''), t.title)\r\n" + 
@@ -171,15 +187,20 @@ public class BoardDAO {
 				"        FROM (SELECT @start_with:=0, @id:=@start_with, @level:=0) vars\r\n" + 
 				"          JOIN t_board\r\n" + 
 				"         WHERE @id IS NOT NULL) fnc\r\n" + 
-				"  JOIN t_board t ON fnc.id = t.bno";
+				"  JOIN t_board t ON fnc.id = t.bno " +
+				"limit ?, ?";
 		
 		log.info(sql);
 		
 		try(	//try with resources
 			Connection conn = ds.getConnection();
 			PreparedStatement pstmt = conn.prepareCall(sql);
-			ResultSet rs = pstmt.executeQuery();
 			) {
+
+			pstmt.setInt(1, page.getSkip());
+			pstmt.setInt(2, page.getAmount());
+			
+			ResultSet rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
 				int level = rs.getInt("level");

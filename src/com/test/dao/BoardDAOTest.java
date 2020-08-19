@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 import org.junit.Test;
 
 import com.coco.vo.BoardVO;
+import com.coco.vo.PageOper;
+import com.coco.vo.PageVO;
 
 public class BoardDAOTest {
 	private final static Logger log = Logger.getGlobal();
@@ -22,6 +24,93 @@ public class BoardDAOTest {
     private static final String URL = "jdbc:mysql://127.0.0.1:3306/servletex?serverTimezone=Asia/Seoul";
     private static final String USER = "servlet";
     private static final String PW = "1234";
+    
+    @Test
+    public void getListPaging() throws ClassNotFoundException {
+    	
+    	PageVO vo = new PageVO();
+
+    	Class.forName(DRIVER);
+    	String sql = "SELECT *\r\n" + 
+    			"FROM \r\n" + 
+    			"	(SELECT CASE WHEN LEVEL-1 > 0 then CONCAT(CONCAT(REPEAT('    ', level  - 1),' '), t.title)\r\n" + 
+    			"                ELSE t.title\r\n" + 
+    			"          END AS title\r\n" + 
+    			"    , t.bno\r\n" + 
+    			"    , t.p_bno\r\n" + 
+    			"    ,t.content\r\n" + 
+    			"    ,t.id\r\n" + 
+    			"    ,regdate\r\n" + 
+    			"    , fnc.level\r\n" + 
+    			" FROM\r\n" + 
+    			"    (SELECT fnc_hierarchy() AS id, @level AS level\r\n" + 
+    			"       FROM (SELECT @start_with:=0, @id:=@start_with, @level:=0) \r\n" + 
+    			"       vars JOIN t_board\r\n" + 
+    			"        WHERE @id IS NOT NULL) fnc\r\n" + 
+    			" JOIN t_board t ON fnc.id = t.bno) t\r\n" + 
+    			" ORDER BY bno limit ?, ?" + 
+    			";";
+    	log.info(sql);
+    	try(
+            Connection conn = DriverManager.getConnection(URL,USER,PW);
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+    		) {
+    		
+    		vo.setPage(1);	//1페이지
+    		vo.setAmount(10);	//10개의 게시물
+    		
+    		pstmt.setInt(1, vo.getSkip());
+    		pstmt.setInt(2, vo.getAmount());
+    		
+    		ResultSet rs = pstmt.executeQuery();
+    		
+    		assertNotNull(rs);
+    		
+    		while (rs.next()) {
+    			int bno = rs.getInt("bno");
+    			String title = rs.getString("title");
+    			String content = rs.getString("content");
+    			String id = rs.getString("id");
+
+    			log.info("bno : " + bno);
+    			log.info("title : " + title);
+    			log.info("content : " + content);
+    			log.info("id : " + id);
+    		}
+    		
+    		//임의의 수
+    		int total = 515;
+    		
+    		log.info("page info : " + new PageOper(vo, total));
+    		
+    	} catch (Exception e) {
+    		log.info(e.getMessage());
+    	}
+    }
+    
+    @Test
+    public void getTotalTest() throws ClassNotFoundException {
+    	Class.forName(DRIVER);
+    	String sql = "SELECT COUNT(*) as total FROM t_board";
+    	log.info(sql);
+    	try(
+            Connection conn = DriverManager.getConnection(URL,USER,PW);
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+    		ResultSet rs = pstmt.executeQuery();
+    			) {
+    		rs.next();
+    		int total = rs.getInt("total");
+    		
+    		log.info("total : " + total);
+    		
+    		assertNotNull(total);
+    		assertTrue(total > 0);
+    		
+    		
+    	} catch (Exception e) {
+    		log.info(e.getMessage());
+    	}
+    }
     
     @Test
     public void deleteProcedureTest() throws ClassNotFoundException {
@@ -144,7 +233,7 @@ public class BoardDAOTest {
     		log.info(conn.toString());
     		log.info(pstmt.toString());
     		
-    		for (int i=1; i<=3; i++) {
+    		for (int i=1; i<=90; i++) {
     			pstmt.setString(1, "하이룽" + i);
     			pstmt.setString(2, "hello world " + i);
     			pstmt.setString(3, null);
