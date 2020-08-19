@@ -4,6 +4,22 @@
 - MySQL
 - vanilla Javascript
 
+> 참고 : 자바 웹을 다루는 기술
+
+servlet/jsp를 이용해서 게시판을 어떻게 만드나, 스프링과는 어떻게 다른가 궁금해서 만들어보았다.
+간단하게 crud만 구현해볼 목적이었으므로 레이아웃은 크게 신경쓰지 않았다.
+- 우선 가장 불편했던 점은 자동 수집이었다. VO객체를 직접 수집하지 못하니 하나하나 일일이 request.getParameter로 받아서 직접 vo를 생성해야 하니... 몹시 귀찮은 작업이었다.
+
+- MyBatis 같은 프레임워크를 이용하지 못해서 하나하나 DataSource로 커넥션을 만들고... PreparedStatement로 값을 지정하고, ResultSet으로 결과를 받고 하는 일이 몹시 귀찮았다.
+
+- 이건 참고 서적의 문제일지도 모르겠다. get요청과 post요청 모두 doHandle()를 만들어서 한 번에 처리한다.
+이때 생기는 문제점은 반드시 post로만 접근해야 하는 url에 get방식으로도 접근할 수 있게 된다는 것이다.
+@GetMapping이나 @PostMapping 같은 애노테이션을 사용할 수 있었으면 안정성 면에서도 좋았을 듯하다.
+
+- 그리고 영속 계층에서만 테스트를 진행할 수밖에 없었던 것은 좀 아쉬웠다. 능력 부족. 이것 또한 스프링에서는 아무 문제 없이 진행할 수 있었다.
+
+
+
 > 보다 자세한 내용은 블로그에 정리해두었습니다. [✈이동](https://velog.io/@cocodori/series/ServletJSP-%EB%8B%B5%EB%B3%80%ED%98%95-%EA%B2%8C%EC%8B%9C%ED%8C%90-%EB%A7%8C%EB%93%A4%EA%B8%B0)
 
 # 게시물 목록(/board/list)
@@ -209,4 +225,10 @@ if(id.value.length==0||id==='') {
 register메서드에 단순히 조건을 하나 추가해주기만 하면 된다! 이른바 재사용성!
 
 ![](https://images.velog.io/images/cocodori/post/71bbb90d-51c1-4db7-adbd-ffd5f0699a54/image.png)
+
+# 페이징
+- 첫 페이지와 마지막 페이지
+![](https://images.velog.io/images/cocodori/post/66a82df8-aaa2-4c16-b5ea-1098477a7c05/image.png)
+
+![](https://images.velog.io/images/cocodori/post/dfb2ea9f-89ce-4bbe-bf44-f8b0d0f55941/image.png)
 
