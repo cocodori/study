@@ -1,8 +1,8 @@
-# SpringEx
+# ✏ Spring Study
 
 > [코드로 배우는 스프링 웹 프로젝트](http://www.yes24.com/Product/Goods/64340061)를 참고하여 공부한 내용을 정리한 저장소입니다.
 
-필기한 내용은 '필기' 폴더에서 확인할 수 있습니다.
+필기한 내용은 ['필기'](https://github.com/cocodori/SpringEx/tree/master/%ED%95%84%EA%B8%B0) 폴더에서 확인할 수 있습니다.
 [블로그](https://velog.io/@cocodori/series/Spring)에서도 확인할 수 있습니다.
 
 
