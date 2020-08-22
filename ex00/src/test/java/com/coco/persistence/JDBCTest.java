@@ -20,9 +20,9 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class JDBCTest {
 	
-    private static final String URL= "jdbc:mysql://127.0.0.1:3306/springex?serverTimezone=Asia/Seoul";;
-    private static final String USER= "springuser";;
-    private static final String PW= "springuser";;
+    private static final String URL= "jdbc:mysql://127.0.0.1:3306/springex?serverTimezone=Asia/Seoul";
+    private static final String USER= "springuser";
+    private static final String PW= "springuser";
 	
 	static {
 		try {
