@@ -7,13 +7,18 @@
 	SELECT *
 	FROM tbl_board
 	WHERE bno > 0
-	LIMIT 0, 30
+	ORDER BY bno DESC
+	LIMIT 30
 </select>
-
+	
 <insert id="insert">
 	INSERT INTO tbl_board(title, content, writer)
 	VALUES (#{title}, #{content}, #{writer})
 </insert>
+
+<select id="lastInsertId" resultType="Long">
+	SELECT last_insert_id()
+</select>
 
 <select id="getPost" resultType="com.coco.domain.BoardVO">
 	SELECT *

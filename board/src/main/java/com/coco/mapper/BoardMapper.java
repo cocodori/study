@@ -10,4 +10,6 @@ public interface BoardMapper {
 	BoardVO getPost(Long bno);
 	int update(BoardVO boardVO);
 	int delete(Long bno);
+	
+	Long lastInsertId();
 }

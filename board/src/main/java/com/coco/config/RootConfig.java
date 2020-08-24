@@ -14,7 +14,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 //참조할 패키지
-@ComponentScan(basePackages = {"com.coco.controller"})
+@ComponentScan(basePackages = {"com.coco.service"})
 @MapperScan(basePackages = {"com.coco.mapper"})
 public class RootConfig {
 
@@ -23,7 +23,7 @@ public class RootConfig {
 		HikariConfig config = new HikariConfig();
 		
 		config.setDriverClassName("net.sf.log4jdbc.sql.jdbcapi.DriverSpy");
-		config.setJdbcUrl("jdbc:log4jdbc:mysql://127.0.0.1:3306/springex?serverTimezone=Asia/Seoul");
+		config.setJdbcUrl("jdbc:log4jdbc:mysql://127.0.0.1:3306/springstudy?serverTimezone=Asia/Seoul");
 		config.setUsername("springuser");
 		config.setPassword("springuser");
 		config.addDataSourceProperty("cachePrepStmts", "true");

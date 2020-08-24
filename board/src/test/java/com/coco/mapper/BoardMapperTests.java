@@ -36,7 +36,7 @@ public class BoardMapperTests {
 	@Test
 	public void insertTest() {
 		BoardVO boardVO = BoardVO.builder()
-				.title("Mapper Insert Test")
+				.title("Mapper Insert Test2")
 				.content("Hello MyBatis Mapper")
 				.writer("user0")
 				.build();
@@ -46,6 +46,10 @@ public class BoardMapperTests {
 		log.info("result : " + result);
 		
 		assertTrue(result == 1);
+		
+		Long lastInsertId = boardMapper.lastInsertId();
+		
+		log.info("LAST INSERT ID : " + lastInsertId);
 	}
 	
 	@Test
