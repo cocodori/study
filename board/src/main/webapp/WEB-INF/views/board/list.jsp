@@ -36,7 +36,7 @@
 						<c:forEach var="post" items="${list }" begin="0" end="${list.size()}">
 							<tr>
 								<td>${post.bno }</td>
-								<td>${post.title }</td>
+								<td><a class='move' href='/board/post?no=${post.bno}'>${post.title }</a></td>
 								<td>${post.writer }</td>
 								<td>
 									<fmt:formatDate value="${post.regdate }" pattern="yyyy-MM-dd"/>
@@ -55,9 +55,14 @@
 
 <script>
 
+$(document).ready( () => {
 	$(".write").on("click", () => {
 		location.replace("/board/write")
-	});
+	})
+	
+}) //docu
+	
+
 
 </script>
 

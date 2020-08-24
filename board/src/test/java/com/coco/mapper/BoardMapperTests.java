@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,21 +36,25 @@ public class BoardMapperTests {
 	
 	@Test
 	public void insertTest() {
-		BoardVO boardVO = BoardVO.builder()
-				.title("Mapper Insert Test2")
-				.content("Hello MyBatis Mapper")
-				.writer("user0")
-				.build();
 		
-		int result = boardMapper.insert(boardVO);
-		
-		log.info("result : " + result);
-		
-		assertTrue(result == 1);
-		
-		Long lastInsertId = boardMapper.lastInsertId();
-		
-		log.info("LAST INSERT ID : " + lastInsertId);
+		IntStream.rangeClosed(1, 10).forEach(i -> {
+			BoardVO boardVO = BoardVO.builder()
+					.title("Mapper Insert Test2" +i)
+					.content("Hello MyBatis Mapper" +i)
+					.writer("user0"+i)
+					.build();
+			
+			int result = boardMapper.insert(boardVO);
+			
+			log.info("result : " + result);
+			
+			assertTrue(result == 1);
+			
+			Long lastInsertId = boardMapper.lastInsertId();
+			
+			log.info("LAST INSERT ID : " + lastInsertId);
+			
+		});
 	}
 	
 	@Test
