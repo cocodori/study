@@ -5,7 +5,6 @@
 필기한 내용은 ['필기'](https://github.com/cocodori/SpringEx/tree/master/%ED%95%84%EA%B8%B0) 폴더에서 확인할 수 있습니다.
 [블로그](https://velog.io/@cocodori/series/Spring)에서도 확인할 수 있습니다.
 
-
 # 스프링이라는 프레임 워크
 
 ![](https://images.velog.io/images/cocodori/post/a58ab921-eed5-48ac-b223-e4e8d8c57a41/Wood-framed_house.jpg)
@@ -51,5 +50,3 @@
 
 - 트랜잭션
   - 트랜젹선 관리를 어노테이션이나 XML설정만으로 끝낼 수 있다.
-
-> 이 시리즈는  🔎 [코드로 배우는 스프링 웹 프로젝트](http://www.yes24.com/Product/Goods/64340061?OzSrank=1)를 참고했습니다.

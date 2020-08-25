@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.coco.config.RootConfig;
 import com.coco.domain.BoardVO;
+import com.coco.domain.Page;
 
 import lombok.extern.log4j.Log4j;
 
@@ -48,7 +49,7 @@ public class BoardServiceTest {
 	
 	@Test
 	public void getAllPostTest() {
-		List<BoardVO> allPostList = boardService.getAllPost();
+		List<BoardVO> allPostList = boardService.getAllPost(new Page(3, 10));
 		
 		assertNotNull(allPostList);
 		

@@ -8,7 +8,7 @@
 	FROM tbl_board
 	WHERE bno > 0
 	ORDER BY bno DESC
-	LIMIT 30
+	LIMIT #{skip}, #{amount}
 </select>
 	
 <insert id="insert">
@@ -31,6 +31,7 @@
 	UPDATE tbl_board
 	SET title = #{title}
 		,content = #{content}
+		,moddate = now()
 	WHERE bno = #{bno}
 </update>
 
@@ -38,5 +39,10 @@
 	DELETE FROM tbl_board
 	WHERE bno = #{bno}
 </delete>
+
+<select id="getTotal" resultType="Long">
+	SELECT COUNT(*)
+	FROM tbl_board
+</select>
 
 </mapper>

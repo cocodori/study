@@ -29,6 +29,20 @@
 							<input type='text' class="form-control py-4" name="writer" 
 							value="${post.writer }" disabled>
 						</div>
+						<div class="form-group">
+							<p align="right">
+							<label class="small mb-1">작성일</label>
+							<fmt:formatDate value="${post.regdate }" pattern="yyyy-MM-dd HH:mm:ss"/>
+							</p>
+							<c:choose>
+								<c:when test="${post.moddate != post.regdate}">
+									<p align="right">
+									<label class="small mb-1">수정일</label>
+									<fmt:formatDate value="${post.moddate }" pattern="yyyy-MM-dd HH:mm:ss"/>
+									</p>	
+								</c:when>
+							</c:choose>
+						</div>
 						<div class="btns">
 							<button class="btn bg-dark" id="modBtn" style='color:white'>수정</button>
 							<button class="btn bg-dark" id="list" style='color:white'>목록</button>

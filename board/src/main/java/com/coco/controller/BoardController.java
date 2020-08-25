@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.coco.domain.BoardVO;
+import com.coco.domain.Page;
+import com.coco.domain.PageDTO;
 import com.coco.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,11 +24,17 @@ public class BoardController {
 	private final BoardService boardService;
 	
 	@GetMapping("/list")
-	public void getAllPost(Model model) {
+	public void getAllPost(Page page,Model model) {
 		
 		log.info("/board/list");
+		log.info("page : " + page);
+		log.info(page.getPage());
+		log.info(page.getAmount());
 		
-		model.addAttribute("list", boardService.getAllPost());
+		Long total = boardService.getTotal();
+		
+		model.addAttribute("list", boardService.getAllPost(page));
+		model.addAttribute("pageDTO", new PageDTO(page, total));
 	}
 	
 	@GetMapping("/write")

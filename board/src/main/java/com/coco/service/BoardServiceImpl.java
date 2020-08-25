@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.coco.domain.BoardVO;
+import com.coco.domain.Page;
 import com.coco.mapper.BoardMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,12 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public List<BoardVO> getAllPost() {
-		return boardMapper.getAllPost();
+	public List<BoardVO> getAllPost(Page page) {
+		
+		Page pageInfo = page.getPage() < 0 || page.getAmount() < 0 ?
+				new Page() : page;
+				
+		return boardMapper.getAllPost(pageInfo);
 	}
 
 	@Override
@@ -51,6 +56,11 @@ public class BoardServiceImpl implements BoardService {
 		log.info(result == 0 ? "존재하지 않는 게시물" : "삭제되었습니다.");
 		
 		return result;
+	}
+
+	@Override
+	public Long getTotal() {
+		return boardMapper.getTotal();
 	}
 
 }
