@@ -9,7 +9,7 @@
 					<h3 class="text-center font-weight-light my-4">📝<i>Write</i><h3>
 				</div>
 				<div class="card-body">
-					<form id="writeForm" >
+					<form id="actionForm" >
 						<div class="form-group">
 							<label class="small mb-1">게시물 번호</label> <input
 								class="form-control py-4" type="text"
@@ -55,6 +55,8 @@
 						
 						<!-- disabled속성을 가진 태그는 전달되지 않아서 hidden태그로 따로 보낸다. -->
 						<input type="hidden" name="bno" value="${post.bno }">
+						<input type="hidden" name='page' value='${pageInfo.page }'>
+						<input type='hidden' name='amount' value='${pageInfo.amount}'>
 					</form>
 				</div>
 			</div>
@@ -64,13 +66,21 @@
 
 <script>
 $(document).ready(() => {
-		const form = $("#writeForm")
+		const form = $("#actionForm")
 		/* '수정' 버튼 클릭 전*/
+		
 		//목록
 		$('#list').on('click', (e) => {
 			e.preventDefault()
+			
+			//페이지 정보를 받아서 원래 있던 페이지로 돌아간다.
+			const page = $('input[name="page"]')
+			const amount = $('input[name="amount"]')
+			
 			form.empty()
 			form.attr('action','/board/list')
+				.append(page)
+				.append(amount)
 				.submit()
 		})
 		

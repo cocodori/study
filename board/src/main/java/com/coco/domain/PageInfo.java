@@ -3,15 +3,15 @@ package com.coco.domain;
 import lombok.Data;
 
 @Data
-public class Page {
+public class PageInfo {
 	private int page;
 	private int amount;
 	
-	public Page() {
+	public PageInfo() {
 		this(1,10);
 	}
 	
-	public Page(int page, int amount) {
+	public PageInfo(int page, int amount) {
 		if(page < 0 || amount <= 0) {	//유효성 검사
 			this.page = 0;
 			this.amount = 10;

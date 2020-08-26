@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.coco.domain.BoardVO;
-import com.coco.domain.Page;
+import com.coco.domain.PageInfo;
 import com.coco.mapper.BoardMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -31,10 +31,10 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public List<BoardVO> getAllPost(Page page) {
+	public List<BoardVO> getAllPost(PageInfo page) {
 		
-		Page pageInfo = page.getPage() < 0 || page.getAmount() < 0 ?
-				new Page() : page;
+		PageInfo pageInfo = page.getPage() < 0 || page.getAmount() < 0 ?
+				new PageInfo() : page;
 				
 		return boardMapper.getAllPost(pageInfo);
 	}

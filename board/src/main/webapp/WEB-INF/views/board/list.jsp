@@ -35,7 +35,7 @@
 								end="${list.size()}">
 								<tr>
 									<td>${post.bno }</td>
-									<td><a class='move' href='/board/post?no=${post.bno}'>${post.title }</a></td>
+									<td><a class='move' href='${post.bno}'>${post.title }</a></td>
 									<td>${post.writer }</td>
 									<td><fmt:formatDate value="${post.regdate }"
 											pattern="yyyy-MM-dd" /></td>
@@ -45,38 +45,63 @@
 					</c:choose>
 				</tbody>
 			</table>
-			<div class="pagination" align="center">
+			
+ 			<div class="pagination" align="center">
 				<ul class="pagination">
-					<li class="page-item disabled"><a class="page-link" href="#"
-						tabindex="-1">Previous</a></li>
-					<li class="page-item"><a class="page-link" href="#">1</a></li>
-					<li class="page-item active"><a class="page-link" href="#">2
-							<span class="sr-only">(current)</span>
-					</a></li>
-					<li class="page-item"><a class="page-link" href="#">3</a></li>
-					<li class="page-item"><a class="page-link" href="#">Next</a></li>
+				
+					<c:if test="${pageDTO.prev }">
+						<li class="page-item"><a class="page-link" href="${pageDTO.startPage - 1 }"
+							tabindex="-1">Previous</a></li>
+					</c:if>
+					
+					<c:forEach var="pageNumber" begin="${pageDTO.startPage }" end="${pageDTO.endPage }">
+						<li class="page-item ${pageNumber == pageDTO.pageInfo.page ? "active":""}">
+							 <a href="${pageNumber }" class="page-link">
+								${pageNumber}
+							 </a>
+						 </li>
+					</c:forEach>
+					
+					<c:if test="${pageDTO.next}">
+						<li class="page-item"><a class="page-link" href="${pageDTO.endPage + 1 }">Next</a></li>
+					</c:if>
 				</ul>
 			</div>
+			
 		</div>
 	</div>
 </div>
 
-<%@include file="../includes/footer.jsp"%>
+<form id="form" action="/board/list">
+	<input type="hidden" name='page' value='${pageDTO.pageInfo.page }'>
+	<input type='hidden' name='amount' value='${pageDTO.pageInfo.amount}'>
+</form>
 
-<script>
-
-$(document).ready( () => {
+<script type="text/javascript">
+$(document).ready(() => {
+	const form = $("#form")
+	
 	$(".write").on("click", () => {
 		location.replace("/board/write")
 	})
 	
+	//게시물 조회 페이지로 이동 시에, page정보 함께 가져 갈 수 있도록 핸들링
+	$(".move").on("click", function(e) {
+		e.preventDefault()
+		form.attr("action", "/board/post")
+			.append("<input type='hidden' name='no' value='"+
+												$(this).attr("href")+"'>")
+		form.submit()
+	})
 	
-	
+	$(".page-item a").on("click", function(e) {
+		e.preventDefault();
+		
+		form.find("input[name='page']").val($(this).attr('href'))
+		form.submit()
+	})
+
 }) //docu
-	
-
-
 </script>
 
-
-
+<%@include file="../includes/footer.jsp"%>

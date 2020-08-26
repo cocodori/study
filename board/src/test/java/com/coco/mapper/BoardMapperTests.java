@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.coco.config.RootConfig;
 import com.coco.domain.BoardVO;
-import com.coco.domain.Page;
+import com.coco.domain.PageInfo;
 import com.coco.domain.PageDTO;
 
 import lombok.extern.log4j.Log4j;
@@ -31,7 +31,7 @@ public class BoardMapperTests {
 	public void pageDTOTest() {
 		Long total = boardMapper.getTotal();
 		
-		PageDTO dto = new PageDTO(new Page(), total);
+		PageDTO dto = new PageDTO(new PageInfo(90, 10), total);
 		
 		assertNotNull(dto);
 
@@ -40,7 +40,7 @@ public class BoardMapperTests {
 	}
 	@Test
 	public void getAllPostTest() {
-		List<BoardVO> allPostList= boardMapper.getAllPost(new Page(-2, 10));
+		List<BoardVO> allPostList= boardMapper.getAllPost(new PageInfo(-2, 10));
 		
 		assertNotNull(allPostList);
 

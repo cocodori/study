@@ -3,13 +3,14 @@ package com.coco.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.coco.domain.BoardVO;
-import com.coco.domain.Page;
 import com.coco.domain.PageDTO;
+import com.coco.domain.PageInfo;
 import com.coco.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class BoardController {
 	private final BoardService boardService;
 	
 	@GetMapping("/list")
-	public void getAllPost(Page page,Model model) {
+	public void getAllPost(PageInfo page,Model model) {
 		
 		log.info("/board/list");
 		log.info("page : " + page);
@@ -53,7 +54,7 @@ public class BoardController {
 	}
 	
 	@GetMapping("/post")
-	public void getPost(Long no, Model model) {
+	public void getPost(Long no, PageInfo PageInfo, Model model) {
 		log.info("/board/post");
 		
 		model.addAttribute("post", boardService.getPost(no));
@@ -61,7 +62,7 @@ public class BoardController {
 	
 	
 	@PostMapping("/modify")
-	public String modify(BoardVO boardVO, RedirectAttributes redirect) {
+	public String modify(BoardVO boardVO, PageInfo pageInfo,RedirectAttributes redirect) {
 		log.info("/board/modify");
 		log.info("BoardVO : " + boardVO);
 		
@@ -70,17 +71,21 @@ public class BoardController {
 		log.info("MODIFY RESULT : " + result);
 		
 		redirect.addAttribute("no",boardVO.getBno());
+		redirect.addAttribute("page", pageInfo.getPage());
+		redirect.addAttribute("amount", pageInfo.getAmount());
 		
 		return "redirect:/board/post";
 	}
 
 	@PostMapping("/remove")
-	public String remove(Long bno) {
+	public String remove(Long bno, PageInfo pageInfo, RedirectAttributes redirect) {
 		log.info("/board/remove");
-		log.info("bno : " + bno);
 		
 		int result = boardService.remove(bno);
 		log.info("result : " + result);
+
+		redirect.addAttribute("page", pageInfo.getPage());
+		redirect.addAttribute("amount", pageInfo.getAmount());
 		
 		return "redirect:/board/list";
 	}
