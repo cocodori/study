@@ -7,6 +7,9 @@ public class PageInfo {
 	private int page;
 	private int amount;
 	
+	private String type;
+	private String keyword;
+	
 	public PageInfo() {
 		this(1,10);
 	}
@@ -24,6 +27,12 @@ public class PageInfo {
 	
 	public int getSkip() {
 		return (this.page-1) * this.amount;
+	}
+	
+	public String[] getTypeArr() {
+		System.out.println("type : " + type);
+		return type == null 
+					? new String[] {} : type.split("");
 	}
 	
 }

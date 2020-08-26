@@ -3,12 +3,32 @@
 <%@include file="../includes/header.jsp"%>
 <br><h1 class="asdfasdt-4">📝 <i>Any story is fine!</i></h1><br>
 <div align="right">
-	<button id="write" class="btn bg-dark write" style="color:white">✒글쓰기</button>
+	<button id="write" class="btn btn-dark write">✒글쓰기</button>
 </div>
 <br>
 <div class="card asdfasdb-4">
 	<div class="card-body">
-		<div class="table-responsive">
+		<div class="table-responsive" align="right">
+
+			<form id="form" action="/board/list"
+				class="d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+				<div class="input-group">
+					<select class="form-control" name='type'>
+						<option value="tcw">전체</option>
+						<option value="tc">제목 + 내용</option>
+						<option value="t">제목</option>
+						<option value="c">내용</option>
+						<option value="w">작성자</option>
+					</select> <input class="form-control" type="text" name="keyword">
+					<div class="input-group-append">
+						<button class="btn btn-dark" type="submit">🔍</button>
+					</div>
+				</div>
+
+				<input type="hidden" name='page' value='${pageDTO.pageInfo.page }'>
+				<input type='hidden' name='amount' value='${pageDTO.pageInfo.amount}'>
+			</form>
+			<hr>
 			<table class="table table-bordered" id="" width="100%"
 				cellspacing="0">
 				<thead>
@@ -56,7 +76,7 @@
 					
 					<c:forEach var="pageNumber" begin="${pageDTO.startPage }" end="${pageDTO.endPage }">
 						<li class="page-item ${pageNumber == pageDTO.pageInfo.page ? "active":""}">
-							 <a href="${pageNumber }" class="page-link">
+							 <a href="${pageNumber }" class="page-link ">
 								${pageNumber}
 							 </a>
 						 </li>
@@ -72,10 +92,6 @@
 	</div>
 </div>
 
-<form id="form" action="/board/list">
-	<input type="hidden" name='page' value='${pageDTO.pageInfo.page }'>
-	<input type='hidden' name='amount' value='${pageDTO.pageInfo.amount}'>
-</form>
 
 <script type="text/javascript">
 $(document).ready(() => {

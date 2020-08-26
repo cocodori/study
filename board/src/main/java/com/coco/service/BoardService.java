@@ -11,7 +11,7 @@ public interface BoardService {
 	BoardVO getPost(Long bno);
 	int modify(BoardVO boardVO);
 	int remove(Long bno);
-	List<BoardVO> getAllPost(PageInfo page);
-	Long getTotal();
+	List<BoardVO> getAllPost(PageInfo pageInfo);
+	Long getTotal(PageInfo pageInfo);
 	
 }

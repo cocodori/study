@@ -32,7 +32,7 @@ public class BoardController {
 		log.info(page.getPage());
 		log.info(page.getAmount());
 		
-		Long total = boardService.getTotal();
+		Long total = boardService.getTotal(page);
 		
 		model.addAttribute("list", boardService.getAllPost(page));
 		model.addAttribute("pageDTO", new PageDTO(page, total));

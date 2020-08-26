@@ -3,10 +3,26 @@
 
 <mapper namespace="com.coco.mapper.BoardMapper">
 
+<sql id="search">
+	<foreach collection="typeArr" item="type" separator="OR" open="AND (" close=")">
+		<if test='type.equals("t")'>
+			title LIKE CONCAT('%',#{keyword},'%')
+		</if>
+		<if test='type.equals("c")'>
+			content LIKE CONCAT('%',#{keyword},'%')
+		</if>
+		<if test='type.equals("w")'>
+			writer LIKE CONCAT('%',#{keyword},'%')
+		</if>
+	</foreach>
+	
+</sql>
+
 <select id="getAllPost" resultType="com.coco.domain.BoardVO">
 	SELECT *
 	FROM tbl_board
 	WHERE bno > 0
+	<include refid="search"/>
 	ORDER BY bno DESC
 	LIMIT #{skip}, #{amount}
 </select>
@@ -43,6 +59,8 @@
 <select id="getTotal" resultType="Long">
 	SELECT COUNT(*)
 	FROM tbl_board
+	WHERE bno > 0
+	<include refid="search"/>
 </select>
 
 </mapper>

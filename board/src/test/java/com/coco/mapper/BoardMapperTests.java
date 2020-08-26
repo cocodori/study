@@ -27,17 +27,34 @@ public class BoardMapperTests {
 	@Autowired
 	BoardMapper boardMapper;
 	
+	
 	@Test
-	public void pageDTOTest() {
-		Long total = boardMapper.getTotal();
+	public void searchTest() {
+		PageInfo pageInfo = new PageInfo();
+		pageInfo.setKeyword("coco");	//검색 키워드
+		pageInfo.setType("twc");	//제목 검색
 		
-		PageDTO dto = new PageDTO(new PageInfo(90, 10), total);
+		List<BoardVO> allPostList = boardMapper.getAllPost(pageInfo);
 		
-		assertNotNull(dto);
-
-		log.info(dto);
+		assertNotNull(allPostList);
+		assertTrue(allPostList.size() == 10);
 		
+		allPostList.forEach(element -> log.info(allPostList));
+		
+		log.info(boardMapper.getTotal(pageInfo));
 	}
+	
+//	@Test
+//	public void pageDTOTest() {
+//		Long total = boardMapper.getTotal();
+//		
+//		PageDTO dto = new PageDTO(new PageInfo(90, 10), total);
+//		
+//		assertNotNull(dto);
+//
+//		log.info(dto);
+//		
+//	}
 	@Test
 	public void getAllPostTest() {
 		List<BoardVO> allPostList= boardMapper.getAllPost(new PageInfo(-2, 10));

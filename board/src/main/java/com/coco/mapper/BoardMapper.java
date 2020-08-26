@@ -13,6 +13,6 @@ public interface BoardMapper {
 	int delete(Long bno);
 	Long lastInsertId();
 	
-	Long getTotal();
+	Long getTotal(PageInfo pageInfo);
 
 }

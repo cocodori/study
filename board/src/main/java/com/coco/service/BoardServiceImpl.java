@@ -59,8 +59,8 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public Long getTotal() {
-		return boardMapper.getTotal();
+	public Long getTotal(PageInfo pageInfo) {
+		return boardMapper.getTotal(pageInfo);
 	}
 
 }
