@@ -9,7 +9,6 @@
 <div class="card asdfasdb-4">
 	<div class="card-body">
 		<div class="table-responsive" align="right">
-
 			<form id="form" action="/board/list"
 				class="d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
 				<div class="input-group">
@@ -98,7 +97,6 @@ $(document).ready(() => {
 	
 	//검색 핸들링
 	$("#form button").on("click", () => {
-		
 		//검색어를 입력하지 않았을 때
 		if(!form.find("input[name='keyword']").val()){
 			alert('검색어를 입력하세요')
@@ -112,7 +110,8 @@ $(document).ready(() => {
 	})
 	
 	$(".write").on("click", () => {
-		location.replace("/board/write")
+		form.attr('action', '/board/write')
+		form.submit()
 	})
 	
 	//게시물 조회 페이지로 이동 시에, page정보 함께 가져 갈 수 있도록 핸들링

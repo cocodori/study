@@ -54,7 +54,7 @@
 						</div>
 						
 						<!-- disabled속성을 가진 태그는 전달되지 않아서 hidden태그로 따로 보낸다. -->
-						<input type="hidden" name="bno" value="${post.bno }">
+						<input type="hidden" id="bno" name="bno" value="${post.bno }">
 						<input type="hidden" name='page' value='${pageInfo.page }'>
 						<input type='hidden' name='amount' value='${pageInfo.amount}'>
 						<input type='hidden' name='type' value='${pageInfo.type}'>
@@ -74,6 +74,7 @@ $(document).ready(() => {
 		//목록
 		$('#list').on('click', (e) => {
 			e.preventDefault()
+			
 			form.attr('action','/board/list')
 				.submit()
 		})
@@ -106,7 +107,7 @@ $(document).ready(() => {
 			$('.mod').attr('disabled',true)
 		})
 		
-		//'완료' 버튼 클릭 시
+		//'완료' 버튼 클릭 시 수정 처리
 		$('#modify').on("click", (e) => {
 			e.preventDefault()
 			form.attr('action', '/board/modify')

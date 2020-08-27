@@ -1,5 +1,7 @@
 package com.coco.domain;
 
+import org.springframework.web.util.UriComponentsBuilder;
+
 import lombok.Data;
 
 @Data
@@ -33,6 +35,16 @@ public class PageInfo {
 		System.out.println("type : " + type);
 		return type == null || type.length() == 0
 					? new String[] {} : type.split("");
+	}
+	
+	public String getUrlList () {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromPath("")
+				.queryParam("page", this.getPage())
+				.queryParam("amount", this.getAmount())
+				.queryParam("type", this.getType())
+				.queryParam("keyword", this.getKeyword());
+		
+		return builder.toUriString();
 	}
 	
 }

@@ -26,22 +26,16 @@ public class BoardController {
 	
 	@GetMapping("/list")
 	public void getAllPost(PageInfo page,Model model) {
-		
 		log.info("/board/list");
 		log.info("page : " + page);
-		log.info(page.getPage());
-		log.info(page.getAmount());
 		
 		Long total = boardService.getTotal(page);
-		
-		log.info(total);
-		
 		model.addAttribute("list", boardService.getAllPost(page));
 		model.addAttribute("pageDTO", new PageDTO(page, total));
 	}
 	
 	@GetMapping("/write")
-	public void write(PageInfo pageInfo) {
+	public void write() {
 		log.info("/board/write");
 	}
 	
@@ -62,7 +56,6 @@ public class BoardController {
 		model.addAttribute("post", boardService.getPost(no));
 	}
 	
-	
 	@PostMapping("/modify")
 	public String modify(BoardVO boardVO, PageInfo pageInfo,RedirectAttributes redirect) {
 		log.info("/board/modify");
@@ -73,26 +66,19 @@ public class BoardController {
 		log.info("MODIFY RESULT : " + result);
 		
 		redirect.addAttribute("no",boardVO.getBno());
-		redirect.addAttribute("page", pageInfo.getPage());
-		redirect.addAttribute("amount", pageInfo.getAmount());
-		redirect.addAttribute("type", pageInfo.getType());
-		redirect.addAttribute("keyword", pageInfo.getKeyword());
 		
-		return "redirect:/board/post";
+		log.info("pageInfo.getUrlList() : " + pageInfo.getUrlList());
+		
+		return "redirect:/board/post" + pageInfo.getUrlList();
 	}
 
 	@PostMapping("/remove")
-	public String remove(Long bno, PageInfo pageInfo, RedirectAttributes redirect) {
+	public String remove(Long bno, PageInfo pageInfo) {
 		log.info("/board/remove");
 		
 		int result = boardService.remove(bno);
 		log.info("result : " + result);
-
-		redirect.addAttribute("page", pageInfo.getPage());
-		redirect.addAttribute("amount", pageInfo.getAmount());
-		redirect.addAttribute("type", pageInfo.getType());
-		redirect.addAttribute("keyword", pageInfo.getKeyword());
 		
-		return "redirect:/board/list";
+		return "redirect:/board/list" + pageInfo.getUrlList();
 	}
 }
