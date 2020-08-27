@@ -14,17 +14,16 @@
 				class="d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
 				<div class="input-group">
 					<select class="form-control" name='type'>
-						<option value="tcw">전체</option>
-						<option value="tc">제목 + 내용</option>
-						<option value="t">제목</option>
-						<option value="c">내용</option>
-						<option value="w">작성자</option>
-					</select> <input class="form-control" type="text" name="keyword">
+						<option value="tcw" ${pageDTO.pageInfo.type eq 't' ? selected : ''}>전체</option>
+						<option value="tc" ${pageDTO.pageInfo.type eq 'tc' ? 'selected' : '' }>제목 + 내용</option>
+						<option value="t" ${pageDTO.pageInfo.type eq 't' ? 'selected' : '' }>제목</option>
+						<option value="c" ${pageDTO.pageInfo.type eq 'c' ? 'selected' : '' }>내용</option>
+						<option value="w" ${pageDTO.pageInfo.type eq 'w' ? 'selected' : '' }>작성자</option>
+					</select> <input class="form-control" type="text" name="keyword" value="${pageDTO.pageInfo.keyword }">
 					<div class="input-group-append">
 						<button class="btn btn-dark" type="submit">🔍</button>
 					</div>
 				</div>
-
 				<input type="hidden" name='page' value='${pageDTO.pageInfo.page }'>
 				<input type='hidden' name='amount' value='${pageDTO.pageInfo.amount}'>
 			</form>
@@ -96,6 +95,21 @@
 <script type="text/javascript">
 $(document).ready(() => {
 	const form = $("#form")
+	
+	//검색 핸들링
+	$("#form button").on("click", () => {
+		
+		//검색어를 입력하지 않았을 때
+		if(!form.find("input[name='keyword']").val()){
+			alert('검색어를 입력하세요')
+			return
+		}
+		
+		//검색하면 1페이지로 이동
+		form.find("input[name='page']").val('1')
+		e.preventDefault()
+		form.submit()
+	})
 	
 	$(".write").on("click", () => {
 		location.replace("/board/write")

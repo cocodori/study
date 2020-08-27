@@ -15,7 +15,6 @@
 			writer LIKE CONCAT('%',#{keyword},'%')
 		</if>
 	</foreach>
-	
 </sql>
 
 <select id="getAllPost" resultType="com.coco.domain.BoardVO">

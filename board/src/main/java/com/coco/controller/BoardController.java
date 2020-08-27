@@ -34,12 +34,14 @@ public class BoardController {
 		
 		Long total = boardService.getTotal(page);
 		
+		log.info(total);
+		
 		model.addAttribute("list", boardService.getAllPost(page));
 		model.addAttribute("pageDTO", new PageDTO(page, total));
 	}
 	
 	@GetMapping("/write")
-	public void write() {
+	public void write(PageInfo pageInfo) {
 		log.info("/board/write");
 	}
 	
@@ -73,6 +75,8 @@ public class BoardController {
 		redirect.addAttribute("no",boardVO.getBno());
 		redirect.addAttribute("page", pageInfo.getPage());
 		redirect.addAttribute("amount", pageInfo.getAmount());
+		redirect.addAttribute("type", pageInfo.getType());
+		redirect.addAttribute("keyword", pageInfo.getKeyword());
 		
 		return "redirect:/board/post";
 	}
@@ -86,6 +90,8 @@ public class BoardController {
 
 		redirect.addAttribute("page", pageInfo.getPage());
 		redirect.addAttribute("amount", pageInfo.getAmount());
+		redirect.addAttribute("type", pageInfo.getType());
+		redirect.addAttribute("keyword", pageInfo.getKeyword());
 		
 		return "redirect:/board/list";
 	}

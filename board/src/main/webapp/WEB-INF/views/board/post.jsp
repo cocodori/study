@@ -57,6 +57,8 @@
 						<input type="hidden" name="bno" value="${post.bno }">
 						<input type="hidden" name='page' value='${pageInfo.page }'>
 						<input type='hidden' name='amount' value='${pageInfo.amount}'>
+						<input type='hidden' name='type' value='${pageInfo.type}'>
+						<input type='hidden' name='keyword' value='${pageInfo.keyword}'>
 					</form>
 				</div>
 			</div>
@@ -72,15 +74,7 @@ $(document).ready(() => {
 		//목록
 		$('#list').on('click', (e) => {
 			e.preventDefault()
-			
-			//페이지 정보를 받아서 원래 있던 페이지로 돌아간다.
-			const page = $('input[name="page"]')
-			const amount = $('input[name="amount"]')
-			
-			form.empty()
 			form.attr('action','/board/list')
-				.append(page)
-				.append(amount)
 				.submit()
 		})
 		

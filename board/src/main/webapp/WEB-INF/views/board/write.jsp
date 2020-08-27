@@ -24,8 +24,12 @@
 							<input type='text' class="form-control py-4" name="writer">
 						</div>
 						<div>
-							<button class="btn bg-dark" id="submit" style='color:white'>등록</a>
+							<input type="button" id="register" class="btn btn-dark" value="등록">
+							<input type="button" id="cancel" class="btn btn-dark" value="취소">
 						</div>
+						
+						<input type="hidden" name="page" value="${pageInfo.page }">
+						<input type="hidden" name="amount" value="${pageInfo.amount}">
 					</form>
 				</div>
 			</div>
@@ -35,23 +39,24 @@
 
 <script>
 $(document).ready(() => {
-	
 		const form = $("#writeForm")
+
+		$("#cancel").on("click", (e) => {
+			e.preventDefault()
+			form.empty()
+			form.attr("action", "/board/list")
+				.submit()
+				
+			return
+		})
 		
-		console.log(form)
 		
-		const btn = $("#submit")
-		
-		console.log(btn)
-	
-		$("#submit").on("click", (e) => {
-			//e.preventDefault()
-			console.log('hi hello?')
-			
+		$("#register").on("click", (e) => {
 			form.attr("action","/board/register")
 				.attr('method', 'POST')
 				.submit()
-			
+				
+			return
 		})
 		
 })//docuemnt

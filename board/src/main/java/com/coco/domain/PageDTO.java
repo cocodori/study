@@ -2,9 +2,11 @@ package com.coco.domain;
 
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.log4j.Log4j;
 
 @Getter
 @ToString
+@Log4j
 public class PageDTO {
 
 	private int startPage;
@@ -24,7 +26,7 @@ public class PageDTO {
 		this.endPage = (int)(Math.ceil(pageInfo.getPage() / 10.0)) * 10;
 		this.startPage = endPage - 9;
 		
-		int realEnd = (int)(Math.ceil((total*10) / pageInfo.getAmount()));
+		int realEnd = (int)(Math.ceil((total*1.0) / pageInfo.getAmount()));
 
 		if(realEnd < this.endPage) {
 			this.endPage = realEnd;
@@ -32,5 +34,12 @@ public class PageDTO {
 		
 		this.prev = this.startPage > 1;
 		this.next = this.endPage < realEnd;
+		
+		log.info("startPage : " + startPage);
+		log.info("endPage : " + endPage);
+		log.info("prev : " + prev);
+		log.info("next : " + next);
+		log.info("total : " + total);
+		log.info("pageInfo :" + pageInfo);
 	}
 }

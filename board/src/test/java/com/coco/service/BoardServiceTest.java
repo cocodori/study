@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.coco.config.RootConfig;
 import com.coco.domain.BoardVO;
+import com.coco.domain.PageDTO;
 import com.coco.domain.PageInfo;
 
 import lombok.extern.log4j.Log4j;
@@ -24,6 +25,27 @@ public class BoardServiceTest {
 
 	@Autowired
 	BoardService boardService;
+	
+	@Test
+	public void searchTest() {
+		PageInfo pageInfo = new PageInfo();
+		pageInfo.setType("tcw");
+		pageInfo.setKeyword("한글");
+		Long total = boardService.getTotal(pageInfo);
+		List<BoardVO> allPostList = boardService.getAllPost(pageInfo);
+		PageDTO pageDTO = new PageDTO(pageInfo, total);
+		
+		log.info("pageInfo : " +pageInfo);
+		log.info("total : " + total);
+		log.info("allPostList : " + allPostList);
+		log.info("pageDTO : " + pageDTO);
+		
+		assertNotNull(total);
+		assertTrue(total > 0);
+		assertNotNull(allPostList);
+		assertNotNull(allPostList.size() > 0);
+		assertNotNull(pageDTO);
+	}
 	
 	@Test
 	public void serviceIsExistTest() {

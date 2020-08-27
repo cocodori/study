@@ -32,7 +32,7 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public List<BoardVO> getAllPost(PageInfo page) {
-		
+		log.info("page : " + page);
 		PageInfo pageInfo = page.getPage() < 0 || page.getAmount() < 0 ?
 				new PageInfo() : page;
 				
@@ -60,6 +60,9 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public Long getTotal(PageInfo pageInfo) {
+		
+		log.info("pageINfo : " +pageInfo);
+		
 		return boardMapper.getTotal(pageInfo);
 	}
 

@@ -31,7 +31,7 @@ public class PageInfo {
 	
 	public String[] getTypeArr() {
 		System.out.println("type : " + type);
-		return type == null 
+		return type == null || type.length() == 0
 					? new String[] {} : type.split("");
 	}
 	
