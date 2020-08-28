@@ -20,7 +20,8 @@
 	
 	<update id="update">
 		UPDATE tbl_reply
-		SET reply = #{reply}
+		SET  reply = #{reply}
+			,moddate = now()
 		WHERE rno = #{rno}
 	</update>
 	
