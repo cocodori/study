@@ -47,7 +47,6 @@ const replyService = (() => {
 			type	: 'DELETE',
 			url		: '/replies/'+rno,
 			success : (deleteResult, status, xhr) => {
-				console.log(xhr)
 				if(callback) {
 					callback(deleteResult)
 				}

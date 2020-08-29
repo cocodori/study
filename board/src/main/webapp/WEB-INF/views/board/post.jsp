@@ -70,7 +70,7 @@
 	 			
 	 			</h4>
 				<div class="input-group">
-                    <input class="form-control" type="text" name="reply" placeholder="댓글을 입력하세요">
+                    <input class="form-control py-4" type="text" name="reply" placeholder="댓글을 입력하세요">
                     <div class="input-group-append">
                         <input type='submit' class="btn btn-dark" id="replyBtn" value="등록">
                     </div>
@@ -113,13 +113,50 @@ $(document).ready(()=>{
 	
 	showReplyList(1)
 	
-	//댓글 삭제
-	$('#replyRemove').on('click', (e) => {
+	//댓글 삭제 || 수정
+	$('.chat').on('click', 'a', function(e) {
 		e.preventDefault()
-		console.log('replyRemove')
-	})
+		const rno = $(this).data('rno')
+		const btn = $(this).data('oper')
+
+		console.log(rno)
+		console.log(btn)
+		//삭제 버튼을 클릭했다면.
+		if(btn === 'replyRemove') {
+			if(confirm('정말 삭제하겠습니까?')) { //정말 삭제할 것인지 확인
+				//삭제 함수 호출
+				replyService.remove(rno,(result)=>{
+					console.log(result)
+					
+					//삭제 처리 후, 댓글 목록 갱신
+					showReplyList(1)
+					return
+				})
+			}
+		}
+		
+		if(btn === 'replyModify') {
+			
+			console.log('hello mod')
+			console.log(rno)
+/* 			$("#mod").css("display","none")
+			$('#reply').css('display','none')
+			$('#replyRemove').css('display','none')
+			$('#replyInput').css('display','block') */
+			$('.beforeMod').css('display','none')
+			$('.afterMod').css('display','block')
+		
+			let modReply = $('#reply'+rno)
+			console.log(modReply.textContent)
+			
+			
+		}
+		
+
+		
+	}) //댓글 삭제
 	
-	//댓글 추가
+	//댓글 등록
 	$('#replyBtn').on('click', () => {
 		//댓글 내용을 받아온다.
 		const replyVal = $('input[name="reply"]').val()
@@ -161,12 +198,31 @@ $(document).ready(()=>{
 				}
 				
 				for (let i = 0, len = list.length || 0; i < len; i++) {
-					str += '<dd class="left clearfix" data-rno="'+list[i].rno+'">'
+/* 					str += '<dd class="left clearfix" data-rno="'+list[i].rno+'">'
 					str += '<div><div class="header"><strong class="primary-font"> 👩‍🚀‍ '+list[i].replyer+'</strong>'
 					str += '<small class="pull-right text-muted">'+list[i].replyDate+'</small>'
-					str += '&nbsp<small><a id="replyModify" href="#">수정</a></small>'
-					str += '&nbsp<small><a id="replyRemove" href="#">삭제</a></small></div>'
-					str += '<p>'+list[i].reply+'</p></div></dd>'
+					str += '&nbsp<small><a href="#" data-oper="replyModify" data-rno="'+list[i].rno+'" id="mod">수정</a></small>'
+					str += '&nbsp<small><a href="#" data-oper="replyRemove" data-rno="'+list[i].rno+'" id="replyRemove">삭제</a></small></div>'
+					str += '<p id="reply'+i+'">'+list[i].reply+'</p></div></dd>'
+					str += '<div class="replyModClass" style="display:none">'
+					str += '<input type="text" class="form-control py-4" id="replyInput'+i+'" value="'+list[i].reply+'">'
+					str += '<button class="btn btn-dark">완료</button></div>'
+					str += '<hr>' */
+					
+					str += '<dd class="left clearfix" data-rno="'+list[i].rno+'">'
+					str += '<div class="beforeMod"><div class="header"><strong class="primary-font"> 👩‍🚀‍ '+list[i].replyer+'</strong>'
+					str += '<small class="pull-right text-muted">'+list[i].replyDate+'</small>'
+					str += '&nbsp<small><a href="#" data-oper="replyModify" data-rno="'+list[i].rno+'" id="mod">수정</a></small>'
+					str += '&nbsp<small><a href="#" data-oper="replyRemove" data-rno="'+list[i].rno+'" id="replyRemove">삭제</a></small></div>'
+					str += '<p id="reply'+list[i].rno+'">'+list[i].reply+'</p></div>'
+					
+					str += '<div class="afterMod" style="display:none"><div class="header"><strong class="primary-font"> 👩‍🚀‍ '+list[i].replyer+'</strong>'
+					str += '<small class="pull-right text-muted">'+list[i].replyDate+'</small>'
+					str += '&nbsp<small><a href="#" data-oper="replyModify" data-rno="'+list[i].rno+'" id="mod">수정</a></small>'
+					str += '&nbsp<small><a href="#" data-oper="replyRemove" data-rno="'+list[i].rno+'" id="replyRemove">삭제</a></small></div>'
+					str += '<p id="reply'+list[i].rno+'">'+list[i].reply+'</p></div>'
+					
+					str += '</dd>'
 					str += '<hr>'
 				} //for
 				
