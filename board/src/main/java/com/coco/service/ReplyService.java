@@ -11,5 +11,6 @@ public interface ReplyService {
 	List<ReplyVO> getReplyList(Long bno, PageInfo pageInfo);
 	int modify(ReplyVO replyVO);
 	int remove(Long rno);
+	ReplyVO getReply(Long rno);
 	
 }

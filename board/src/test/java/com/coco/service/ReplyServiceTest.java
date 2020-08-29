@@ -27,6 +27,14 @@ public class ReplyServiceTest {
 	ReplyService replyService;
 	
 	@Test
+	public void testGetReply() {
+		ReplyVO replyVO = replyService.getReply(1L);
+		log.info(replyVO);
+		assertNotNull(replyVO);
+		assertTrue(replyVO instanceof ReplyVO);
+	}
+	
+	@Test
 	public void diTest() {
 		assertNotNull(replyService);
 		log.info(replyService);

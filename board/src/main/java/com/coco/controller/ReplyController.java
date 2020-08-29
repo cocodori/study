@@ -112,6 +112,12 @@ public class ReplyController {
 				: new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
+	@GetMapping(value = "/{rno}")
+	public ResponseEntity<ReplyVO> get(@PathVariable("rno")Long rno) {
+		log.info("rno : " + rno);
+		return new ResponseEntity<>(replyService.getReply(rno), HttpStatus.OK);
+	}
+	
 	
 	
 }

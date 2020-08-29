@@ -36,4 +36,9 @@ public class ReplyServiceImpl implements ReplyService {
 		return replyMapper.delete(rno);
 	}
 
+	@Override
+	public ReplyVO getReply(Long rno) {
+		return replyMapper.getReply(rno);
+	}
+
 }

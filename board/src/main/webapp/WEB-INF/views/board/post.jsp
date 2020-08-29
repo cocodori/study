@@ -104,12 +104,48 @@
 </div>
 
 
+
+<!-- Reply Modify Modal -->
+<div class="modal fade" id="replyModifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">댓글 수정</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label class="col-form-label"> 👩‍🚀  작성자 </label>
+            <input type="text" class="form-control" name="replyer" disabled>
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">댓글</label>
+            <textarea class="form-control" name="reply"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-dark">수정 완료</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script type="text/javascript" src="/resources/dist/js/reply.js"></script>
 
 <script>
 $(document).ready(()=>{
 	const bnoValue = '${post.bno}'
 	const replyDL = $(".chat")
+	const modal = $('#replyModifyModal')
+	
+	replyService.get (1, (data) => {
+		console.log(data)
+	})
 	
 	showReplyList(1)
 	
@@ -136,25 +172,19 @@ $(document).ready(()=>{
 		}
 		
 		if(btn === 'replyModify') {
+			$('#replyModifyModal').modal('show')
+			replyService.get(rno,(reply) => {
+				console.log(reply.replyer)
+				console.log(reply.reply)
+				console.log(reply)
+				modal.find('input[name="replyer"]').val(reply.replyer)
+				modal.find('textarea[name="reply"]').val(reply.reply)
+			})
 			
-			console.log('hello mod')
-			console.log(rno)
-/* 			$("#mod").css("display","none")
-			$('#reply').css('display','none')
-			$('#replyRemove').css('display','none')
-			$('#replyInput').css('display','block') */
-			$('.beforeMod').css('display','none')
-			$('.afterMod').css('display','block')
 		
-			let modReply = $('#reply'+rno)
-			console.log(modReply.textContent)
-			
-			
+				
 		}
-		
-
-		
-	}) //댓글 삭제
+	}) 
 	
 	//댓글 등록
 	$('#replyBtn').on('click', () => {
@@ -198,31 +228,12 @@ $(document).ready(()=>{
 				}
 				
 				for (let i = 0, len = list.length || 0; i < len; i++) {
-/* 					str += '<dd class="left clearfix" data-rno="'+list[i].rno+'">'
+ 					str += '<dd class="left clearfix" data-rno="'+list[i].rno+'">'
 					str += '<div><div class="header"><strong class="primary-font"> 👩‍🚀‍ '+list[i].replyer+'</strong>'
 					str += '<small class="pull-right text-muted">'+list[i].replyDate+'</small>'
-					str += '&nbsp<small><a href="#" data-oper="replyModify" data-rno="'+list[i].rno+'" id="mod">수정</a></small>'
-					str += '&nbsp<small><a href="#" data-oper="replyRemove" data-rno="'+list[i].rno+'" id="replyRemove">삭제</a></small></div>'
-					str += '<p id="reply'+i+'">'+list[i].reply+'</p></div></dd>'
-					str += '<div class="replyModClass" style="display:none">'
-					str += '<input type="text" class="form-control py-4" id="replyInput'+i+'" value="'+list[i].reply+'">'
-					str += '<button class="btn btn-dark">완료</button></div>'
-					str += '<hr>' */
-					
-					str += '<dd class="left clearfix" data-rno="'+list[i].rno+'">'
-					str += '<div class="beforeMod"><div class="header"><strong class="primary-font"> 👩‍🚀‍ '+list[i].replyer+'</strong>'
-					str += '<small class="pull-right text-muted">'+list[i].replyDate+'</small>'
-					str += '&nbsp<small><a href="#" data-oper="replyModify" data-rno="'+list[i].rno+'" id="mod">수정</a></small>'
-					str += '&nbsp<small><a href="#" data-oper="replyRemove" data-rno="'+list[i].rno+'" id="replyRemove">삭제</a></small></div>'
-					str += '<p id="reply'+list[i].rno+'">'+list[i].reply+'</p></div>'
-					
-					str += '<div class="afterMod" style="display:none"><div class="header"><strong class="primary-font"> 👩‍🚀‍ '+list[i].replyer+'</strong>'
-					str += '<small class="pull-right text-muted">'+list[i].replyDate+'</small>'
-					str += '&nbsp<small><a href="#" data-oper="replyModify" data-rno="'+list[i].rno+'" id="mod">수정</a></small>'
-					str += '&nbsp<small><a href="#" data-oper="replyRemove" data-rno="'+list[i].rno+'" id="replyRemove">삭제</a></small></div>'
-					str += '<p id="reply'+list[i].rno+'">'+list[i].reply+'</p></div>'
-					
-					str += '</dd>'
+					str += '&nbsp<small><a href="#" data-oper="replyModify" data-rno="'+list[i].rno+'">수정</a></small>'
+					str += '&nbsp<small><a href="#" data-oper="replyRemove" data-rno="'+list[i].rno+'">삭제</a></small></div>'
+					str += '<p>'+list[i].reply+'</p></div></dd>'
 					str += '<hr>'
 				} //for
 				

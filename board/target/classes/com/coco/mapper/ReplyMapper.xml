@@ -29,5 +29,12 @@
 		DELETE FROM tbl_reply
 		WHERE rno = #{rno}
 	</delete>
+	
+	<select id="getReply" resultType="com.coco.domain.ReplyVO">
+		SELECT *
+		FROM tbl_reply
+		WHERE rno > 0
+		AND rno = #{rno}
+	</select>
 
 </mapper>

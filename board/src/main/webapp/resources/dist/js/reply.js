@@ -75,11 +75,20 @@ const replyService = (() => {
 			}
 		})
 	} // update()
+	
+	function get(rno, callback, error) {
+		$.get('/replies/'+rno+'.json', (result)=> {
+			callback ? callback(result) : ''
+		}).fail((xhr, status, err) => {
+			error ? error() : ''
+		})
+	} //getReply()
 		
 	return {
 		 add			: add
 		,getReplyList	: getReplyList
 		,remove			: remove
 		,update			: update
+		,get			: get
 		}
 })() 

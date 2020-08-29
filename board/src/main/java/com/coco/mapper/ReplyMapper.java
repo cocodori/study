@@ -13,5 +13,5 @@ public interface ReplyMapper {
 	List<ReplyVO> getReplyList(@Param("bno")Long bno, @Param("pageInfo")PageInfo pageInfo);
 	int update(ReplyVO replyVO);
 	int delete(Long rno);
-	
+	ReplyVO getReply(Long rno);
 }

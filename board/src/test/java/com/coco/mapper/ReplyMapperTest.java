@@ -27,11 +27,17 @@ public class ReplyMapperTest {
 	private ReplyMapper replyMapper;
 	
 	@Test
+	public void testGetReply() {
+		ReplyVO replyVO = replyMapper.getReply(1L);
+		assertNotNull(replyVO);
+		log.info(replyVO);
+	}
+	
+	@Test
 	public void testReplyMapper() {
 		assertNotNull(replyMapper);
 		log.info(replyMapper);
 	}
-	
 	
 	@Test
 	public void testInsert() {	//댓글 등록 테스트
