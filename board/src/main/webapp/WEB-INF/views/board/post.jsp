@@ -61,10 +61,122 @@
 						<input type='hidden' name='keyword' value='${pageInfo.keyword}'>
 					</form>
 				</div>
+<!-- 댓글 -->
+<div class="row">
+	<div class="col-lg-12">
+	 	<div class="panel panel-default">
+	 		<div class="pannel-heading">
+	 			&nbsp&nbsp <h4><strong>💬  댓글 </strong>
+	 			
+	 			</h4>
+				<div class="input-group">
+                    <input class="form-control" type="text" name="reply" placeholder="댓글을 입력하세요">
+                    <div class="input-group-append">
+                        <input type='submit' class="btn btn-dark" id="replyBtn" value="등록">
+                    </div>
+                </div>
+			</div>
+			
+			<br>
+			
+			
+			
+			<div class="panel-body">
+				<ul class="chat">
+<!-- 			<dd class="left clearfix" data-rno='28'>
+					<div>
+						<div class="header">
+							<strong class="primary-font">user00</strong>
+							<small class="pull-right text-muted">0000-00-00</small>
+						</div>
+						<p>First Reply</p>
+					</div>
+					</dd> -->
+				</ul>
 			</div>
 		</div>
 	</div>
 </div>
+
+		</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript" src="/resources/dist/js/reply.js"></script>
+
+<script>
+$(document).ready(()=>{
+	const bnoValue = '${post.bno}'
+	const replyDL = $(".chat")
+	
+	showReplyList(1)
+	
+	//댓글 삭제
+	$('#replyRemove').on('click', (e) => {
+		e.preventDefault()
+		console.log('replyRemove')
+	})
+	
+	//댓글 추가
+	$('#replyBtn').on('click', () => {
+		//댓글 내용을 받아온다.
+		const replyVal = $('input[name="reply"]').val()
+		
+		//만약, 내용이 없다면 아무 일도 하지 않는다.
+		if(replyVal.length === 0) { return }
+
+		//reply객체를 만든다.
+		const reply = {
+				reply 	: replyVal,
+				replyer : 'tester',
+				bno		: bnoValue
+		} //reply
+
+		//댓글 추가하는 함수를 호출해서 reply객체를 인자로 넘긴다.
+		replyService.add(reply, (result) => {
+			console.log(result)
+			
+			//input태그를 초기화 한다.
+			$('input[name="reply"]').val('')
+			
+			//댓글이 추가 되었으므로 새롭게 목록을 갱신한다.
+			showReplyList(1)
+		})
+		
+	})
+	
+	//댓글 목록을 출력하는 함수
+	function showReplyList(page) {
+		replyService.getReplyList({
+			bno	: bnoValue,
+			page: page||1
+			}, (list) => {
+				let str = ""
+				
+				if(list == null || list.length == 0 ) {
+					replyDL.html('')
+					return
+				}
+				
+				for (let i = 0, len = list.length || 0; i < len; i++) {
+					str += '<dd class="left clearfix" data-rno="'+list[i].rno+'">'
+					str += '<div><div class="header"><strong class="primary-font"> 👩‍🚀‍ '+list[i].replyer+'</strong>'
+					str += '<small class="pull-right text-muted">'+list[i].replyDate+'</small>'
+					str += '&nbsp<small><a id="replyModify" href="#">수정</a></small>'
+					str += '&nbsp<small><a id="replyRemove" href="#">삭제</a></small></div>'
+					str += '<p>'+list[i].reply+'</p></div></dd>'
+					str += '<hr>'
+				} //for
+				
+				replyDL.html(str)
+			})
+			
+
+	} //showReplyList
+}) // docu
+</script>
 
 <script>
 $(document).ready(() => {

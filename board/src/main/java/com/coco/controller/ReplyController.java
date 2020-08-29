@@ -24,7 +24,6 @@ import lombok.extern.log4j.Log4j;
 @RestController
 @Log4j
 @RequiredArgsConstructor
-
 public class ReplyController {
 	private final ReplyService replyService;
 	
