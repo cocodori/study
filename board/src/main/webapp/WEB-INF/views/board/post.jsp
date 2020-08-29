@@ -122,13 +122,13 @@
             <input type="text" class="form-control" name="replyer" disabled>
           </div>
           <div class="form-group">
-            <label class="col-form-label">댓글</label>
+            <label class="col-form-label"> 💬  댓글</label>
             <textarea class="form-control" name="reply"></textarea>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-dark">수정 완료</button>
+        <button type="button" class="btn btn-dark" id="modalModBtn">수정 완료</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
       </div>
     </div>
@@ -142,10 +142,6 @@ $(document).ready(()=>{
 	const bnoValue = '${post.bno}'
 	const replyDL = $(".chat")
 	const modal = $('#replyModifyModal')
-	
-	replyService.get (1, (data) => {
-		console.log(data)
-	})
 	
 	showReplyList(1)
 	
@@ -172,18 +168,31 @@ $(document).ready(()=>{
 		}
 		
 		if(btn === 'replyModify') {
-			$('#replyModifyModal').modal('show')
-			replyService.get(rno,(reply) => {
-				console.log(reply.replyer)
-				console.log(reply.reply)
-				console.log(reply)
-				modal.find('input[name="replyer"]').val(reply.replyer)
-				modal.find('textarea[name="reply"]').val(reply.reply)
-			})
-			
-		
+			let replyText
 				
-		}
+			//모달창을 띄우고, 모달창에 수정할 댓글 내용을 출력한다
+			$('#replyModifyModal').modal('show')
+			replyService.get(rno,(result) => {
+				modal.find('input[name="replyer"]').val(result.replyer)
+				replyText = modal.find('textarea[name="reply"]').val(result.reply)
+				
+				//수정 처리
+				$("#modalModBtn").on('click', () => {
+					//수정할 데이터를 객체 형식으로 저장
+					const reply = {
+						rno:rno,
+						reply:replyText.val()
+					}
+					
+					replyService.update(reply, (result)=>{
+						console.log(result)
+						//수정을 마치면 모달을 닫고 목록을 갱신한다.
+						modal.modal('hide')
+						showReplyList(1)
+					}) //update
+				})
+			})
+		} //if(modify)
 	}) 
 	
 	//댓글 등록
