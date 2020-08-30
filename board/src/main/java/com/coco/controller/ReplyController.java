@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coco.domain.PageInfo;
+import com.coco.domain.ReplyPageDTO;
 import com.coco.domain.ReplyVO;
 import com.coco.service.ReplyService;
 
@@ -69,7 +70,7 @@ public class ReplyController {
 	
 	//게시물의 댓글 조회하기
 	@GetMapping(value = "/pages/{bno}/{page}")
-	public ResponseEntity<List<ReplyVO>> getList (
+	public ResponseEntity<ReplyPageDTO> getList (
 			@PathVariable("bno") Long bno,
 			@PathVariable("page") int page
 			) {
@@ -79,7 +80,7 @@ public class ReplyController {
 		PageInfo pageInfo = new PageInfo(page, 10);
 		log.info("pageInfo : " + pageInfo);
 		
-		List<ReplyVO> replyList = replyService.getReplyList(bno, pageInfo);
+		ReplyPageDTO replyList = replyService.getReplyList(pageInfo, bno);
 		
 		return new ResponseEntity<>(replyList, HttpStatus.OK);
 	}

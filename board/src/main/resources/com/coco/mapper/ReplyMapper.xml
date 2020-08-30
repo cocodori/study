@@ -12,8 +12,8 @@
 	<select id="getReplyList" resultType="com.coco.domain.ReplyVO">
 		SELECT *
 		FROM tbl_reply
-		WHERE bno = #{bno}
-		AND bno > 0
+		WHERE bno = 514
+		AND rno > 0
 		ORDER BY rno DESC
 		LIMIT #{pageInfo.skip}, #{pageInfo.amount}
 	</select>
@@ -35,6 +35,12 @@
 		FROM tbl_reply
 		WHERE rno > 0
 		AND rno = #{rno}
+	</select>
+	
+	<select id="replyCount" resultType="int">
+		SELECT COUNT(*)
+		FROM tbl_reply
+        WHERE bno = #{bno}
 	</select>
 
 </mapper>

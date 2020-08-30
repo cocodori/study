@@ -3,7 +3,6 @@ package com.coco.service;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import java.util.stream.IntStream;
 
 import org.junit.Test;
@@ -14,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.coco.config.RootConfig;
 import com.coco.domain.PageInfo;
+import com.coco.domain.ReplyPageDTO;
 import com.coco.domain.ReplyVO;
 
 import lombok.extern.log4j.Log4j;
@@ -57,7 +57,7 @@ public class ReplyServiceTest {
 	
 	@Test
 	public void getReplyListTest() {
-		List<ReplyVO> replyList = replyService.getReplyList(514L, new PageInfo(1, 10));
+		ReplyPageDTO replyList = replyService.getReplyList(new PageInfo(1, 10), 514L);
 		
 		assertNotNull(replyList);
 	}

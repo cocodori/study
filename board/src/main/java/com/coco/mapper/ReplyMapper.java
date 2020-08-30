@@ -14,4 +14,7 @@ public interface ReplyMapper {
 	int update(ReplyVO replyVO);
 	int delete(Long rno);
 	ReplyVO getReply(Long rno);
+	
+	int replyCount(Long bno);
+
 }

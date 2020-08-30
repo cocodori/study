@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.coco.domain.PageInfo;
+import com.coco.domain.ReplyPageDTO;
 import com.coco.domain.ReplyVO;
 import com.coco.mapper.ReplyMapper;
 
@@ -22,8 +23,11 @@ public class ReplyServiceImpl implements ReplyService {
 	}
 
 	@Override
-	public List<ReplyVO> getReplyList(Long bno, PageInfo pageInfo) {
-		return replyMapper.getReplyList(bno, pageInfo);
+	public ReplyPageDTO getReplyList(PageInfo pageInfo, Long bno) {
+		int replyCount = replyMapper.replyCount(bno);
+		List<ReplyVO> replyList = replyMapper.getReplyList(bno, pageInfo);
+		
+		return new ReplyPageDTO(replyCount, replyList);
 	}
 
 	@Override

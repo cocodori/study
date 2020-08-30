@@ -14,14 +14,10 @@ const replyService = (() => {
 			data		: JSON.stringify(reply),				//JS의 객체를 JSON문자열로 바꾼다.(반대는 JSON.Parse)
 			contentType : 'application/json;charset=UTF-8',	//지금 보내는 데이터가 json이다.
 			success		: (result, status, xhr) => {
-				if (callback) {
-					callback(result)
-				}
+				callback ? callback(result) : ''
 			}, //success
 			error		: (xhr, status, er) => {
-				if(er) {
-					error(er)
-				}
+				er ? error(er) : ''
 			} // error
 		}) //ajax
 	} //add()
@@ -31,14 +27,10 @@ const replyService = (() => {
 		const page = param.page || 1
 		
 		$.getJSON('/replies/pages/'+bno+'/'+page+'.json',
-				function(data) {
-					if(callback) {
-						callback(data)
-					}
+				(data) => {
+					if(callback) callback(data.replyCount, data.replyList)
 		}).fail((xhr, status, err) => {
-			if(err) {
-				error(err)
-			}
+			err ? error(err) : ''
 		})
 	}	//getReplyList()
 	
@@ -47,14 +39,10 @@ const replyService = (() => {
 			type	: 'DELETE',
 			url		: '/replies/'+rno,
 			success : (deleteResult, status, xhr) => {
-				if(callback) {
-					callback(deleteResult)
-				}
+				callback ? callback(deleteResult) : ''
 			}, //success
 			error	: (xhr, status, er) => {
-				if(error) {
-					error(er)
-				}
+				error ? error(er) : ''
 			}
 		})
 	} //remove()

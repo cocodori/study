@@ -6,53 +6,58 @@
 		<div class="col-lg-5">
 			<div class="card shadow-lg border-0 rounded-lg mt-5">
 				<div class="card-header">
-					<h3 class="text-center font-weight-light my-4">📝<i>Write</i><h3>
+					<h3 class="text-center font-weight-light my-4">
+						📝<i>Write</i>
+						<h3>
 				</div>
 				<div class="card-body">
-					<form id="actionForm" >
+					<form id="actionForm">
 						<div class="form-group">
 							<label class="small mb-1">게시물 번호</label> <input
-								class="form-control py-4" type="text"
-								name="bno" value='${post.bno }' disabled>
+								class="form-control py-4" type="text" name="bno"
+								value='${post.bno }' disabled>
 						</div>
 						<div class="form-group">
 							<label class="small mb-1">제목</label> <input
-								class="form-control py-4 mod" type="text"
-								name="title" value='${post.title }' disabled>
+								class="form-control py-4 mod" type="text" name="title"
+								value='${post.title }' disabled>
 						</div>
 						<div class="form-group">
-							<label "small mb-1">내용</label>
-							<textarea class="form-control py-4 mod" rows="20" cols="54" name="content" disabled>${post.content }</textarea>
+							<label "smallmb-1">내용</label>
+							<textarea class="form-control py-4 mod" rows="20" cols="54"
+								name="content" disabled>${post.content }</textarea>
 						</div>
 						<div class="form-group">
-							<label class="small mb-1" for="inputEmailAddress">작성자</label> 
-							<input type='text' class="form-control py-4" name="writer" 
-							value="${post.writer }" disabled>
+							<label class="small mb-1" for="inputEmailAddress">작성자</label> <input
+								type='text' class="form-control py-4" name="writer"
+								value="${post.writer }" disabled>
 						</div>
 						<div class="form-group">
 							<p align="right">
-							<label class="small mb-1">작성일</label>
-							<fmt:formatDate value="${post.regdate }" pattern="yyyy-MM-dd HH:mm:ss"/>
+								<label class="small mb-1">작성일</label>
+								<fmt:formatDate value="${post.regdate }"
+									pattern="yyyy-MM-dd HH:mm:ss" />
 							</p>
 							<c:choose>
 								<c:when test="${post.moddate != post.regdate}">
 									<p align="right">
-									<label class="small mb-1">수정일</label>
-									<fmt:formatDate value="${post.moddate }" pattern="yyyy-MM-dd HH:mm:ss"/>
-									</p>	
+										<label class="small mb-1">수정일</label>
+										<fmt:formatDate value="${post.moddate }"
+											pattern="yyyy-MM-dd HH:mm:ss" />
+									</p>
 								</c:when>
 							</c:choose>
 						</div>
 						<div class="btns">
-							<button class="btn bg-dark" id="modBtn" style='color:white'>수정</button>
-							<button class="btn bg-dark" id="list" style='color:white'>목록</button>
-							<button class="btn bg-dark" id="remove" style='color:white'>삭제</button>
+							<button class="btn bg-dark" id="modBtn" style='color: white'>수정</button>
+							<button class="btn bg-dark" id="list" style='color: white'>목록</button>
+							<button class="btn bg-dark" id="remove" style='color: white'>삭제</button>
 						</div>
-						<div class="modBtns" style="display:none">
-							<button class="btn bg-dark" id="modify" style='color:white'>완료</button>
-							<button class="btn bg-dark" id="cancel" style='color:white'>취소</button>
+						<div class="modBtns" style="display: none">
+							<button class="btn bg-dark" id="modify" style='color: white'>완료</button>
+							<button class="btn bg-dark" id="cancel" style='color: white'>취소</button>
 						</div>
-						
+
 						<!-- disabled속성을 가진 태그는 전달되지 않아서 hidden태그로 따로 보낸다. -->
 						<input type="hidden" id="bno" name="bno" value="${post.bno }">
 						<input type="hidden" name='page' value='${pageInfo.page }'>
@@ -61,49 +66,42 @@
 						<input type='hidden' name='keyword' value='${pageInfo.keyword}'>
 					</form>
 				</div>
-<!-- 댓글 -->
-<div class="row">
-	<div class="col-lg-12">
-	 	<div class="panel panel-default">
-	 		<div class="pannel-heading">
-	 			&nbsp&nbsp <h4><strong>💬  댓글 </strong>
-	 			
-	 			</h4>
-				<div class="input-group">
-                    <input class="form-control py-4" type="text" name="reply" placeholder="댓글을 입력하세요">
-                    <div class="input-group-append">
-                        <input type='submit' class="btn btn-dark" id="replyBtn" value="등록">
-                    </div>
-                </div>
-			</div>
-			
-			<br>
-			
-			
-			
-			<div class="panel-body">
-				<ul class="chat">
-<!-- 			<dd class="left clearfix" data-rno='28'>
-					<div>
-						<div class="header">
-							<strong class="primary-font">user00</strong>
-							<small class="pull-right text-muted">0000-00-00</small>
+				<!-- 댓글 -->
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="panel panel-default">
+							<div class="pannel-heading">
+								&nbsp&nbsp
+								<h4>
+									<strong>💬 댓글 </strong>
+
+								</h4>
+								<div class="input-group">
+									<input class="form-control py-4" type="text" name="reply"
+										placeholder="댓글을 입력하세요">
+									<div class="input-group-append">
+										<input type='submit' class="btn btn-dark" id="replyBtn"
+											value="등록">
+									</div>
+								</div>
+							</div>
+							<br>
+							<div class="panel-body">
+								<ul class="chat">
+									<!-- 댓글이 생성되는 영역 -->
+								</ul>
+							</div>
+							<div class="panel-footer">
+								<!-- 페이지 번호가 생성되는 영역 -->
+							</div>
 						</div>
-						<p>First Reply</p>
 					</div>
-					</dd> -->
-				</ul>
+				</div>
+
 			</div>
 		</div>
 	</div>
 </div>
-
-		</div>
-		</div>
-	</div>
-</div>
-
-
 
 <!-- Reply Modify Modal -->
 <div class="modal fade" id="replyModifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -136,12 +134,13 @@
 </div>
 
 <script type="text/javascript" src="/resources/dist/js/reply.js"></script>
-
 <script>
 $(document).ready(()=>{
 	const bnoValue = '${post.bno}'
 	const replyDL = $(".chat")
 	const modal = $('#replyModifyModal')
+	let pageNum = 1
+	const replyPageFooter = $('.panel-footer')
 	
 	showReplyList(1)
 	
@@ -223,12 +222,34 @@ $(document).ready(()=>{
 		
 	})
 	
+	replyPageFooter.on('click', 'li a', function(e) {
+		e.preventDefault()
+		pageNum = $(this).attr('href')
+		
+		showReplyList(pageNum)
+	})
+	
+	
 	//댓글 목록을 출력하는 함수
 	function showReplyList(page) {
+		
+		console.log('page : ' + page)
+		
 		replyService.getReplyList({
 			bno	: bnoValue,
 			page: page||1
-			}, (list) => {
+			}, (replyCount, list) => {
+				
+				console.log(replyCount)
+				console.log(list)
+				
+				//페이지 번호를 -1로 받아서  댓글의 개수와 목록을 갱신한다.
+				if(page == -1) {
+					pageNum = Math.ceil(replyCount/10.0)
+					showReplyList(pageNum)
+					return
+				}
+				
 				let str = ""
 				
 				if(list == null || list.length == 0 ) {
@@ -247,11 +268,48 @@ $(document).ready(()=>{
 				} //for
 				
 				replyDL.html(str)
+				
+				showReplyPage(replyCount)
 			})
 			
 
 	} //showReplyList
+	
+	function showReplyPage(replyCount) {
+		let endNum = Math.ceil(pageNum / 10.0) * 10
+		let startNum = endNum - 9
+		
+		let prev = startNum != 1
+		let next = false
+		
+		endNum * 10 >= replyCount ?
+				endNum = Math.ceil(replyCount/10.0) : ''
+		
+		if(endNum * 10 < replyCount) next = true
+		
+		let str = "<ul class='pagination pull-right'>"
+		
+		prev ? str += "<li class='page-item'><a class='page-link'"
+				+"href='"+(startNum - 1)+"'> Previous </a></li>" : ''
+		
+		for(let i = startNum; i <= endNum; i++) {
+			let active = pageNum == i ? 'active' : ''
+			str += "<li class='page-item "+active+"'><a class='page-link' href='"+i+"'>"+i+"</a></li>"
+		}
+		
+		if(next) {
+			str += "<li class='page-item'><a class='page-link' href='"+(endNum + 1)+"'>NEXT</a></li>"
+		}
+		
+		str += "</ul></div>"
+		
+		console.log(startNum)
+		console.log(endNum)
+		
+		replyPageFooter.html(str)
+	}
 }) // docu
+
 </script>
 
 <script>

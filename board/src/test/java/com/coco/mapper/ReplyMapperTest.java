@@ -27,6 +27,14 @@ public class ReplyMapperTest {
 	private ReplyMapper replyMapper;
 	
 	@Test
+	public void testGetReplyCount() {
+		int replyCount = replyMapper.replyCount(514L);
+		assertTrue(replyCount >= 0);
+		
+		log.info(replyCount);
+	}
+	
+	@Test
 	public void testGetReply() {
 		ReplyVO replyVO = replyMapper.getReply(1L);
 		assertNotNull(replyVO);
@@ -43,9 +51,9 @@ public class ReplyMapperTest {
 	public void testInsert() {	//댓글 등록 테스트
 		Long[] bnoArr = {514L, 513L, 511L, 509L, 508L};
 		
-		IntStream.rangeClosed(1, 9).forEach(i-> {
+		IntStream.rangeClosed(1, 100).forEach(i-> {
 			ReplyVO replyVO = ReplyVO.builder()
-					.bno(bnoArr[i%5])
+					.bno(514L)
 					.reply("두 번째 테스트요"+i)
 					.replyer("manager")
 					.build();
@@ -59,7 +67,7 @@ public class ReplyMapperTest {
 	
 	@Test
 	public void testGetReplyList() {	//댓글 목록 테스트
-		List<ReplyVO> replyList = replyMapper.getReplyList(514L, new PageInfo());
+		List<ReplyVO> replyList = replyMapper.getReplyList(514L, new PageInfo(2, 10));
 		assertTrue(replyList.size() >= 0);
 	}
 	
