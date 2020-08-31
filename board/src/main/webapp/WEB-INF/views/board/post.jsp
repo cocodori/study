@@ -141,7 +141,7 @@ $(document).ready(()=>{
 	let pageNum = 1
 	const replyPageFooter = $('.panel-footer')
 	
-	showReplyList(1)
+	showReplyList(pageNum)
 	
 	//댓글 삭제 || 수정
 	$('.chat').on('click', 'a', function(e) {
@@ -150,7 +150,7 @@ $(document).ready(()=>{
 		const btn = $(this).data('oper')
 
 		console.log(rno)
-		console.log(btn)
+		
 		//삭제 버튼을 클릭했다면.
 		if(btn === 'replyRemove') {
 			if(confirm('정말 삭제하겠습니까?')) { //정말 삭제할 것인지 확인
@@ -159,7 +159,7 @@ $(document).ready(()=>{
 					console.log(result)
 					
 					//삭제 처리 후, 댓글 목록 갱신
-					showReplyList(1)
+					showReplyList(pageNum)
 					return
 				})
 			}
@@ -170,10 +170,11 @@ $(document).ready(()=>{
 				
 			//모달창을 띄우고, 모달창에 수정할 댓글 내용을 출력한다
 			$('#replyModifyModal').modal('show')
+			
 			replyService.get(rno,(result) => {
 				modal.find('input[name="replyer"]').val(result.replyer)
 				replyText = modal.find('textarea[name="reply"]').val(result.reply)
-				
+		
 				//수정 처리
 				$("#modalModBtn").on('click', () => {
 					//수정할 데이터를 객체 형식으로 저장
@@ -182,11 +183,12 @@ $(document).ready(()=>{
 						reply:replyText.val()
 					}
 					
+					console.log('----------rno----------')
+					
 					replyService.update(reply, (result)=>{
-						console.log(result)
 						//수정을 마치면 모달을 닫고 목록을 갱신한다.
 						modal.modal('hide')
-						showReplyList(1)
+						showReplyList(pageNum)
 					}) //update
 				})
 			})
@@ -210,8 +212,6 @@ $(document).ready(()=>{
 
 		//댓글 추가하는 함수를 호출해서 reply객체를 인자로 넘긴다.
 		replyService.add(reply, (result) => {
-			console.log(result)
-			
 			//input태그를 초기화 한다.
 			$('input[name="reply"]').val('')
 			
@@ -231,24 +231,11 @@ $(document).ready(()=>{
 	
 	//댓글 목록을 출력하는 함수
 	function showReplyList(page) {
-		
-		console.log('page : ' + page)
-		
 		replyService.getReplyList({
 			bno	: bnoValue,
 			page: page||1
 			}, (replyCount, list) => {
-				
-				console.log(replyCount)
-				console.log(list)
-				
-				//페이지 번호를 -1로 받아서  댓글의 개수와 목록을 갱신한다.
-				if(page == -1) {
-					pageNum = Math.ceil(replyCount/10.0)
-					showReplyList(pageNum)
-					return
-				}
-				
+
 				let str = ""
 				
 				if(list == null || list.length == 0 ) {
@@ -257,11 +244,11 @@ $(document).ready(()=>{
 				}
 				
 				for (let i = 0, len = list.length || 0; i < len; i++) {
- 					str += '<dd class="left clearfix" data-rno="'+list[i].rno+'">'
+ 					str += '<dd class="left clearfix">'
 					str += '<div><div class="header"><strong class="primary-font"> 👩‍🚀‍ '+list[i].replyer+'</strong>'
 					str += '<small class="pull-right text-muted">'+list[i].replyDate+'</small>'
 					str += '&nbsp<small><a href="#" data-oper="replyModify" data-rno="'+list[i].rno+'">수정</a></small>'
-					str += '&nbsp<small><a href="#" data-oper="replyRemove" data-rno="'+list[i].rno+'">삭제</a></small></div>'
+					str += '&nbsp<small><a href="#" data-oper="replyRemove">삭제</a></small></div>'
 					str += '<p>'+list[i].reply+'</p></div></dd>'
 					str += '<hr>'
 				} //for
@@ -301,9 +288,6 @@ $(document).ready(()=>{
 		}
 		
 		str += "</ul></div>"
-		
-		console.log(startNum)
-		console.log(endNum)
 		
 		replyPageFooter.html(str)
 	}

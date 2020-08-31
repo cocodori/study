@@ -3,10 +3,12 @@ package com.coco.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.coco.domain.PageInfo;
 import com.coco.domain.ReplyPageDTO;
 import com.coco.domain.ReplyVO;
+import com.coco.mapper.BoardMapper;
 import com.coco.mapper.ReplyMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -16,9 +18,13 @@ import lombok.RequiredArgsConstructor;
 public class ReplyServiceImpl implements ReplyService {
 
 	private final ReplyMapper replyMapper;
-	
+	private final BoardMapper boardMapper;
+
+	@Transactional
 	@Override
 	public int register(ReplyVO replyVO) {
+		//tbl_board테이블의 ReplyCount컬럼을 1 증가 시킨다.
+		boardMapper.updateReplyCount(replyVO.getBno(), 1);
 		return replyMapper.insert(replyVO);
 	}
 
@@ -35,8 +41,14 @@ public class ReplyServiceImpl implements ReplyService {
 		return replyMapper.update(replyVO);
 	}
 
+	@Transactional
 	@Override
 	public int remove(Long rno) {
+		ReplyVO replyVO = replyMapper.getReply(rno);
+		
+		//tbl_board테이블의 ReplyCount칼럼을 1 감소 시킨다.
+		boardMapper.updateReplyCount(replyVO.getBno(), -1);
+		
 		return replyMapper.delete(rno);
 	}
 

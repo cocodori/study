@@ -12,7 +12,7 @@
 	<select id="getReplyList" resultType="com.coco.domain.ReplyVO">
 		SELECT *
 		FROM tbl_reply
-		WHERE bno = 514
+		WHERE bno = #{bno}
 		AND rno > 0
 		ORDER BY rno DESC
 		LIMIT #{pageInfo.skip}, #{pageInfo.amount}

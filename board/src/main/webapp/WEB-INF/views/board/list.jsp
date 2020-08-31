@@ -53,7 +53,8 @@
 								end="${list.size()}">
 								<tr>
 									<td>${post.bno }</td>
-									<td><a class='move' href='${post.bno}'>${post.title }</a></td>
+									<td><a class='move' href='${post.bno}'>${post.title}
+										<b>${post.replyCount !=0 ? [post.replyCount] : '' }</b></a></td>
 									<td>${post.writer }</td>
 									<td><fmt:formatDate value="${post.regdate }"
 											pattern="yyyy-MM-dd" /></td>

@@ -62,4 +62,10 @@
 	<include refid="search"/>
 </select>
 
+<update id="updateReplyCount">
+	UPDATE tbl_board
+	SET replyCount = replyCount + #{amount}
+	WHERE bno = #{bno}
+</update>
+
 </mapper>
