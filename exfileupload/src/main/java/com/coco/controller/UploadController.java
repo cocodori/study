@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.log4j.Log4j;
@@ -45,8 +46,9 @@ public class UploadController {
 		log.info("upload AJAX");
 	}
 	
-	@PostMapping("/uploadAjaxAction")
-	public void uploadAjaxPost(MultipartFile[] uploadFile) {
+	@PostMapping("/uploadAjaxPost")
+	@ResponseBody
+	public void uploadAjaxPost( MultipartFile[] uploadFile) {
 		log.info("Upload Ajax Action");
 		String uploadFolder = "C:\\work\\springex\\uploadFolder";
 		
@@ -66,4 +68,6 @@ public class UploadController {
 			}
 		}
 	}
+	
+
 }
