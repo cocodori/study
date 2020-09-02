@@ -59,13 +59,19 @@ $(document).ready(() => {
 	*/
 	function showUploadedFile(uploadResultArr) {
 		let str = '';
+		
 		$(uploadResultArr).each((i, obj) => {
+	
 			// 이미지가 아니면 파일 아이콘을 출력한다.
 			if(!obj.image) {
-				str += '<li><img src="/resources/img/fileIcon.png">'+obj.fileName+'</li>';
+				const fileCallPath = encodeURIComponent(obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
+ 				str +='<li><a href="/download?fileName='+fileCallPath+'">'
+ 				+'<img src="/resources/img/fileIcon.png">'+obj.fileName+'</a></li>'; 
+		
+					
 			} else {
-				//이미지 파일이면 섬네일을 출력한다.
 				const fileCallPath = encodeURIComponent("/"+obj.uploadPath+'/s_'+obj.uuid+'_'+obj.fileName);
+				//이미지 파일이면 섬네일을 출력한다.
 				console.log(fileCallPath)
 				str += '<img src="/display?fileName='+fileCallPath+'">'+obj.fileName+'</li>';
 			}

@@ -3,6 +3,7 @@ package com.coco.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -171,6 +174,52 @@ public class UploadController {
 		}
 		
 		return result;
+	}
+	
+	//첨부 파일 다운로드
+	/*
+	 * MIME타입은 다운로드 할 수 있는 'application/octet-stream'으로 지정한다.
+	 * 다운로드 시 저장되는 이름은 'Content-Dispostion'을 이용해서 지정한다.
+	 * 파일 이름에 대한 문자열 처리는 파일 이름이 한글인 경우 저장할 때 깨지는 문제를 막기 위해서
+	 * 브라우저에서 '/download?fileName=xxxx'와 같이 호출하면 다운로드 되는 것을 확인할 수 있다.
+	 *  
+	 * */
+	@ResponseBody
+	@GetMapping(value = "/download")
+	public ResponseEntity<Resource> downloadFile(String fileName) {
+		log.info("download File : " + fileName);
+		Resource resource = new FileSystemResource("C:\\work\\springex\\uploadFolder\\" + fileName);
+		
+		log.info("resource : " + resource);
+		
+		//그런 파일 없어요.
+		if(resource.exists() == false) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		
+		String resourceName = resource.getFilename();
+		
+		log.info("resourceName : " + resourceName);
+		
+		//UUID 지우기
+		String resourceOriginalName = resourceName.substring(resourceName.indexOf("_")+1);
+		
+		log.info("resourceOriginalName : " + resourceOriginalName);
+		
+		HttpHeaders httpHeaders = new HttpHeaders();
+		
+		log.info("httpHeaders : " + httpHeaders);
+		
+		try {
+			httpHeaders.add("Content-Disposition", "attachment; filename="+new String(resourceOriginalName.getBytes("UTF-8"),
+					"ISO-8859-1"));
+			
+			log.info("httpHeaders : " + httpHeaders);
+		} catch (UnsupportedEncodingException e) {
+			log.info(e.getMessage());
+		}
+		
+		return new ResponseEntity<>(resource, httpHeaders, HttpStatus.OK);
 	}
 	
 	
