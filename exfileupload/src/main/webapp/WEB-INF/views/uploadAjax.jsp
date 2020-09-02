@@ -27,6 +27,33 @@
 	width:100%;
 }
 
+.uploadResult ul li span {
+	color:white;
+}
+
+.bigPictureWrapper {
+	position:absolute;
+	display:none;
+	justify-content:center;
+	align-items:center;
+	top:0%;
+	width:100%;
+	height:100%;
+	background-color:gray;
+	z-index:100;
+	background:rgba(255,255,255,0,5);
+}
+
+.bigPicture {
+	position:relativce;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+}
+
+.bigPicture img {
+	width:600px;
+}
 </style>
 </head>
 <body>
@@ -40,12 +67,30 @@
 <div class="uploadResult">
 	<ul></ul>
 </div>
+
+<div class="bigPictureWrapper">
+	<div class="bicPicture">
+	
+	</div>
+</div>
 	
 <script
   src="https://code.jquery.com/jquery-3.5.1.min.js"
   integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
   crossorigin="anonymous"></script>
 
+<script type="text/javascript">
+function showImage(fileCallPath) {
+	console.log(fileCallPath);
+	
+	$('.bigPictureWrapper').css('display','flex').show();
+	
+	$('.bigPicture')
+	.html('<img src="/display?fileName='+encodeURI(fileCallPath)+'">')
+	.animate({width:'100%', height:'100%'}, 1000);
+	
+}
+</script>
 <script type="text/javascript">
 $(document).ready(() => {
 	//확장자 exe, sh, zip, alz 제한
@@ -64,20 +109,24 @@ $(document).ready(() => {
 	
 			// 이미지가 아니면 파일 아이콘을 출력한다.
 			if(!obj.image) {
-				const fileCallPath = encodeURIComponent(obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
+				const fileCallPath = encodeURIComponent("/"+obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
  				str +='<li><a href="/download?fileName='+fileCallPath+'">'
  				+'<img src="/resources/img/fileIcon.png">'+obj.fileName+'</a></li>'; 
 		
 					
 			} else {
 				const fileCallPath = encodeURIComponent("/"+obj.uploadPath+'/s_'+obj.uuid+'_'+obj.fileName);
+				let originPath = obj.uploadPath + "\\" + obj.uuid + "_"+obj.fileName;
+				originPath = originPath.replace(new RegExp(/\\/g),"/")
 				//이미지 파일이면 섬네일을 출력한다.
-				console.log(fileCallPath)
-				str += '<img src="/display?fileName='+fileCallPath+'">'+obj.fileName+'</li>';
+				str += '<li><a href=\'javascript:showImage(\"'+originPath+'\")\'>'
+					+'<img src="/display?fileName='+fileCallPath+'">'+obj.fileName+'</a></li>';
+				
+				
 			}
 		})
 		uploadResult.append(str);
-	}
+	} //showUploadedFile()
 	
 	function checkExtension(fileName, fileSize) {
 		if(fileSize >= maxSize) {
@@ -91,7 +140,9 @@ $(document).ready(() => {
 		}
 		
 		return true;
-	}
+	} //checkExtention()
+	
+
 	
 	$('#uploadBtn').on('click', (e) => {
 		let formData = new FormData();
