@@ -10,10 +10,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -138,6 +140,39 @@ public class UploadController {
 		
 		return new ResponseEntity<>(attachFileList, HttpStatus.OK);
 	}
+	
+
+	/*
+	 * getFile()은 문자열로 파일의 경로가 포함된 fileName을 파라미터로 받아서 byte[]로 이미지 파일 데이터를 전송한다.
+	 * byte[]로 이미지 파일 데이터를 전송할 때 신경 쓸 점은 MIME타입이 파일 종류에 따라 달라진다는 점이다.
+	 * Files객체가 가진 static메서드인 probeContentType(Path path)를 이용해서
+	 * 적합한 MIME타입 데이터를 HTTP헤더 메세지에 포함시킬 수 있다.
+	 *	/disaply?fileName=/2020/09/02/aaa.png 이런 식으로 테스트 해볼 수 있다.
+	 * */
+	@GetMapping("/display")
+	@ResponseBody
+	public ResponseEntity<byte[]> getFile(String fileName) {
+		log.info("fileName : " + fileName);
+		
+		File file = new File("C:\\work\\springex\\uploadFolder" + fileName);
+		
+		log.info("file : " + file);
+		
+		ResponseEntity<byte[]> result = null;
+		
+		try {
+			HttpHeaders httpHeader = new HttpHeaders();
+			
+			httpHeader.add("Content-Type", Files.probeContentType(file.toPath()));
+			result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file),
+					httpHeader, HttpStatus.OK);
+		} catch (Exception e) {
+			log.info(e.getMessage());
+		}
+		
+		return result;
+	}
+	
 	
 	//오늘 날짜로 된 경로를 문자열로 생성하는 메서드
 	private String getFolder() {
