@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.coco.domain.BoardAttachVO;
 import com.coco.domain.BoardVO;
 import com.coco.domain.PageInfo;
 import com.coco.mapper.BoardAttachMapper;
@@ -78,6 +79,14 @@ public class BoardServiceImpl implements BoardService {
 		log.info("pageINfo : " +pageInfo);
 		
 		return boardMapper.getTotal(pageInfo);
+	}
+
+	@Override
+	public List<BoardAttachVO> getAttachList(Long bno) {
+		
+		log.info("get Attach List by Bno :" + bno);
+		
+		return boardAttachMapper.findByBno(bno);
 	}
 
 }

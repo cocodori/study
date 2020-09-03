@@ -1,13 +1,18 @@
 package com.coco.controller;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.coco.domain.BoardAttachVO;
 import com.coco.domain.BoardVO;
 import com.coco.domain.PageDTO;
 import com.coco.domain.PageInfo;
@@ -23,6 +28,20 @@ import lombok.extern.log4j.Log4j;
 public class BoardController {
 	
 	private final BoardService boardService;
+	
+	
+	/*
+	 * RestController가 아니므로 메서드에 직접 @ResponsBody를 적용하여 JSON데이터를 반환한다.
+	 * 
+	 * */
+	@ResponseBody
+	@GetMapping(value = "/getAttachList")
+	public ResponseEntity<List<BoardAttachVO>> getAttachList(Long bno) {
+		log.info("-------------getAttachList()--------------");
+		log.info("bno : " + bno);
+		
+		return new ResponseEntity<>(boardService.getAttachList(bno), HttpStatus.OK);
+	}
 	
 	@GetMapping("/list")
 	public void getAllPost(PageInfo page,Model model) {

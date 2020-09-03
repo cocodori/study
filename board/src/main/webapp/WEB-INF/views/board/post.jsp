@@ -1,6 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../includes/header.jsp"%>
+<link href="/resources/css/fileUpload.css" rel="stylesheet">
+<!-- 첨부파일 원본 이미지 -->
+<div class="bigPictureWrapper">
+	<div class="bigPicture"></div>
+</div>
+
 <div class="container">
 	<div class="row justify-content-center">
 		<div class="col-lg-5">
@@ -27,8 +33,17 @@
 							<textarea class="form-control py-4 mod" rows="20" cols="54"
 								name="content" disabled>${post.content }</textarea>
 						</div>
+						
 						<div class="form-group">
-							<label class="small mb-1" for="inputEmailAddress">작성자</label> <input
+							<label class="small mb-1">첨부파일</label>
+							<div class="uploadResult">
+								<ul>
+								</ul>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="small mb-1">작성자</label> <input
 								type='text' class="form-control py-4" name="writer"
 								value="${post.writer }" disabled>
 						</div>
@@ -133,6 +148,71 @@
 </div>
 
 <script type="text/javascript" src="/resources/dist/js/reply.js"></script>
+
+<script>
+$(document).ready(() => {
+	(()=>{	//화면에 첨부파일 출력
+		const bno = '${post.bno}';
+		
+		$.getJSON('/board/getAttachList',{bno:bno}, (arr) => {
+			console.log(arr)
+			
+			let str = '';
+			
+			$(arr).each((i, attach) => {
+				//이미지 파일인경우
+				if(attach.fileType) {
+					const fileCallPath = encodeURIComponent("/"+attach.uploadPath+'/s_'+attach.uuid+'_'+attach.fileName);
+					
+					str += '<li data-uploadpath="'+attach.uploadPath+'" data-uuid="'+attach.uuid+'" data-filename="'+attach.fileName+'" data-filetype="'+attach.fileType+'">';
+					str += '<div><img src="/display?fileName='+fileCallPath+'">';
+					str += '</div>';
+					str += '</li>';
+				} else {
+					str += '<li data-uploadpath="'+attach.uploadPath+'" data-uuid="'+attach.uuid+'" data-filename="'+attach.fileName+'" data-filetype="'+attach.fileType+'">';
+					str += '<div><span>'+attach.fileName+'</span><br>';
+					str += '<img src="/resources/img/fileIcon.png">';
+					str += '</div>';
+					str += '</li>';
+				}
+			});
+			
+			$('.uploadResult ul').html(str);
+			
+		})	//getJSON
+	})() //end - function
+	
+	//이미지 확대 && 파일 다운로드
+	$('.uploadResult').on('click', 'li', function() {
+		const liObj = $(this);
+		const path = encodeURIComponent(liObj.data('uploadpath')+'/'+liObj.data('uuid')+'_'+liObj.data('filename'));
+		
+		if(liObj.data('filetype')) {
+			showImage('/'+path.replace(new RegExp(/\\/g),'/'));
+		} else {
+			//download
+			self.location = '/download?fileName='+path;
+		}
+	})
+	
+	//이미지 축소
+	$('.bigPictureWrapper').on('click', ()=> {
+		$('.bigPictureWrapper').hide();
+	})
+	
+	
+	
+	function showImage(fileCallPath) {
+		console.log(fileCallPath);
+		
+		$('.bigPictureWrapper').css('display','flex').show();
+		$('.bigPicture').html('<img src="/display?fileName='+fileCallPath+'">');
+	}
+	
+	
+})
+</script>
+
 <script>
 $(document).ready(()=>{
 	const bnoValue = '${post.bno}'
@@ -149,7 +229,7 @@ $(document).ready(()=>{
 		const rno = $(this).data('rno')
 		const btn = $(this).data('oper')
 
-		console.log(rno)
+		console.log(rno);
 		
 		//삭제 버튼을 클릭했다면.
 		if(btn === 'replyRemove') {
@@ -248,7 +328,7 @@ $(document).ready(()=>{
 					str += '<div><div class="header"><strong class="primary-font"> 👩‍🚀‍ '+list[i].replyer+'</strong>'
 					str += '<small class="pull-right text-muted">'+list[i].replyDate+'</small>'
 					str += '&nbsp<small><a href="#" data-oper="replyModify" data-rno="'+list[i].rno+'">수정</a></small>'
-					str += '&nbsp<small><a href="#" data-oper="replyRemove">삭제</a></small></div>'
+					str += '&nbsp<small><a href="#" data-oper="replyRemove" data-rno="'+list[i].rno+'">삭제</a></small></div>'
 					str += '<p>'+list[i].reply+'</p></div></dd>'
 					str += '<hr>'
 				} //for
