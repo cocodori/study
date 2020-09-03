@@ -45,7 +45,7 @@
 }
 
 .bigPicture {
-	position:relativce;
+	position:relative;
 	display:flex;
 	justify-content:center;
 	align-items:center;
@@ -69,7 +69,7 @@
 </div>
 
 <div class="bigPictureWrapper">
-	<div class="bicPicture">
+	<div class="bigPicture">
 	
 	</div>
 </div>
@@ -87,8 +87,14 @@ function showImage(fileCallPath) {
 	
 	$('.bigPicture')
 	.html('<img src="/display?fileName='+encodeURI(fileCallPath)+'">')
-	.animate({width:'100%', height:'100%'}, 1000);
+	//.animate({width:'100%', height:'100%'}, 1000);
 	
+	//다시 클릭 시 이미지 축소
+	$('.bigPictureWrapper').on('click',(e) => {
+		$('.bigPictureWrapper').hide()
+	})
+	
+
 }
 </script>
 <script type="text/javascript">
@@ -99,6 +105,24 @@ $(document).ready(() => {
 	const uploadDiv = $('.uploadDiv').clone();
 	const uploadResult = $('.uploadResult ul');
 
+	//삭제
+	$('.uploadResult').on('click','span', function(e){
+		const targetFile = $(this).data('file');
+		const type = $(this).data('type');
+		console.log(targetFile)
+		console.log(type)
+		
+		$.ajax({
+			url		: '/deleteFile',
+			data	: {fileName:targetFile, type:type},
+			dataType: 'text',
+			type	: 'POST',
+			success : (result) => {
+				console.log(result);
+			}
+		}); //Delete Ajax
+	})
+	
 	/*
 		화면에 업로드한 파일 정보를 출력하는 함수	
 	*/
@@ -110,19 +134,26 @@ $(document).ready(() => {
 			// 이미지가 아니면 파일 아이콘을 출력한다.
 			if(!obj.image) {
 				const fileCallPath = encodeURIComponent("/"+obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
- 				str +='<li><a href="/download?fileName='+fileCallPath+'">'
- 				+'<img src="/resources/img/fileIcon.png">'+obj.fileName+'</a></li>'; 
+				
+				const fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");
+				
+ 				str +='<li><div><a href="/download?fileName='+fileCallPath+'">'
+ 				+'<img src="/resources/img/fileIcon.png">'+obj.fileName+'</a>'; 
+ 				
+ 				//삭제를 위한 'x' 추가
+ 				str += '<span data-file=\"'+fileCallPath+'\" data-type="file"> X </span></div></li>';
 		
 					
 			} else {
 				const fileCallPath = encodeURIComponent("/"+obj.uploadPath+'/s_'+obj.uuid+'_'+obj.fileName);
 				let originPath = obj.uploadPath + "\\" + obj.uuid + "_"+obj.fileName;
-				originPath = originPath.replace(new RegExp(/\\/g),"/")
+				originPath = "/"+originPath.replace(new RegExp(/\\/g),"/")
 				//이미지 파일이면 섬네일을 출력한다.
 				str += '<li><a href=\'javascript:showImage(\"'+originPath+'\")\'>'
-					+'<img src="/display?fileName='+fileCallPath+'">'+obj.fileName+'</a></li>';
-				
-				
+					+'<img src="/display?fileName='+fileCallPath+'">'+obj.fileName+'</a>';
+					
+ 				//삭제를 위한 'x' 추가
+ 				str += '<span data-file=\"'+fileCallPath+'\" data-type="image"> X </span></div></li>';
 			}
 		})
 		uploadResult.append(str);
@@ -182,6 +213,9 @@ $(document).ready(() => {
 			}
 		}) //ajax
 	})
+	
+	
+	
 }) // doc
 </script>
 </body>

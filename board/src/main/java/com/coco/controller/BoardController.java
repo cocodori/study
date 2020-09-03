@@ -37,12 +37,21 @@ public class BoardController {
 	@GetMapping("/write")
 	public void write() {
 		log.info("/board/write");
+
 	}
 	
 	@PostMapping("/register")
 	public String register(BoardVO boardVO, RedirectAttributes redirect) {
 		log.info("/board/register");
-		log.info("boardVO : "  + boardVO);
+		
+		log.info("register : " + boardVO);
+		
+		/*
+		 * 
+		 * */
+		if(boardVO.getAttachList() != null ) {
+			boardVO.getAttachList().forEach(attach -> log.info(attach));
+		}
 
 		redirect.addAttribute("no", boardService.register(boardVO));
 		

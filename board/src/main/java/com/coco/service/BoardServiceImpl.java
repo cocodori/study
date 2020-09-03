@@ -3,9 +3,11 @@ package com.coco.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.coco.domain.BoardVO;
 import com.coco.domain.PageInfo;
+import com.coco.mapper.BoardAttachMapper;
 import com.coco.mapper.BoardMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,9 @@ import lombok.extern.log4j.Log4j;
 public class BoardServiceImpl implements BoardService {
 
 	private final BoardMapper boardMapper;
+	private final BoardAttachMapper boardAttachMapper;
 	
+	@Transactional
 	@Override
 	public Long register(BoardVO boardVO) {
 		/* 데이터베이스에 데이터를 추가하는 데 성공하면 
@@ -26,6 +30,16 @@ public class BoardServiceImpl implements BoardService {
 		Long result =
 				boardMapper.insert(boardVO) == 1 ?
 						boardMapper.lastInsertId() : 0;
+						
+		if(boardVO.getAttachList() == null || boardVO.getAttachList().size()<=0) {
+			return result;
+		}
+		
+		//첨부파일이 있으면 첨부파일을 DB에 저장.
+		boardVO.getAttachList().forEach(attach -> {
+			attach.setBno(boardMapper.lastInsertId());
+			boardAttachMapper.insert(attach);
+		});
 		
 		return result;
 	}
