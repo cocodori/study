@@ -1,5 +1,9 @@
 package com.coco.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -104,9 +108,47 @@ public class BoardController {
 	public String remove(Long bno, PageInfo pageInfo) {
 		log.info("/board/remove");
 		
-		int result = boardService.remove(bno);
-		log.info("result : " + result);
+		List<BoardAttachVO> attachList = boardService.getAttachList(bno);
+		
+		log.info(attachList);
+		
+		if(boardService.remove(bno) == 1) {
+			deleteFiles(attachList);
+		}
 		
 		return "redirect:/board/list" + pageInfo.getUrlList();
+	}
+	
+	private void deleteFiles(List<BoardAttachVO> attachList) {
+		if(attachList == null || attachList.size() == 0) {
+			return;
+		}
+		log.info("----------------deleteFiles()--------------------------");
+		log.info("attachList : " + attachList);
+		
+		attachList.forEach(attach -> {
+			//삭제할 파일 경로
+			try {
+				Path file = Paths.get("C:\\work\\springex\\uploadFolder\\"
+			+attach.getUploadPath()+"\\"+attach.getUuid()+"_"+attach.getFileName());
+				
+				log.info("file : " + file);
+				
+				Files.deleteIfExists(file);
+				
+				//삭제하는 파일이 이미지 파일이라면
+				if(Files.probeContentType(file).startsWith("image")) {
+					//삭제하는 파일의 섬네일 경로
+					Path thumbnail = Paths.get("C:\\work\\springex\\uploadFolder\\"
+				+attach.getUploadPath()+"\\s_"+attach.getUuid()+"_"+attach.getFileName());
+					
+					//섬네일 삭제
+					Files.delete(thumbnail);
+				}
+			} catch (IOException e) {
+				log.error(e.getMessage());
+			}
+			
+		});	//forEach()
 	}
 }

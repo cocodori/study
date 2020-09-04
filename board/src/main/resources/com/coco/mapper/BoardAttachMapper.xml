@@ -17,5 +17,10 @@
 		FROM tbl_attach
 		WHERE bno = #{bno}
 	</select>
+	
+	<delete id="deleteAll">
+		DELETE FROM tbl_attach
+		WHERE bno = #{bno}
+	</delete>
 
 </mapper>

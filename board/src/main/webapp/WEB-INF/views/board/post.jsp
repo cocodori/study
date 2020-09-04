@@ -337,8 +337,6 @@ $(document).ready(()=>{
 				
 				showReplyPage(replyCount)
 			})
-			
-
 	} //showReplyList
 	
 	function showReplyPage(replyCount) {

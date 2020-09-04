@@ -64,13 +64,11 @@ public class BoardServiceImpl implements BoardService {
 		return boardMapper.update(boardVO);
 	}
 
+	@Transactional
 	@Override
 	public int remove(Long bno) {
-		
-		int result = boardMapper.delete(bno);
-		log.info(result == 0 ? "존재하지 않는 게시물" : "삭제되었습니다.");
-		
-		return result;
+		boardAttachMapper.deleteAll(bno);
+		return boardMapper.delete(bno);
 	}
 
 	@Override
