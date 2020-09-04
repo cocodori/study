@@ -36,6 +36,11 @@
 						
 						<div class="form-group">
 							<label class="small mb-1">첨부파일</label>
+							
+						<div class="form-group uploadDiv" style="display:none">
+							<input type='file' name="uploadFile" multiple>
+						</div>
+							
 							<div class="uploadResult">
 								<ul>
 								</ul>
@@ -165,12 +170,27 @@ $(document).ready(() => {
 					const fileCallPath = encodeURIComponent("/"+attach.uploadPath+'/s_'+attach.uuid+'_'+attach.fileName);
 					
 					str += '<li data-uploadpath="'+attach.uploadPath+'" data-uuid="'+attach.uuid+'" data-filename="'+attach.fileName+'" data-filetype="'+attach.fileType+'">';
-					str += '<div><img src="/display?fileName='+fileCallPath+'">';
+					str += '<div>'
+					str += '<div class="fileModify" style="display:none">'
+					str += '<span>'+attach.fileName+'</span><br>';
+					str += '<button type="button" data-file=\"'+fileCallPath+'\" class="btn btn-circle" data-type="image">';
+					str += '<i class="fa fa-times"></i></button><br>';
+					str += '</div>'
+
+					
+					str += '<img src="/display?fileName='+fileCallPath+'">';
 					str += '</div>';
 					str += '</li>';
 				} else {
+					const fileCallPath = encodeURIComponent("/"+attach.uploadPath+'/'+attach.uuid+'_'+attach.fileName);
+					
 					str += '<li data-uploadpath="'+attach.uploadPath+'" data-uuid="'+attach.uuid+'" data-filename="'+attach.fileName+'" data-filetype="'+attach.fileType+'">';
-					str += '<div><span>'+attach.fileName+'</span><br>';
+					str += '<div><span>'+attach.fileName+'</span>';
+					str += '<div class="fileModify" style="display:none">'
+					str += '<button type="button" data-file=\"'+fileCallPath+'\" class="btn btn-circle" data-type="file">';
+					str += '<i class="fa fa-times"></i></button><br>';
+
+					str += '</div>'
 					str += '<img src="/resources/img/fileIcon.png">';
 					str += '</div>';
 					str += '</li>';
@@ -403,7 +423,11 @@ $(document).ready(() => {
 			e.preventDefault()
 			$('.btns').css('display','none')
 			$('.modBtns').css('display','block')
-			$('.mod').attr('disabled',false)		
+			$('.mod').attr('disabled',false)
+			
+			//파일 업로드 관련
+			$('.uploadDiv').css('display', 'block')
+			$('.fileModify').css('display', 'block')
 		})
 		
 		//'취소' 버튼 클릭 시, 원상태로 복구
@@ -412,6 +436,11 @@ $(document).ready(() => {
 			$('.btns').css('display','block')
 			$('.modBtns').css('display','none')
 			$('.mod').attr('disabled',true)
+
+			//파일 업로드 관련
+			$('.uploadDiv').css('display', 'none')
+			$('.fileModify').css('display', 'none')
+
 		})
 		
 		//'완료' 버튼 클릭 시 수정 처리
