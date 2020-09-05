@@ -156,7 +156,7 @@
 
 <script>
 $(document).ready(() => {
-	(()=>{	//화면에 첨부파일 출력
+	const showFileList = (()=>{	//화면에 첨부파일 출력
 		const bno = '${post.bno}';
 		
 		$.getJSON('/board/getAttachList',{bno:bno}, (arr) => {
@@ -183,7 +183,6 @@ $(document).ready(() => {
 					str += '</li>';
 				} else {
 					const fileCallPath = encodeURIComponent("/"+attach.uploadPath+'/'+attach.uuid+'_'+attach.fileName);
-					
 					str += '<li data-uploadpath="'+attach.uploadPath+'" data-uuid="'+attach.uuid+'" data-filename="'+attach.fileName+'" data-filetype="'+attach.fileType+'">';
 					str += '<div><span>'+attach.fileName+'</span>';
 					str += '<div class="fileModify" style="display:none">'
@@ -511,6 +510,7 @@ $(document).ready(() => {
 			$('.btns').css('display','none')
 			$('.modBtns').css('display','block')
 			$('.mod').attr('disabled',false)
+			//$(".uploadResult").unbind();
 
 			
 			//파일 업로드 관련
@@ -524,11 +524,9 @@ $(document).ready(() => {
 			$('.btns').css('display','block')
 			$('.modBtns').css('display','none')
 			$('.mod').attr('disabled',true)
-
-			//파일 업로드 관련
+a			//파일 업로드 관련
 			$('.uploadDiv').css('display', 'none')
 			$('.fileModify').css('display', 'none')
-
 		})
 		
 		//'완료' 버튼 클릭 시 수정 처리

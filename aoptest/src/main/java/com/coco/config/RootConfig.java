@@ -17,7 +17,10 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 //참조할 패키지
-@ComponentScan(basePackages = {"com.coco.service", "com.coco.aop"})
+@ComponentScan(basePackages = {"com.coco.service"
+								,"com.coco.aop"
+								,"com.coco.task"
+								})//ComponenetScan
 @MapperScan(basePackages = {"com.coco.mapper"})
 @EnableAspectJAutoProxy
 @EnableTransactionManagement

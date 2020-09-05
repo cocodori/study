@@ -22,5 +22,11 @@
 		DELETE FROM tbl_attach
 		WHERE bno = #{bno}
 	</delete>
+	
+	<select id="getOldFiles" resultType="com.coco.domain.BoardAttachVO">
+		SELECT *
+		FROM tbl_attach
+		WHERE uploadpath = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 DAY), '%y\%m\%d')
+	</select>
 
 </mapper>

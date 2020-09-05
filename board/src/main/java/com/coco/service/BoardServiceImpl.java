@@ -64,16 +64,15 @@ public class BoardServiceImpl implements BoardService {
 	public int modify(BoardVO boardVO) {
 		log.info(boardVO);
 		
-		
 		//게시물 수정
 		int modifyResult = boardMapper.update(boardVO);
+		
+		//기존 파일을 모두 지운다.
+		boardAttachMapper.deleteAll(boardVO.getBno());
 		
 		//첨부파일 등록
 		if (modifyResult == 1 && boardVO.getAttachList() != null
 			&& boardVO.getAttachList().size() > 0) {
-			
-			//기존 파일을 모두 지운다.
-			boardAttachMapper.deleteAll(boardVO.getBno());
 
 			boardVO.getAttachList().forEach(attach -> {
 				attach.setBno(boardVO.getBno());
