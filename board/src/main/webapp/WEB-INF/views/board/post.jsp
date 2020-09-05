@@ -196,9 +196,7 @@ $(document).ready(() => {
 					str += '</li>';
 				}
 			});
-			
 			$('.uploadResult ul').html(str);
-			
 		})	//getJSON
 	})() //end - function
 	
@@ -220,14 +218,103 @@ $(document).ready(() => {
 		$('.bigPictureWrapper').hide();
 	})
 	
+	$('.uploadResult').on('click','button', function(e) {
+		e.preventDefault();
+		console.log('deleteFile');
+		if(confirm('정말 삭제하겠습니까?')) {
+			const targetLi = $(this).closest('li');
+			targetLi.remove();
+		}
+	})
 	
 	
-	function showImage(fileCallPath) {
+	function showImage(fileCallPath) {	//섬네일 이미지를 원본 이미지로 확대하는 함수
 		console.log(fileCallPath);
 		
 		$('.bigPictureWrapper').css('display','flex').show();
 		$('.bigPicture').html('<img src="/display?fileName='+fileCallPath+'">');
 	}
+	
+	const regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+	const maxSize = 5242880; // 5MB
+	
+	function showUploadedResult(uploadResultArr) {
+		if(!uploadResultArr || uploadResultArr.length == 0) {
+			return;
+		}
+		
+		const uploadUL = $('.uploadResult ul');
+		let str = '';
+		$(uploadResultArr).each((i, obj) => {
+			if(obj.image) {
+				const fileCallPath = encodeURIComponent('/'+obj.uploadPath + '/s_'+obj.uuid+'_'+obj.fileName);
+				str += '<li data-uploadpath="'+obj.uploadPath+'" data-uuid="'+obj.uuid+'" data-filename="'+obj.fileName+'" data-filetype="'+obj.image+'">';
+				str += '</div><span>'+obj.fileName+'</span>';
+				str += '<button type="button" class="btn btn-circle" data-file=\"'+fileCallPath+'\" data-type="image">';
+				str += '<i class="fa fa-times"></i></button><br>';
+				str += '<img src="/display?fileName='+fileCallPath+'">';
+				str += '</div>';
+				str += '</li>';
+			} else {
+				const fileCallPath = encodeURIComponent('/'+obj.uploadPath+'/'+obj.uuid+'_'+obj.fileName);
+				const fileLink = fileCallPath.replace(new RegExp(/\\/g),'/');
+				
+				str += '<li data-uploadpath="'+obj.uploadPath+'" data-uuid="'+obj.uuid+'" data-filename="'+obj.fileName+'" data-filetype="'+obj.image+'">';
+				str += '<div><span>' +obj.fileName +'</span>';
+				str += '<button type="button" class="btn btn-circle" data-file=\"'+fileCallPath+'\" data-type="file">';
+				str += '<i class="fa fa-times"></i></button><br>'
+				str += '<img src="/resources/img/fileIcon.png">'
+				str += '</div>'
+				str += '</li>'
+			}
+		})
+		
+		uploadUL.append(str);
+		
+	}
+	
+	//확장자 및 파일 크기 체크
+	function checkExtension(fileName, fileSize) {
+		if(fileSize >= maxSize) {
+			alert('파일이 너무 큽니다.');
+			return false;
+		}
+		
+		if(regex.test(fileName)) {
+			alert('업로드 할 수 없는 파일입니다.');
+			return false;
+		}
+		
+		return true;
+	}
+	
+	$('input[type="file"]').change((e)=>{
+		const formData = new FormData();
+		const inputFile = $('input[name="uploadFile"]');
+		const files = inputFile[0].files;
+		
+		for(let i=0; i<files.length; i++) {
+			//업로드 된 파일이 지정한 용량보다 크거나, 지원하지 않는 확장자라면 작업 X
+			if(!checkExtension(files[i].name, files[i].size)) {
+				return false;
+			}
+			
+			formData.append('uploadFile',files[i]);
+		}
+		
+		$.ajax({
+			url			: '/uploadAjaxPost',
+			processData	: false,
+			contentType : false,
+			data		: formData,
+			type		: 'POST',
+			dataType	: 'json',
+			success		: (result) => {
+				console.log(result);
+				showUploadedResult(result);
+			}
+		})//ajax
+	})//change()
 	
 	
 })
@@ -424,6 +511,7 @@ $(document).ready(() => {
 			$('.btns').css('display','none')
 			$('.modBtns').css('display','block')
 			$('.mod').attr('disabled',false)
+
 			
 			//파일 업로드 관련
 			$('.uploadDiv').css('display', 'block')
@@ -445,10 +533,22 @@ $(document).ready(() => {
 		
 		//'완료' 버튼 클릭 시 수정 처리
 		$('#modify').on("click", (e) => {
-			e.preventDefault()
-			form.attr('action', '/board/modify')
-				.attr('method','POST')
-				.submit()
+			let str = '';
+			
+			$('.uploadResult ul li').each((i, obj)=>{
+				const jobj = $(obj);
+				console.log(jobj);
+				
+				str += '<input type="hidden" name="attachList['+i+'].fileName" value="'+jobj.data('filename')+'">';
+				str += '<input type="hidden" name="attachList['+i+'].uuid" value="'+jobj.data('uuid')+'">';
+				str += '<input type="hidden" name="attachList['+i+'].uploadPath" value="'+jobj.data('uploadpath')+'">';
+				str += '<input type="hidden" name="attachList['+i+'].fileType" value="'+jobj.data('filetype')+'">';
+		
+			}) 
+				form.append(str)
+					.attr('action', '/board/modify')
+					.attr('method','POST')	
+					.submit();
 		})
 		
 		
