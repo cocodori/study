@@ -17,4 +17,18 @@ public class CommonController {
 		
 		model.addAttribute("message", authentication+"");
 	}
+	
+	@GetMapping("/login")
+	public void loginInput(String error, String logout, Model model) {
+		log.info("error : " + error );
+		log.info("logout : " + logout);
+		
+		if(error != null ) {
+			model.addAttribute("error", "입력하신 정보가 틀렸습니다. 다시 입력하세요.");
+		}
+		
+		if(logout != null) {
+			model.addAttribute("logout", "로그아웃 되었습니다.");
+		}
+	}
 }
