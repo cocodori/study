@@ -31,4 +31,9 @@ public class CommonController {
 			model.addAttribute("logout", "로그아웃 되었습니다.");
 		}
 	}
+	
+	@GetMapping("/logout")
+	public void logoutGet() {
+		log.info("LOGOUT !!!! ");
+	}
 }

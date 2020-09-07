@@ -8,5 +8,6 @@
 </head>
 <body>
 <h1>MEMBER PAGE</h1>
+<a href='/logout'><button>로그아웃</button></a>
 </body>
 </html>

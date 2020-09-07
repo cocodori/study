@@ -30,6 +30,8 @@
 		<!-- 직접 만드는 로그인 페이지 -->
 		<security:form-login login-page="/login"
 			authentication-success-handler-ref="customLoginSuccess"/>
+			
+		<security:logout logout-url="/logout" invalidate-session="true"/>
 		
 	</security:http>
 	
