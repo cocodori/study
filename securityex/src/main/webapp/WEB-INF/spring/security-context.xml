@@ -13,7 +13,8 @@
 	<bean id="customLoginSuccess" class="com.coco.security.CustomLoginSuccessHandler">
 	</bean>
 	
-	<bean></bean>
+	<bean id="customPasswordEncoder" class="com.coco.security.CustomNoOpPasswordEncoder">
+	</bean>
 	
 	<security:http>
 		<!-- 접근 제한 -->
@@ -41,7 +42,9 @@
 
 		<security:authentication-provider>
 			
+			<security:password-encoder ref="customPasswordEncoder"/>
 			<security:jdbc-user-service data-source-ref="dataSource"/>
+			
 	
 		</security:authentication-provider>
 	</security:authentication-manager>
