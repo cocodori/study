@@ -2,10 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/security
-	 http://www.springframework.org/schema/security/spring-security.xsd
-	 http://www.springframework.org/schema/beans 
-	 http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 	
 	<bean id="customAccessDenied" class="com.coco.security.CustomAccessDeniedHandler">
 	</bean>
@@ -21,14 +21,7 @@
 		<security:intercept-url pattern="/sample/all" access="permitAll"/>
 		<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
 		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
-		
-		<!-- 접근 제한 에러 시 이동할 페이지 -->
-<!-- 		<security:access-denied-handler error-page="/accessError"/>
- -->		
  		<security:access-denied-handler ref="customAccessDenied"/>
- 		
- 		<!-- 스프링이 제공하는 로그인 페이지 -->
-		<!-- <security:form-login/> -->
 		
 		<!-- 직접 만드는 로그인 페이지 -->
 		<security:form-login login-page="/login"
@@ -41,11 +34,8 @@
 	<security:authentication-manager>
 
 		<security:authentication-provider>
-			
-			<security:password-encoder ref="customPasswordEncoder"/>
 			<security:jdbc-user-service data-source-ref="dataSource"/>
 			
-	
 		</security:authentication-provider>
 	</security:authentication-manager>
 
