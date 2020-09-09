@@ -157,7 +157,7 @@
 		    <version>5.3.4.RELEASE</version>
 		</dependency>
 		
-				<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<!--https://mvnrepository.com/artifact/mysql/mysql-connector-java-->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>

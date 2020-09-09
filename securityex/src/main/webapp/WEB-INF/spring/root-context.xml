@@ -14,7 +14,7 @@
 		<property name="driverClassName"
 			value="com.mysql.cj.jdbc.Driver"></property>
 		<property name="jdbcUrl"
-			value="jdbc:mysql://127.0.0.1:3306/springstudy?serverTimezone=Asia/Seoul"></property>
+			value="jdbc:mysql://localhost:3306/springstudy?serverTimezone=Asia/Seoul"></property>
 		<property name="username" value="springuser"></property>
 		<property name="password" value="springuser"></property>
 	</bean>	
