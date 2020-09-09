@@ -23,7 +23,6 @@ import lombok.extern.log4j.Log4j;
 						})
 @Log4j
 public class MemberTests {
-	
 	@Autowired
 	private PasswordEncoder pwEncoder;
 	
@@ -70,7 +69,6 @@ public class MemberTests {
 	//권한 부여
 	@Test
 	public void testInsertAuth() {
-		
 		String sql = "INSERT INTO tbl_member_auth(userid, auth)"
 				+"VALUES(?,?)";
 		for (int i=0; i < 30; i++) {
@@ -90,6 +88,35 @@ public class MemberTests {
 					pstmt.setString(2, "ROLE_ADMIN");
 				}
 
+				int result = pstmt.executeUpdate();
+				
+				log.info("result : " + result);
+				
+				assertTrue(result == 1);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	} //insert
+	
+	@Test
+	public void testInsertAuth2(){	//admin계정에 manager 권한 추가
+		
+		String sql = "INSERT INTO tbl_member_auth(userid, auth)"
+				+"VALUES(?,?)";
+		
+		for (int i=0; i < 30; i++) {
+			
+			try (	Connection conn = dataSource.getConnection();
+					PreparedStatement pstmt= conn.prepareStatement(sql);
+					){
+				
+				if(i < 30 && i > 20) {
+					pstmt.setString(1, "admin"+i);
+					pstmt.setString(2, "ROLE_MANAGER");
+				}
+				
 				int result = pstmt.executeUpdate();
 				
 				log.info("result : " + result);

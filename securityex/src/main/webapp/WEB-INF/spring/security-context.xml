@@ -16,6 +16,9 @@
 	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
 	</bean>
 	
+	<bean id="customUserDetailsService" class="com.coco.security.CustomUserDetailsService">
+	</bean>
+	
 	<security:http>
 		<!-- 접근 제한 -->
 		<security:intercept-url pattern="/sample/all" access="permitAll"/>
@@ -33,15 +36,16 @@
 	
 	<security:authentication-manager>
 
-		<security:authentication-provider>
+		<security:authentication-provider
+			user-service-ref="customUserDetailsService">
 		
-			<security:jdbc-user-service data-source-ref="dataSource"
+<!-- 			<security:jdbc-user-service data-source-ref="dataSource"
 				users-by-username-query="SELECT userid, userpw as password, enabled
 											FROM tbl_member
 											WHERE userid = ? "
 				authorities-by-username-query="SELECT userid as username, auth as authority
 													FROM tbl_member_auth
-													WHERE userid = ? " />
+													WHERE userid = ? " /> -->
 
 			<security:password-encoder ref="bcryptPasswordEncoder"/>
 		</security:authentication-provider>
