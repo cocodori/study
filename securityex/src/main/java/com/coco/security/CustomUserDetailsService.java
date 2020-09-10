@@ -8,6 +8,8 @@ import com.coco.domain.MemberVO;
 import com.coco.mapper.MemberMapper;
 import com.coco.security.domain.CustomUser;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
