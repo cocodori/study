@@ -50,7 +50,7 @@
 						<div class="form-group">
 							<label class="small mb-1">작성자</label> <input
 								type='text' class="form-control py-4" name="writer"
-								value="${post.writer }" disabled>
+								value="${post.writer }" readonly>
 						</div>
 						<div class="form-group">
 							<p align="right">
@@ -69,9 +69,15 @@
 							</c:choose>
 						</div>
 						<div class="btns">
-							<button class="btn bg-dark" id="modBtn" style='color: white'>수정</button>
 							<button class="btn bg-dark" id="list" style='color: white'>목록</button>
-							<button class="btn bg-dark" id="remove" style='color: white'>삭제</button>
+							<!-- 본인이 작성한 글만 수정/삭제 할 수 있다. -->
+							<sec:authentication property="principal" var="pinfo" />
+								<sec:authorize access="isAuthenticated()">
+									<c:if test="${pinfo.username == post.writer }">
+										<button class="btn bg-dark" id="modBtn" style='color: white'>수정</button>
+										<button class="btn bg-dark" id="remove" style='color: white'>삭제</button>
+									</c:if>
+								</sec:authorize>
 						</div>
 						<div class="modBtns" style="display: none">
 							<button class="btn bg-dark" id="modify" style='color: white'>완료</button>
@@ -84,6 +90,7 @@
 						<input type='hidden' name='amount' value='${pageInfo.amount}'>
 						<input type='hidden' name='type' value='${pageInfo.type}'>
 						<input type='hidden' name='keyword' value='${pageInfo.keyword}'>
+						<input type='hidden' name='${_csrf.parameterName }' value="${_csrf.token }">
 					</form>
 				</div>
 				<!-- 댓글 -->
@@ -94,16 +101,18 @@
 								&nbsp&nbsp
 								<h4>
 									<strong>💬 댓글 </strong>
-
 								</h4>
-								<div class="input-group">
-									<input class="form-control py-4" type="text" name="reply"
-										placeholder="댓글을 입력하세요">
-									<div class="input-group-append">
-										<input type='submit' class="btn btn-dark" id="replyBtn"
-											value="등록">
+								<!-- 로그인한 사용자만 댓글 등록 가능 -->
+								<sec:authorize access="isAuthenticated()"> 
+									<div class="input-group">
+										<input class="form-control py-4" type="text" name="reply"
+											placeholder="댓글을 입력하세요">
+										<div class="input-group-append">
+											<input type='submit' class="btn btn-dark" id="replyBtn"
+												value="등록">
+										</div>
 									</div>
-								</div>
+								</sec:authorize>
 							</div>
 							<br>
 							<div class="panel-body">

@@ -68,12 +68,8 @@ public class BoardController {
 	@PreAuthorize("isAuthenticated()")
 	public String register(BoardVO boardVO, RedirectAttributes redirect) {
 		log.info("/board/register");
-		
 		log.info("register : " + boardVO);
 		
-		/*
-		 * 
-		 * */
 		if(boardVO.getAttachList() != null ) {
 			boardVO.getAttachList().forEach(attach -> log.info(attach));
 		}
@@ -90,6 +86,8 @@ public class BoardController {
 		model.addAttribute("post", boardService.getPost(no));
 	}
 	
+	//수정하는 사람이 글쓴이와 같아야 한다.
+	@PreAuthorize("principal.username == #boardVO.writer")
 	@PostMapping("/modify")
 	public String modify(BoardVO boardVO, PageInfo pageInfo,RedirectAttributes redirect) {
 		log.info("/board/modify");
@@ -105,10 +103,13 @@ public class BoardController {
 		
 		return "redirect:/board/post" + pageInfo.getUrlList();
 	}
-
+	
+	//삭제하는 사람이 글쓴이와 같아야 한다.
+	@PreAuthorize("principal.username == #writer")
 	@PostMapping("/remove")
-	public String remove(Long bno, PageInfo pageInfo) {
+	public String remove(Long bno, PageInfo pageInfo, String writer) {
 		log.info("/board/remove");
+		log.info("writer : " + writer);
 		
 		List<BoardAttachVO> attachList = boardService.getAttachList(bno);
 		
