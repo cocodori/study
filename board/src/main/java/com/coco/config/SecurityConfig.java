@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.coco.security.CustomLoginSuccessHandler;
 import com.coco.security.CustomUserDetailsService;
@@ -71,6 +73,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.key("coco")
 			.tokenRepository(persistentTokenRepository())
 			.tokenValiditySeconds(604800);
+		
+        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+        filter.setEncoding("UTF-8");
+        filter.setForceEncoding(true);
+        http.addFilterBefore(filter,CsrfFilter.class);
 	}
 
 	@Override

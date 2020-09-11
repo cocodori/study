@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +34,6 @@ public class BoardController {
 	
 	private final BoardService boardService;
 	
-	
 	/*
 	 * RestController가 아니므로 메서드에 직접 @ResponsBody를 적용하여 JSON데이터를 반환한다.
 	 * 
@@ -57,6 +57,7 @@ public class BoardController {
 		model.addAttribute("pageDTO", new PageDTO(page, total));
 	}
 	
+	@PreAuthorize("isAuthenticated()") //로그인한 사용자만 접근 가능
 	@GetMapping("/write")
 	public void write() {
 		log.info("/board/write");
@@ -64,6 +65,7 @@ public class BoardController {
 	}
 	
 	@PostMapping("/register")
+	@PreAuthorize("isAuthenticated()")
 	public String register(BoardVO boardVO, RedirectAttributes redirect) {
 		log.info("/board/register");
 		

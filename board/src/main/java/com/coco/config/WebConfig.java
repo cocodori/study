@@ -34,6 +34,9 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
 		return new Filter[] {characterEncodingFilter };
 	}
 	
+	
+	
+	
 	//FileUpload
 	@Override
 	protected void customizeRegistration(Dynamic registration) {

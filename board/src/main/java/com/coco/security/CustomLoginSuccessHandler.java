@@ -30,6 +30,5 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 		
 		//로그인에 성공한 모든 사용자는 /board/list로 간다.
 		response.sendRedirect("/board/list");
-}
-
+		}
 }

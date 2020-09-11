@@ -2,7 +2,6 @@
 	pageEncoding="UTF-8"%>
 <%@ include file="../includes/header.jsp"%>
 <link href="/resources/css/fileUpload.css" rel="stylesheet">
-
 <div class="container">
 	<div class="row justify-content-center">
 		<div class="col-lg-5">
@@ -32,10 +31,9 @@
 						</div>
 						<div class="form-group">
 							<label class="small mb-1" for="inputEmailAddress">작성자</label> 
-							<input type='text' class="form-control py-4" name="writer">
+							<input type='text' class="form-control py-4" name="writer"
+								value='<sec:authentication property="principal.username"/>' readonly>
 						</div>
-						
-						
 						<div>
 							<input type="button" id="register" class="btn btn-dark" value="등록">
 							<input type="button" id="cancel" class="btn btn-dark" value="취소">
@@ -43,6 +41,7 @@
 						
 						<input type="hidden" name="page" value="${pageInfo.page }">
 						<input type="hidden" name="amount" value="${pageInfo.amount}">
+						<input type='hidden' name='${_csrf.parameterName }' value='${_csrf.token }'>
 					</form>
 				</div>
 			</div>
