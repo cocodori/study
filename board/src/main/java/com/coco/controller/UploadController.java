@@ -42,7 +42,7 @@ public class UploadController {
 	@PostMapping("/uploadFormAction")
 	public void uploadFormPost(MultipartFile[] uploadFile, Model model) {
 		
-		String uploadFolderPath = "C:\\work\\springex\\uploadFolder";
+		String uploadFolderPath = "/home/hoon/learning2020/SpringEx/uploadFolder";
 
 		for (MultipartFile multipartFile : uploadFile) {
 			log.info("----------------------------------------------------------");
@@ -79,7 +79,7 @@ public class UploadController {
 		
 		List<AttachFileDTO> attachFileList = new ArrayList<>();
 		
-		String uploadFolder = "C:\\work\\springex\\uploadFolder";
+		String uploadFolder = "/home/hoon/learning2020/SpringEx/uploadFolder";
 		
 		String uploadFolderPath = getFolder();
 		log.info("uploadFolderPath : " + uploadFolderPath);
@@ -158,7 +158,7 @@ public class UploadController {
 	public ResponseEntity<byte[]> getFile(String fileName) {
 		log.info("fileName : " + fileName);
 		
-		File file = new File("C:\\work\\springex\\uploadFolder" + fileName);
+		File file = new File("/home/hoon/learning2020/SpringEx/uploadFolder" + fileName);
 		
 		log.info("file : " + file);
 		
@@ -189,7 +189,7 @@ public class UploadController {
 	@GetMapping(value = "/download")
 	public ResponseEntity<Resource> downloadFile(String fileName) {
 		log.info("download File : " + fileName);
-		Resource resource = new FileSystemResource("C:\\work\\springex\\uploadFolder\\" + fileName);
+		Resource resource = new FileSystemResource("/home/hoon/learning2020/SpringEx/uploadFolder/" + fileName);
 		
 		log.info("resource : " + resource);
 		
@@ -242,7 +242,7 @@ public class UploadController {
 		File file;
 		
 		try {
-			file = new File("C:\\work\\springex\\uploadFolder\\"+URLDecoder.decode(fileName, "UTF-8"));
+			file = new File("/home/hoon/learning2020/SpringEx/uploadFolder/"+URLDecoder.decode(fileName, "UTF-8"));
 			file.delete();
 			
 			//이미지 파일일 경우 섬네일도 함께 삭제

@@ -52,6 +52,9 @@
 <script>
 	const regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
 	const maxSize = 5242880; // 5MB
+	//security
+	const csrfHeaderName = '${_csrf.headerName}';
+	const csrfTokenValue = '${_csrf.token}';
 	
 	function showUploadedResult(uploadResultArr) {
 		if(!uploadResultArr || uploadResultArr.length == 0) {
@@ -121,6 +124,10 @@
 			url			: '/uploadAjaxPost',
 			processData	: false,
 			contentType : false,
+			beforeSend	: (xhr) => {
+				//security
+				xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+			},
 			data		: formData,
 			type		: 'POST',
 			dataType	: 'json',

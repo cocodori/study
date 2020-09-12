@@ -43,7 +43,7 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
 		registration.setInitParameter("throwsExceptionIfNoHandlerFound", "true");
 		
 		MultipartConfigElement multipartConfig = 
-				new MultipartConfigElement("C:\\work\\springex\\uploadFolder", 20971520, 41943040, 20971520);
+				new MultipartConfigElement("/home/hoon/learning2020/SpringEx/uploadFolder", 20971520, 41943040, 20971520);
 		
 		registration.setMultipartConfig(multipartConfig);
 	}
