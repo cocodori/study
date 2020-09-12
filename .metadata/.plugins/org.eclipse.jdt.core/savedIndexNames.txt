@@ -40,7 +40,6 @@ INDEX VERSION 1.131+/home/hoon/learning2020/SpringEx/.metadata/.plugins/org.ecli
 890009435.index
 2960994995.index
 2000982498.index
-3645688346.index
 2183283172.index
 1322951281.index
 3847366313.index

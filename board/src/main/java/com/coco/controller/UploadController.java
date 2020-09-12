@@ -17,6 +17,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -72,6 +73,8 @@ public class UploadController {
 	 * 이 메서드는 업로드된 파일 정보를 리턴한다.
 	 * 
 	 * */
+	
+	@PreAuthorize("isAuthenticated()")
 	@ResponseBody 	
 	@PostMapping(value = "/uploadAjaxPost")
 	public ResponseEntity<List<AttachFileDTO>> uploadAjaxPost( MultipartFile[] uploadFile) {
@@ -230,6 +233,7 @@ public class UploadController {
 	 * 이미지 파일의 경우 섬네일까지 삭제한다.
 	 * 
 	 * */
+	@PreAuthorize("isAuthenticated()")
 	@ResponseBody
 	@PostMapping("/deleteFile")
 	public ResponseEntity<String> deleteFile(String fileName, String type) {

@@ -149,6 +149,9 @@
 			url			: '/deleteFile',
 			data		: {fileName : targetFile, type:type},
 			dataType	: 'text',
+			beforeSend	: (xhr) => {
+				xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+			},
 			type		: 'POST', 
 			success		: (result) => {
 				console.log(result);
