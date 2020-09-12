@@ -34,10 +34,12 @@ const replyService = (() => {
 		})
 	}	//getReplyList()
 	
-	function remove(rno, callback, error) {
+	function remove(rno, replyer, callback, error) {
 		$.ajax({
 			type	: 'DELETE',
 			url		: '/replies/'+rno,
+			data	: JSON.stringify({rno:rno, replyer:replyer}),
+			contentType : 'application/json; charset=UTF-8',
 			success : (deleteResult, status, xhr) => {
 				callback ? callback(deleteResult) : ''
 			}, //success

@@ -368,14 +368,22 @@ $(document).ready(()=>{
 		e.preventDefault()
 		const rno = $(this).data('rno')
 		const btn = $(this).data('oper')
-
-		console.log(rno);
+		const originalReplyer = $('input[name="originalReplyer"]').val();
+		
+		//ogReplyer와 replyer가 달라야 하는 댓글에도 왜 같다고 나올까?
+		console.log(originalReplyer);
+		console.log(replyer);
+		
+		if (replyer !== originalReplyer ) {
+			alert('본인이 작성한 댓글이 아닙니다.');
+			return;
+		}
 		
 		//삭제 버튼을 클릭했다면.
 		if(btn === 'replyRemove') {
 			if(confirm('정말 삭제하겠습니까?')) { //정말 삭제할 것인지 확인
 				//삭제 함수 호출
-				replyService.remove(rno,(result)=>{
+				replyService.remove(rno, replyer,(result)=>{
 					console.log(result)
 					
 					//삭제 처리 후, 댓글 목록 갱신
@@ -387,7 +395,7 @@ $(document).ready(()=>{
 		
 		if(btn === 'replyModify') {
 			let replyText
-				
+			
 			//모달창을 띄우고, 모달창에 수정할 댓글 내용을 출력한다
 			$('#replyModifyModal').modal('show')
 			
@@ -400,7 +408,8 @@ $(document).ready(()=>{
 					//수정할 데이터를 객체 형식으로 저장
 					const reply = {
 						rno:rno,
-						reply:replyText.val()
+						reply:replyText.val(),
+						replyer : originalReplyer
 					}
 					
 					console.log('----------rno----------')
@@ -463,12 +472,23 @@ $(document).ready(()=>{
 					return
 				}
 				
+				
 				for (let i = 0, len = list.length || 0; i < len; i++) {
+					const replyerID  = list[i].replyer;
+					let loginID = null;
+					<sec:authorize access="isAuthenticated()">
+					loginID = '<sec:authentication property="principal.username"/>';
+					</sec:authorize>
+					
  					str += '<dd class="left clearfix">'
 					str += '<div><div class="header"><strong class="primary-font"> 👩‍🚀‍ '+list[i].replyer+'</strong>'
 					str += '<small class="pull-right text-muted">'+list[i].replyDate+'</small>'
-					str += '&nbsp<small><a href="#" data-oper="replyModify" data-rno="'+list[i].rno+'">수정</a></small>'
-					str += '&nbsp<small><a href="#" data-oper="replyRemove" data-rno="'+list[i].rno+'">삭제</a></small></div>'
+					if(replyerID === loginID) {	//댓글 작성자와 로그인한 아이디가 같을 때만 삭제/수정 메뉴를 볼 수 있다.
+						str += '&nbsp<small><a href="#" data-oper="replyModify" data-rno="'+list[i].rno+'">수정</a></small>'
+						str += '&nbsp<small><a href="#" data-oper="replyRemove" data-rno="'+list[i].rno+'">삭제</a></small>'
+						str += '<input type="hidden" name="originalReplyer" value="'+list[i].replyer+'">';
+					}
+					str += '</div>';
 					str += '<p>'+list[i].reply+'</p></div></dd>'
 					str += '<hr>'
 				} //for

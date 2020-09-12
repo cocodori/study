@@ -1,7 +1,5 @@
 package com.coco.controller;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -88,15 +86,19 @@ public class ReplyController {
 	}
 	
 	//댓글 삭제
+	@PreAuthorize("principal.username == #replyVO.replyer")
 	@DeleteMapping(value = "/{rno}")
-	public ResponseEntity<String> remove(@PathVariable("rno")Long rno) {
+	public ResponseEntity<String> remove(@RequestBody ReplyVO replyVO ,@PathVariable("rno")Long rno) {
 		log.info("rno : " + rno);
+		log.info("replyVO : " + replyVO);
 		
 		return replyService.remove(rno) == 1 ?
 				new ResponseEntity<>("success", HttpStatus.OK)
 				:new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
+	//로그인 아이디와 댓글 아이디가 달라도 수정이 된다. ogreplyer를 보내도, replyer를 보내도 똑같다.
+	@PreAuthorize("principal.username == #replyVO.replyer")
 	@PutMapping(value="/{rno}",
 			consumes = "application/json")
 	public ResponseEntity<String> modify(
