@@ -347,8 +347,21 @@ $(document).ready(()=>{
 	const modal = $('#replyModifyModal')
 	let pageNum = 1
 	const replyPageFooter = $('.panel-footer')
+	let replyer = null
+	const csrfHeaderName = '${_csrf.headerName}';
+	const csrfTokenValue = '${_csrf.token}';
+	<sec:authorize access="isAuthenticated()">
+	replyer = '<sec:authentication property="principal.username"/>';
+	</sec:authorize>
 	
 	showReplyList(pageNum)
+	
+	//Ajax Spring Security Header
+	//첨부파일의 경우 beforeSend를 이용했지만, 기본 설정을 지정하는 것이 더 편하다.
+	$(document).ajaxSend((e, xhr, options) => {
+		xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+	})
+	
 	
 	//댓글 삭제 || 수정
 	$('.chat').on('click', 'a', function(e) {
@@ -413,7 +426,7 @@ $(document).ready(()=>{
 		//reply객체를 만든다.
 		const reply = {
 				reply 	: replyVal,
-				replyer : 'tester',
+				replyer : replyer,
 				bno		: bnoValue
 		} //reply
 
