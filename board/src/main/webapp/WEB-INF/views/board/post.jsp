@@ -161,10 +161,20 @@
   </div>
 </div>
 
+    <meta id="_csrf" name="_csrf" content="${_csrf.token}" />
+    <meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}" />
+
 <script type="text/javascript" src="/resources/dist/js/reply.js"></script>
 
 <script>
 $(document).ready(() => {
+	const regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+	const maxSize = 5242880; // 5MB
+ 	const csrfHeaderName = '${_csrf.headerName}';
+	const csrfTokenValue = '${_csrf.token}';
+/* 	 var csrfTokenValue = $("meta[name='_csrf']").attr("content");
+    var csrfHeaderName = $("meta[name='_csrf_header']").attr("content"); */
+	
 	const showFileList = (()=>{	//화면에 첨부파일 출력
 		const bno = '${post.bno}';
 		
@@ -243,8 +253,7 @@ $(document).ready(() => {
 		$('.bigPicture').html('<img src="/display?fileName='+fileCallPath+'">');
 	}
 	
-	const regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
-	const maxSize = 5242880; // 5MB
+
 	
 	function showUploadedResult(uploadResultArr) {
 		if(!uploadResultArr || uploadResultArr.length == 0) {
@@ -316,6 +325,9 @@ $(document).ready(() => {
 			contentType : false,
 			data		: formData,
 			type		: 'POST',
+			beforeSend	: (xhr) => {
+				xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+			},
 			dataType	: 'json',
 			success		: (result) => {
 				console.log(result);

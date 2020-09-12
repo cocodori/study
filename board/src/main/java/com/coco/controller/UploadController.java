@@ -73,7 +73,6 @@ public class UploadController {
 	 * 이 메서드는 업로드된 파일 정보를 리턴한다.
 	 * 
 	 * */
-	
 	@PreAuthorize("isAuthenticated()")
 	@ResponseBody 	
 	@PostMapping(value = "/uploadAjaxPost")
