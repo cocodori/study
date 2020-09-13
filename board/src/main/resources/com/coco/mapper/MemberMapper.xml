@@ -25,4 +25,15 @@
  			LEFT OUTER JOIN tbl_member_auth auth on mem.userid = auth.userid
  		WHERE mem.userid = #{userid}
  	</select>
+ 	
+ 	<insert id="register">
+ 		INSERT INTO tbl_member(userid, userpw, username)
+ 		VALUES(#{userid}, #{userpw}, #{username})
+ 	</insert>
+ 	
+ 	<insert id="addAuth">
+ 		INSERT INTO tbl_member_auth(userid, auth)
+ 		VALUES(#{userid}, #{auth})
+ 	</insert>
+ 	
 </mapper>

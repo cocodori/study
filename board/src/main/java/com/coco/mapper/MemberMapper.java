@@ -1,5 +1,6 @@
 package com.coco.mapper;
 
+import com.coco.domain.AuthVO;
 import com.coco.domain.MemberVO;
 
 /*
@@ -14,4 +15,6 @@ import com.coco.domain.MemberVO;
  * */
 public interface MemberMapper {
 	public MemberVO read(String userid);
+	public int register(MemberVO memberVO);
+	public int addAuth(AuthVO authVO);
 }
