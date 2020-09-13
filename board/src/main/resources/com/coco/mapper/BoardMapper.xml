@@ -63,9 +63,13 @@
 </select>
 
 <update id="updateReplyCount">
-	UPDATE tbl_board
-	SET replyCount = replyCount + #{amount}
-	WHERE bno = #{bno}
+	UPDATE tbl_board 
+	SET replyCount = (
+		SELECT COUNT(rno)
+    	FROM tbl_reply
+    	WHERE tbl_reply.bno = tbl_board.bno
+		) + #{amount}
+    WHERE bno = #{bno};
 </update>
 
 </mapper>

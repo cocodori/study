@@ -6,7 +6,6 @@
 	<button id="write" class="btn btn-dark write">✒글쓰기</button>
 </div>
 <br>
-<h1>${list }</h1>
 <div class="card asdfasdb-4">
 	<div class="card-body">
 		<div class="table-responsive" align="right">
