@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -23,6 +25,11 @@
                                     <div class="card-header"><h3 class="text-center font-weight-light my-4"> 로그인 </h3></div>
                                     <div class="card-body">
                                         <form id="form" method="post" action="/login">
+                                        	<c:if test="${error!=null}">
+	                                        	<div class="form-group">
+													<h3><c:out value="${error }"/></h1>
+	                                            </div>
+                                        	</c:if>
                                             <div class="form-group">
                                                 <label class="small mb-1" for="inputEmailAddress">아이디</label>
                                                 <input class="form-control py-4" name="username" type="text" />
