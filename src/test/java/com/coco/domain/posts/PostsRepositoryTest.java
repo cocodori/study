@@ -20,7 +20,6 @@ public class PostsRepositoryTest {
 
     @AfterEach
     public void cleanup() {
-        System.out.println("===================AfterEach===================");
         postsRepository.deleteAll();
     }
 
