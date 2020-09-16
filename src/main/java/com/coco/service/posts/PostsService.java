@@ -18,6 +18,14 @@ import java.util.stream.Collectors;
 public class PostsService {
     private final PostsRepository postsRepository;
 
+    @Transactional
+    public void delete(Long id) {
+        Posts post = postsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 없습니다. id :"+id));
+
+        postsRepository.delete(post);
+    }
+
     /*
     * postsRepository 결과로 넘어온 Posts의 Stream을 map을 통해
     * PostsListResponseDto로 변환해서 List로 반환하는 메서드
