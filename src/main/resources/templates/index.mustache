@@ -27,6 +27,13 @@
                 <td>{{modifiedDate}}</td>
             </tr>
             {{/posts}}
+            {{^posts}}
+                <tr>
+                    <td colspan="4">
+                          <h3 align="center">게시물이 없습니다.</h3>
+                    </td>
+                </tr>
+            {{/posts}}
         </tbody>
     </table>
 {{>layout/footer}}
