@@ -16,7 +16,7 @@ script: "./gradlew clean build"
 
 # S3 연동
 before_deploy:
-  - zip -r bootex
+  - zip -r springboot
   - mkdir -p deploy
   - mv bootex.zip deploy/bootex.zip
 
@@ -35,4 +35,4 @@ deploy:
 notifications :
   email:
     recipients:
-      - 'leejihun1024@gmail.com'
+      - leejihun1024@gmail.com
