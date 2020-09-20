@@ -14,6 +14,23 @@ cache:
 
 script: "./gradlew clean build"
 
+# S3 연동
+before_deploy:
+  - zip -r bootex
+  - mkdir -p deploy
+  - mv bootex.zip deploy/bootex.zip
+
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: bootex-build
+    region: ap-northeast-2
+    skip_cleanup: true
+    acl: private # zip파일 접근을 private으로
+    local_dir: deploy # before_deploy에서 생성한 디렉토리
+    wait-until-deployed: true
+
 # CI 실행 완료 시 메일로 알람
 notifications :
   email:
