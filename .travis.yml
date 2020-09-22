@@ -16,9 +16,9 @@ script: "./gradlew clean build"
 
 # S3 연동
 before_deploy:
-  - zip -r springboot
+  - zip -r bootex
   - mkdir -p deploy
-  - mv springboot.zip deploy/springboot.zip
+  - mv bootex.zip deploy/bootex.zip
 
 deploy:
   - provider: s3
