@@ -16,7 +16,7 @@ script: "./gradlew clean build"
 
 # S3 연동
 before_deploy:
-  - zip -r bootex
+  - zip -r bootex *
   - mkdir -p deploy
   - mv bootex.zip deploy/bootex.zip
 
