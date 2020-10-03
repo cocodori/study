@@ -1,6 +1,8 @@
 package com.coco.board.service;
 
 import com.coco.board.dto.BoardDTO;
+import com.coco.board.dto.PageRequestDTO;
+import com.coco.board.dto.PageResultDTO;
 import com.coco.board.entity.Board;
 import com.coco.board.entity.Member;
 import com.coco.board.entity.Reply;
@@ -60,5 +62,16 @@ public class BoardServiceTest {
                 .build();
 
         Long bno = boardService.register(boardDto);
+    }
+
+    @Test
+    void testList() {
+        PageRequestDTO pageRequestDTO = new PageRequestDTO();
+
+        PageResultDTO<BoardDTO, Object[]> result = boardService.getList(pageRequestDTO);
+
+        for(BoardDTO boardDto : result.getDtoList()) {
+            System.out.println(boardDto);
+        }
     }
 }
