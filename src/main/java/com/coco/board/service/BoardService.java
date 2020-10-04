@@ -12,7 +12,7 @@ public interface BoardService {
 
     Long register(BoardDTO boardDto);
     PageResultDTO<BoardDTO, Object[]> getList(PageRequestDTO pageRequestDTO);
-    Object getPost(Long bno);
+    BoardDTO getPost(Long bno);
 
     default Board dtoToEntity(BoardDTO boardDto) {
         Member member = Member.builder()

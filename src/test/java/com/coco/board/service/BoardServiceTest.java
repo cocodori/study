@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -51,6 +52,11 @@ public class BoardServiceTest {
             boardRepository.save(board);
             replyRepository.save(reply);
         });
+    }
+
+    @Test
+    public void testRead2() {
+        System.out.println(boardService.getPost(11L));
     }
 
     @Test

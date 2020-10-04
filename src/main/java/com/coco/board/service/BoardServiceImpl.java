@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -48,7 +49,9 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Object getPost(Long bno) {
-        return boardRepository.getBoardByBno(bno);
+    public BoardDTO getPost(Long bno) {
+        Object[] entity = (Object[])boardRepository.getBoardByBno(bno);
+
+        return entityToDto((Board)entity[0], (Member)entity[1], (Long)entity[2]);
     }
 }
