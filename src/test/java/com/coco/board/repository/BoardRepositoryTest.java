@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 public class BoardRepositoryTest {
 
@@ -53,8 +55,35 @@ public class BoardRepositoryTest {
 
             memberRepository.save(member);
             boardRepository.save(board);
-            replyRepository.save(reply);
+            //replyRepository.save(reply);
         });
+    }
+
+    @Test
+    public void testRemove2() {
+        System.out.println(boardRepository.getBoardByBno(11L));
+        boardRepository.deleteById(11L);
+        System.out.println(boardRepository.getBoardByBno(11L));
+        Object[] result = (Object[])boardRepository.getBoardByBno(11L);
+        System.out.println(result[0]);
+
+        boardRepository.delete((Board)result[0]);
+        System.out.println(result[0]);
+
+    }
+
+    /* 댓글 등록하는 코드 주석 달고 실행해야 함*/
+    //삭제
+    @Test
+    public void testRemove() {
+        System.out.println(boardRepository.getBoardByBno(11L));
+        assertNotNull(boardRepository.findById(11L));
+
+        boardRepository.deleteById(11L);
+
+        System.out.println(boardRepository.findById(11L));
+
+        assertEquals(boardRepository.findById(11L), Optional.empty());
     }
 
     //하나의 게시물 조회

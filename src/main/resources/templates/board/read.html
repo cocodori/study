@@ -3,7 +3,7 @@
 <th:block th:replace:"~{/layout/basic :: setContent(~{this::content} )}" >
     <th:block th:fragment="content">
         <h1 class="mt-4">게시물 조회</h1>
-        <form th:action="@{/board/register}" th:method="post">
+        <form id="form" method="get">
             <div class="form-group">
                 <label>게시물 번호</label>
                 <input type="text" class="form-control" name="bno"
@@ -23,10 +23,25 @@
                 <input type="email" class="form-control" name="writerEmail" th:value="${post.writerEmail}" readonly>
             </div>
             <button type="submit" class="btn btn-primary">수정</button>
-            <button type="submit" class="btn btn-primary">삭제</button>
-            <a th:href="@{/board/list}"><button type="submit" class="btn btn-primary">목록</button></a>
+            <button type="submit" class="btn btn-primary" id="remove">삭제</button>
+            <a th:href="@{/board/list}" class="btn btn-primary">목록</a>
         </form>
     </th:block>
 </th:block>
+
+<script>
+    const removeBtn = document.getElementById('remove');
+    const form = document.getElementById('form');
+    window.onload = () => {
+        removeBtn.addEventListener('click', () => {
+            if(confirm('정말 삭제하시겠습니까?')) {
+                form.method = 'post';
+                form.action = '/board/remove';
+                form.submit();
+            }
+            return;
+        });
+    }
+</script>
 
 <footer th:replace="/layout/footer.html"></footer>

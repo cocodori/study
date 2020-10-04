@@ -54,4 +54,14 @@ public class BoardController {
         model.addAttribute("post", post);
     }
 
+    @PostMapping("/remove")
+    public String remove(Long bno) {
+        log.info("---------------------remove--------------------");
+        log.info("bno : " + bno);
+
+        boardService.removePost(bno);
+
+        return "redirect:/board/list";
+    }
+
 }

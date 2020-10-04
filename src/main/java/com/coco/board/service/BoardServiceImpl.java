@@ -12,8 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.function.Function;
 
 @Log4j2
@@ -53,5 +51,10 @@ public class BoardServiceImpl implements BoardService {
         Object[] entity = (Object[])boardRepository.getBoardByBno(bno);
 
         return entityToDto((Board)entity[0], (Member)entity[1], (Long)entity[2]);
+    }
+
+    @Override
+    public void removePost(Long bno) {
+        boardRepository.deleteById(bno);
     }
 }

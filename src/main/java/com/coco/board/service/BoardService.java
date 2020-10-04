@@ -13,6 +13,7 @@ public interface BoardService {
     Long register(BoardDTO boardDto);
     PageResultDTO<BoardDTO, Object[]> getList(PageRequestDTO pageRequestDTO);
     BoardDTO getPost(Long bno);
+    void removePost(Long bno);
 
     default Board dtoToEntity(BoardDTO boardDto) {
         Member member = Member.builder()

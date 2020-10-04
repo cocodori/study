@@ -14,8 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
 import java.util.stream.IntStream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class BoardServiceTest {
@@ -50,9 +51,24 @@ public class BoardServiceTest {
 
             memberRepository.save(member);
             boardRepository.save(board);
-            replyRepository.save(reply);
+           // replyRepository.save(reply);
         });
     }
+
+    /* 댓글 등록하는 코드 주석 달고 실행해야 함*/
+    @Test
+    public void testRemove() {
+        assertNotNull(boardService.getPost(99L));
+        boardService.removePost(99L);
+        System.out.println(boardService.getList(new PageRequestDTO()));
+
+        //삭제가 되었고.. getList()로 조회하면 삭제 된 것을 확인할 수 있는데
+        //getPost()로는 여전히 조회가 된다..?
+
+        System.out.println(boardService.getPost(99L));
+
+    }
+
 
     @Test
     public void testRead2() {
