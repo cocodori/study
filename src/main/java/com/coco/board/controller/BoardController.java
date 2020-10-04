@@ -42,4 +42,12 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
+    @GetMapping("/read")
+    public void read(Long bno, Model model) {
+        log.info("------------------read--------------------");
+        log.info("bno : " + bno);
+
+        model.addAttribute("post", boardService.getPost(bno));
+    }
+
 }

@@ -6,10 +6,13 @@ import com.coco.board.dto.PageResultDTO;
 import com.coco.board.entity.Board;
 import com.coco.board.entity.Member;
 
+import java.util.Optional;
+
 public interface BoardService {
 
     Long register(BoardDTO boardDto);
     PageResultDTO<BoardDTO, Object[]> getList(PageRequestDTO pageRequestDTO);
+    Object getPost(Long bno);
 
     default Board dtoToEntity(BoardDTO boardDto) {
         Member member = Member.builder()

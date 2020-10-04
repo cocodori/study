@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 @Log4j2
@@ -46,5 +47,8 @@ public class BoardServiceImpl implements BoardService {
         return new PageResultDTO<>(result, fn);
     }
 
-
+    @Override
+    public Object getPost(Long bno) {
+        return boardRepository.getBoardByBno(bno);
+    }
 }
