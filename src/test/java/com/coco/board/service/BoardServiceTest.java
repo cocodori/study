@@ -55,6 +55,18 @@ public class BoardServiceTest {
         });
     }
 
+    @Test
+    public void testModify() {
+        BoardDTO boardDto = boardService.getPost(11L);
+        System.out.println(boardDto);
+
+        boardDto.setTitle("서비스 수정 테스트");
+        boardDto.setContent("Service Layer");
+        boardService.modify(boardDto);
+
+        System.out.println(boardService.getPost(11L));
+    }
+
     /* 댓글 등록하는 코드 주석 달고 실행해야 함*/
     @Test
     public void testRemove() {

@@ -57,4 +57,10 @@ public class BoardServiceImpl implements BoardService {
     public void removePost(Long bno) {
         boardRepository.deleteById(bno);
     }
+
+    @Override
+    public void modify(BoardDTO boardDto) {
+        Board modPost = dtoToEntity(boardDto);
+        boardRepository.save(modPost);
+    }
 }

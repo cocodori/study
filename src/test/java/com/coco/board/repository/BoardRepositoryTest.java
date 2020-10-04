@@ -1,5 +1,6 @@
 package com.coco.board.repository;
 
+import com.coco.board.dto.BoardDTO;
 import com.coco.board.entity.Board;
 import com.coco.board.entity.Member;
 import com.coco.board.entity.Reply;
@@ -57,6 +58,44 @@ public class BoardRepositoryTest {
             boardRepository.save(board);
             //replyRepository.save(reply);
         });
+    }
+
+    //수정
+    @Test
+    public void testModify() {
+        Object[] entity = (Object[])boardRepository.getBoardByBno(11L);
+        Board board = (Board)entity[0];
+        Member member = (Member) entity[1];
+        Long replyCount =(Long)entity[2];
+
+        BoardDTO boardDto = BoardDTO.builder()
+                .bno(board.getBno())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .regDate(board.getRegDate())
+                .modDate(board.getModDate())
+                .writerEmail(member.getEmail())
+                .writerName(member.getName())
+                .replyCount(replyCount.intValue())
+                .build();
+
+        System.out.println("dto : " + boardDto);
+
+        boardDto.setTitle("수정 테스트");
+        boardDto.setContent("수정 테스트");
+
+        Board modBoard = Board.builder()
+                .bno(boardDto.getBno())
+                .title(boardDto.getTitle())
+                .content(boardDto.getContent())
+                .writer(member)
+                .build();
+
+        boardRepository.save(modBoard);
+
+        Object[] entity2 = (Object[])boardRepository.getBoardByBno(11L);
+
+        System.out.println(" final board : " + entity2[0]);
     }
 
     @Test

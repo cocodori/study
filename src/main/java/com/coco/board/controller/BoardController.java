@@ -44,7 +44,7 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    @GetMapping("/read")
+    @GetMapping({"/read", "/modify"})
     public void read(Long bno, Model model) {
         log.info("------------------read--------------------");
         log.info("bno : " + bno);
@@ -53,6 +53,15 @@ public class BoardController {
 
         model.addAttribute("post", post);
     }
+
+    @PostMapping("/modify")
+    public String modifyPost(BoardDTO boardDTO) {
+        log.info("----------------modify post---------------------------");
+        log.info("boardDTO : " + boardDTO);
+        boardService.modify(boardDTO);
+        return "redirect:/board/list";
+    }
+
 
     @PostMapping("/remove")
     public String remove(Long bno) {
