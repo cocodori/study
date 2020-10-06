@@ -1,5 +1,6 @@
 package com.webex.domain.posts;
 
+import com.webex.domain.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,8 +10,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity //테이블과 링크할 클래스
-public class Posts {
-
+public class Posts extends BaseTimeEntity {
     @Id //PK
     /*
     *  @GeneratedValue
