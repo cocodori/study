@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -110,5 +111,27 @@ public class PostApiControllerTest {
         System.out.println("responseEntity.getStatusCode() : " + responseEntity.getStatusCode());
         System.out.println("responseEntity.getBody() : " + responseEntity.getBody());
         System.out.println("--------------------------------------------");
+    }
+
+    @Test
+    public void post_삭제한다() {
+        //given
+        Posts post = postsRepository.save(Posts.builder()
+                                    .title("title")
+                                    .content("content")
+                                    .author("cococ")
+                                    .build());
+
+        assertThat(postsRepository.findById(1L))
+                .isNotEmpty();
+
+        String url = "http://localhost:"+port+"/api/v1/posts/"+post.getId();
+
+        //when
+        restTemplate.delete(url);
+
+        //then
+        assertThat(postsRepository.findById(1L))
+                .isEmpty();
     }
 }
