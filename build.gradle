@@ -15,6 +15,8 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
@@ -22,7 +24,7 @@ dependencies {
 	compile group: 'org.springframework.data', name: 'spring-data-jpa', version: '2.3.4.RELEASE'
 	compile group: 'org.springframework', name: 'spring-web', version: '5.2.9.RELEASE'
 
-	testCompile group: 'com.h2database', name: 'h2', version: '1.4.200'
+	runtimeOnly 'com.h2database:h2'
 
 	compileOnly 'org.projectlombok:lombok:1.18.12'
 	annotationProcessor 'org.projectlombok:lombok:1.18.12'
