@@ -1,6 +1,9 @@
 package com.webex.domain.posts;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 /*
 *   MyBatis에서 DAO라고 불리는 데이터 레이어 접근자를 JPA에서는 Repository로 표기한다.
@@ -9,4 +12,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 *   나중에 유지보수할 때도 용이하므로 엔티티와 레포지토리는 같은 패키지에서 관리한다.
 * */
 public interface PostsRepository extends JpaRepository<Posts, Long> {
+
+    /*
+    *  전체 목록 조회
+    * */
+    @Query("SELECT p FROM Posts p ORDER BY p.id DESC")
+    List<Posts> findAllDesc();
 }
