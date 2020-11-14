@@ -1,5 +1,6 @@
-package com.jpabook.domain;
+package com.jpabook.domain.item;
 
+import com.jpabook.domain.Category;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "DTYPE")
 @Entity
 public class Item {
     @Id @GeneratedValue
