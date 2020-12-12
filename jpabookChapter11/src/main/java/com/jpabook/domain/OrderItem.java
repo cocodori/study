@@ -33,4 +33,24 @@ public class OrderItem {
 	
 	private int count;
 	
+	public static OrderItem createOrderItem(Item item, int orderPrice, int count) {
+		OrderItem orderItem = new OrderItem();
+		
+		orderItem.setItem(item);
+		orderItem.setOrderPrice(orderPrice);
+		orderItem.setCount(count);
+		
+		item.removeStock(count);
+		
+		return orderItem;
+	}
+
+	public void cancel() {
+		getItem().addStock(count); // 주문 취소한 만큼 재고 증가
+	}
+
+	public int getTotalPrice() {
+		return getOrderPrice() * getCount();
+	}
+	
 }

@@ -10,12 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter @Setter @NoArgsConstructor
 @Entity
 public class Delivery {
-	
+
 	@Id @GeneratedValue
 	@Column(name = "DELIVERY_ID")
 	Long id;
@@ -28,5 +29,8 @@ public class Delivery {
 	
 	@Enumerated(EnumType.STRING)
 	private DeliveryStatus status;
-
+	
+	public Delivery(Address address) {
+		this.address = address;
+	}
 }
