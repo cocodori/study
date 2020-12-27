@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JS로 쿠키 제어하기</title>
+</head>
+<body>
+	<form>
+		<input type='button' value='쿠키 삭제' onclick="deleteCookie()">
+	</form>
+<script>
+
+window.onload = () => {
+	//notShowPop의 쿠키 값을 getCookieValue()를 호출하여 얻는다.
+	notShowPop = getCookieValue();
+	
+	console.log(getCookieValue());
+	console.log(typeof notShowPop);
+	console.log(notShowPop !== 'true')
+	
+	
+	//notShowPop이 true가 아니면 팝업창을 나타낸다.
+	if(notShowPop !== 'true') {
+		window.open("popUp.html","pop","width=400,height=500,history=no,"
+				+"resizable=no,status=no,scrollbars=yes,menubar=no");
+	}
+} 
+
+function getCookieValue() {
+	var result = 'false';
+	if(document.cookie!== '') {
+		//document의 cookie속성으로 쿠키 정보를 문자열로 가져온 후 ';'를 구분자로하여 각각 쿠키를 얻는다.
+		cookie = document.cookie.split(';');
+		
+		for(var i=0; i<cookie.length;i++) {
+			element = cookie[i].split('=');
+			value=element[0];
+			//정규식을 이용해 쿠키 이름 문자열의 공백을 제거
+			value=value.replace(/^\s*/,'');
+			
+			if(value==='notShowPop') {
+				result = element[1];
+			}
+		} //for
+	} // if
+	return result;
+} //getCookieValue()
+
+//쿠키 삭제 클릭 시 호출. notShowPop 쿠키 값을 false로 설정.
+function deleteCookie() {
+	document.cookie = 'notShowPop='+'false'+';path=/; expires=-1';
+}
+</script>	
+	
+</body>
+</html>

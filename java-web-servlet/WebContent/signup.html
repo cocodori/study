@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+</head>
+<body>
+	<form name='member'>
+	<table>
+		<th>회원가입</th>
+		<tr> 
+			<td>아아디</td>
+			<td><input type='text' name='id'></td> 
+		</tr>
+		<tr>
+			<td>비밀번호</td> 
+			<td><input type='password' name='pwd'></td>
+		</tr>
+		<tr>
+			<td>이름</td>
+			<td><input type='text' name='name'></td>
+		</tr>
+		<tr>
+			<td>이메일</td>
+			<td><input type='text' name='email'></td>
+		</tr>
+	</table>
+	<input type='button' value='가입' onClick='fn_sendMember()'/>
+	<input type='hidden' name='command' value='addMember'>
+	</form>
+	
+	<script>
+		function fn_sendMember() {
+			var form = document.member;
+			var id = form.id.value;
+			var pwd = form.pwd.value;
+			var name = form.name.value;
+			var email = form.email.value;
+			
+			if(id.length===0||id==='') {
+				alert('아이디를 입력하세요');
+			} else if(pwd.length===0||pwd==='') {
+				alert('비밀번호를 입력하세요')
+			} else if(name.length===0||name===''){
+				alert('이름을 입력하세요')
+			} else if(email.length===0||name===''){
+				alert('이메일을 입력하세요')
+			} else {
+				form.method = 'post';
+				form.action = 'member';
+				form.submit();
+			}
+		}
+	</script>
+</body>
+</html>
