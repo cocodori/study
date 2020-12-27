@@ -1,0 +1,46 @@
+<header th:replace="/layout/header.html"></header>
+
+<a th:href="@{/board/register(page=${result.page})}">
+<input type="button" class="btn btn-primary" value="등록"></a>
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">제목</th>
+                <th scope="col">작성자</th>
+                <th scope="col">작성일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="dto :${result.dtoList}">
+                <td>[[${dto.bno}]]</td>
+                <th scope="row">
+                    <a th:href="@{/board/read(bno=${dto.bno}, page=${result.page})}">
+                        [[${dto.title}]]  [<b th:text="${dto.replyCount}"></b>]
+                    </a>
+                </th>
+                <td>[[${dto.writerName}]] <small>[[${dto.writerEmail}]]</small> </td>
+                <td>[[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul class="pagination h-100 justify-content-center align-items-center">
+        <li class="page-item " th:if="${result.prev}">
+           <a class="page-link" th:href="@{/board/list(page=${result.start-1})}" tabindex="-1"> Prev </a>
+        </li>
+        <li th:class=" 'page-item ' + ${result.page == page ? 'active':''}" th:each="page : ${result.pageList}">
+            <a class="page-link" th:href="@{/board/list(page=${page})}">
+                [[${page}]]
+            </a>
+        </li>
+        <li class="page-item" th:if="${result.next}">
+            <a class="page-link" th:href="@{/board/list(page=${result.end + 1})}">
+                Next
+            </a>
+        </li>
+    </ul>
+</div>
+
+<footer th:replace="/layout/footer.html"></footer>

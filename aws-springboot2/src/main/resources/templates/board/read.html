@@ -1,0 +1,47 @@
+<header th:replace="/layout/header.html"></header>
+
+<th:block th:replace:"~{/layout/basic :: setContent(~{this::content} )}" >
+    <th:block th:fragment="content">
+        <h1 class="mt-4">게시물 조회</h1>
+        <form id="form" method="get">
+            <div class="form-group">
+                <label>게시물 번호</label>
+                <input type="text" class="form-control" name="bno"
+                       th:value="${post.bno}" readonly>
+            </div>
+            <div class="form-group">
+                <label>제목</label>
+                <input type="text" class="form-control" name="title"
+                       th:value="${post.title}" readonly>
+            </div>
+            <div class="form-group">
+                <label>내용</label>
+                <textarea class="form-control" rows="5" name="content" readonly>[[${post.content}]]</textarea>
+            </div>
+            <div class="form-group">
+                <label>작성자</label>
+                <input type="email" class="form-control" name="writerEmail" th:value="${post.writerEmail}" readonly>
+            </div>
+            <a th:href="@{/board/modify(bno=${post.bno})}" class="btn btn-primary">수정</a>
+            <button type="submit" class="btn btn-primary" id="remove">삭제</button>
+            <a th:href="@{/board/list}" class="btn btn-primary">목록</a>
+        </form>
+    </th:block>
+</th:block>
+
+<script>
+    const removeBtn = document.getElementById('remove');
+    const form = document.getElementById('form');
+    window.onload = () => {
+        removeBtn.addEventListener('click', () => {
+            if(confirm('정말 삭제하시겠습니까?')) {
+                form.method = 'post';
+                form.action = '/board/remove';
+                form.submit();
+            }
+            return;
+        });
+    }
+</script>
+
+<footer th:replace="/layout/footer.html"></footer>
