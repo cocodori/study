@@ -1,0 +1,37 @@
+{{>layout/header}}
+    <h1>솜방망이로 홈런을 날렸다. 계란으로 바위를 깼다. 연필로 칼을 깎았다. 커피에 소금을 탔다. 깊었다. 당신의 주름처럼.
+        영어로된 책을 열심히 읽는 척했다. 뭔가 아주 심오한 것을 읽는 듯한 표정은 덤이었다. 책을 거꾸로 들고 있었다는 것은 나중에야 안 사실이다.
+        샤프심은 강하다.샴푸는 샴프가 아니다. 이건 모두 거짓말. 하지만 믿어준다면 모두 진실이 될 거야. 인용이다.
+    </h1>
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <a href="/posts/save" role="button" class="btn btn-primary">
+                    등록
+                </a>
+            </div>
+        </div>
+        <br>
+        <!-- 게시글 목록 -->
+        <table class="table table-horizontal table-bordered">
+            <thead class="thead-strong">
+                <tr>
+                    <th>no</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>작성일</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                {{#posts}}
+                    <tr>
+                        <td>{{id}}</td>
+                        <td><a href="/posts/update/{{id}}">{{title}}</a></td>
+                        <td>{{author}}</td>
+                        <td>{{createDate}}</td>
+                    </tr>
+                {{/posts}}
+            </tbody>
+        </table>
+    </div>
+{{>layout/footer}}
