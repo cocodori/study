@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="36ca6e24-2117-491d-9deb-7308092bf39e" name="Default Changelist" comment="BubbleSort - blog : https://coco-log.tistory.com/120" />
+    <list default="true" id="36ca6e24-2117-491d-9deb-7308092bf39e" name="Default Changelist" comment="Insertion sort - blog post : https://coco-log.tistory.com/123">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,7 +24,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/java-algorithm/algorithm01/sort-algorithm" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../studyolle" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -42,6 +44,8 @@
       <workItem from="1609169424316" duration="126000" />
       <workItem from="1609169586977" duration="438000" />
       <workItem from="1609210668902" duration="56000" />
+      <workItem from="1609424398741" duration="248000" />
+      <workItem from="1609484728576" duration="640000" />
     </task>
     <task id="LOCAL-00001" summary="BubbleSort - blog : https://coco-log.tistory.com/120">
       <created>1609169608240</created>
@@ -50,7 +54,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609169608240</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Insertion sort - blog post : https://coco-log.tistory.com/123">
+      <created>1609424410933</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1609424410933</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -70,6 +81,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="BubbleSort - blog : https://coco-log.tistory.com/120" />
-    <option name="LAST_COMMIT_MESSAGE" value="BubbleSort - blog : https://coco-log.tistory.com/120" />
+    <MESSAGE value="Insertion sort - blog post : https://coco-log.tistory.com/123" />
+    <option name="LAST_COMMIT_MESSAGE" value="Insertion sort - blog post : https://coco-log.tistory.com/123" />
   </component>
 </project>
