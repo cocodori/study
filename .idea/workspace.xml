@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="36ca6e24-2117-491d-9deb-7308092bf39e" name="Default Changelist" comment="Insertion sort - blog post : https://coco-log.tistory.com/123">
+      <change afterPath="$PROJECT_DIR$/modern-java-in-action/ch02/src/main/java/ch02/Apple.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modern-java-in-action/ch02/src/main/java/ch02/Main01.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modern-java-in-action/ch02/src/main/java/ch02/Main02.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,6 +49,8 @@
       <workItem from="1609210668902" duration="56000" />
       <workItem from="1609424398741" duration="248000" />
       <workItem from="1609484728576" duration="640000" />
+      <workItem from="1609770118614" duration="87000" />
+      <workItem from="1609822501671" duration="605000" />
     </task>
     <task id="LOCAL-00001" summary="BubbleSort - blog : https://coco-log.tistory.com/120">
       <created>1609169608240</created>
@@ -61,7 +66,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609424410933</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="싱글톤 레지스트리(110p)까지">
+      <created>1609770181037</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1609770181037</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -82,6 +94,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="BubbleSort - blog : https://coco-log.tistory.com/120" />
     <MESSAGE value="Insertion sort - blog post : https://coco-log.tistory.com/123" />
-    <option name="LAST_COMMIT_MESSAGE" value="Insertion sort - blog post : https://coco-log.tistory.com/123" />
+    <MESSAGE value="싱글톤 레지스트리(110p)까지" />
+    <option name="LAST_COMMIT_MESSAGE" value="싱글톤 레지스트리(110p)까지" />
   </component>
 </project>

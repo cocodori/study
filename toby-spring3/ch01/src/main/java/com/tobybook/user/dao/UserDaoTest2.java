@@ -14,7 +14,7 @@ public class UserDaoTest2 {
         UserDao6 dao = context.getBean("userDao", UserDao6.class);
 
         User user = new User();
-        user.setId("hoon2");
+        user.setId("hoon4");
         user.setName("이지훈");
         user.setPassword("1234");
 
@@ -30,7 +30,6 @@ public class UserDaoTest2 {
         System.out.println("동등성 비교 equals : " + user.getId().equals(user2.getId()));
         System.out.println("user 1 : " + user);
         System.out.println("user 2 : " + user2);
-
 
     }
 }
