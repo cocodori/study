@@ -2,10 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="36ca6e24-2117-491d-9deb-7308092bf39e" name="Default Changelist" comment="Insertion sort - blog post : https://coco-log.tistory.com/123">
-      <change afterPath="$PROJECT_DIR$/modern-java-in-action/ch02/src/main/java/ch02/Apple.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modern-java-in-action/ch02/src/main/java/ch02/Main01.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modern-java-in-action/ch02/src/main/java/ch02/Main02.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/AmountDiscountPolicy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/Client.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/Customer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/DiscountCondition.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/DiscountPolicy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/Money.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/Movie.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/PercentDiscountPolicy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/PeriodCondition.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/Reservation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/Screening.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/object-book/src/main/java/ch02/SequenceCondition.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +36,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../studyolle" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -51,6 +60,7 @@
       <workItem from="1609484728576" duration="640000" />
       <workItem from="1609770118614" duration="87000" />
       <workItem from="1609822501671" duration="605000" />
+      <workItem from="1610215838862" duration="42000" />
     </task>
     <task id="LOCAL-00001" summary="BubbleSort - blog : https://coco-log.tistory.com/120">
       <created>1609169608240</created>
