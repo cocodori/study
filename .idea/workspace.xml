@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="36ca6e24-2117-491d-9deb-7308092bf39e" name="Default Changelist" comment="오브젝트 2장 예제">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="36ca6e24-2117-491d-9deb-7308092bf39e" name="Default Changelist" comment="오브젝트 2장 예제" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,7 +22,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../my-jango_bitcamp_153th_final_project" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../studyolle" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -50,6 +48,7 @@
       <workItem from="1609822501671" duration="605000" />
       <workItem from="1610215838862" duration="670000" />
       <workItem from="1610263703399" duration="100000" />
+      <workItem from="1610935332029" duration="5000" />
     </task>
     <task id="LOCAL-00001" summary="BubbleSort - blog : https://coco-log.tistory.com/120">
       <created>1609169608240</created>
