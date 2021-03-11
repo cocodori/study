@@ -20,4 +20,14 @@ public class Select {
             System.out.println("[query] member.username ? " + member.getUsername());
         }
     }
+
+    //일대다 컬렉션 조회
+    public void biDirection(){
+        Team team = em.find(Team.class, "team1");
+        List<Member> members = team.getMembers(); //팀 -> 회원 객체 그래프 탐색
+
+        for (Member member : members) {
+            System.out.println(member.getUsername());
+        }
+    }
 }
