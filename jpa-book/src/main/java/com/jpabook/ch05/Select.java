@@ -10,7 +10,7 @@ public class Select {
     EntityManager em = emf.createEntityManager();
 
     public void select() {
-        String jpql = "select m from Member m join m.team t where t.name = teamName";
+        String jpql = "select m from Ch06Member m join m.team t where t.name = teamName";
 
         List<Member> resultList = em.createQuery(jpql, Member.class)
                 .setParameter("teamName", "팀1")

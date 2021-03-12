@@ -23,7 +23,7 @@ public class JpaTest {
     }
 
     private List<Member> queryLogicJoin() {
-        String jpql = "select m from Member m join m.team t" +
+        String jpql = "select m from Ch06Member m join m.team t" +
                 "  where t.name =: teamName";
 
         return entityManager.createQuery(jpql, Member.class)
