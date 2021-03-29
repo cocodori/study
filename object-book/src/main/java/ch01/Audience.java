@@ -13,13 +13,6 @@ public class Audience {
 
     //외부에 공개할 인터페이스
     public Long buy(Ticket ticket) {
-        if(bag.hasInvitation()) {
-            bag.setTicket(ticket);
-            return 0L;
-        } else {
-            bag.setTicket(ticket);
-            bag.minusAmount(ticket.getFee());
-            return ticket.getFee();
-        }
+        return bag.hold(ticket);
     }
 }
