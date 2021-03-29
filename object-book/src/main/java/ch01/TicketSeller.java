@@ -14,7 +14,8 @@ public class TicketSeller {
 
     //인터페이스
     public void sellTo(Audience audience) {
-        if(audience.getBag().hasInvitation()) {
+        ticketOffice.plusAmount(audience.buy(ticketOffice.getTicket()));
+/*        if(audience.getBag().hasInvitation()) {
             Ticket ticket = ticketOffice.getTicket();
             audience.getBag().setTicket(ticket);
         } else {
@@ -22,6 +23,6 @@ public class TicketSeller {
             audience.getBag().minusAmount(ticket.getFee());
             ticketOffice.plusAmount(ticket.getFee());
             audience.getBag().setTicket(ticket);
-        }
+        }*/
     }
 }
