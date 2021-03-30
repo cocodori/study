@@ -1,7 +1,7 @@
 package ch02;
 
 public class SequenceCondition implements DiscountCondition {
-    int sequence;
+    private int sequence;
 
     public SequenceCondition(int sequence) {
         this.sequence = sequence;

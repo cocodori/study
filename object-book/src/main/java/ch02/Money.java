@@ -7,12 +7,16 @@ public class Money {
 
     private final BigDecimal amount;
 
-    public Money(BigDecimal amount) {
-        this.amount = amount;
-    }
-
     public static Money wons(long amount) {
         return new Money(BigDecimal.valueOf(amount));
+    }
+
+    public static Money wons(double amount) {
+        return new Money(BigDecimal.valueOf(amount));
+    }
+
+    Money(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public Money plus(Money amount) {
@@ -35,5 +39,4 @@ public class Money {
     public boolean isGreaterThanOrEqual(Money other) {
         return amount.compareTo(other.amount) >= 0;
     }
-
 }
