@@ -22,5 +22,7 @@ public class Main {
                         new PeriodCondition(DayOfWeek.TUESDAY, LocalTime.of(14, 0), LocalTime.of(16, 59)),
                         new SequenceCondition(2),
                         new PeriodCondition(DayOfWeek.THURSDAY, LocalTime.of(10, 0), LocalTime.of(13, 59))));
+
+        titanic.changeDiscountPolicy(new AmountDiscountPolicy(Money.wons(1000)));
     }
 }

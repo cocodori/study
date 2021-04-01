@@ -1,6 +1,6 @@
 package ch02;
 
-public class PercentDiscountCondition extends DiscountPolicy {
+public class PercentDiscountCondition extends DefaultDiscountPolicy {
     private double percent;
 
     public PercentDiscountCondition(double percent, DiscountCondition... conditions) {
