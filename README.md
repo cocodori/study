@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-# Study
+# _**공부하자**_
 
 [jpa-book - 자바 ORM 표준 JPA프로그래밍 예제](https://github.com/cocodori/study/tree/main/jpa-book)
 
@@ -20,4 +19,3 @@
 [Spring In Action5](https://github.com/cocodori/study/tree/main/spring-in-action)
 
 [오브젝트(조영호)](https://github.com/cocodori/study/tree/main/object-book)
-
